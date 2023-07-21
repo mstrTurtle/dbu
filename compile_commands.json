@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/turtle/dbackup-updater",
+  "command": "/usr/bin/c++      -o CMakeFiles/dbu.dir/src/d.cpp.o -c /home/turtle/dbackup-updater/src/d.cpp",
+  "file": "/home/turtle/dbackup-updater/src/d.cpp"
+}
+]
