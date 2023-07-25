@@ -3,7 +3,8 @@
 
 using std::string;
 
-class Downloader{
+class Downloader
+{
   string filepath_;
   string threads_;
   string save_path_;

@@ -4,15 +4,16 @@
 
 using std::string;
 
+FtpCommandHelper::FtpCommandHelper(){};
 
-FtpCommandHelper::FtpCommandHelper(){
+string
+FtpCommandHelper::loginPhase()
+{
+  return "USER scutech\nPASS dingjia\n";
 };
 
-string FtpCommandHelper::loginPhase(){
-    return "USER scutech\nPASS dingjia\n";
-};
-
-
-string FtpCommandHelper::retr(const string& path){
-    return "RETR " + path + '\n';
+string
+FtpCommandHelper::retr(const string& path)
+{
+  return "RETR " + path + '\n';
 };

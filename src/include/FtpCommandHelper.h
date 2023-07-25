@@ -3,8 +3,9 @@
 
 using std::string;
 
-class FtpCommandHelper{
+class FtpCommandHelper
+{
   FtpCommandHelper();
   string loginPhase();
   string retr(const string& path);
-} ;
+};

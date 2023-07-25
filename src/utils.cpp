@@ -9,17 +9,16 @@ using std::cout;
 #endif
 
 void
-usage (int status)
+usage(int status)
 {
-  if (status != EXIT_SUCCESS)
-    {
-      cout << "Try 'dbu --help' for more information.\n";
-      exit (status);
-    }
+  if (status != EXIT_SUCCESS) {
+    cout << "Try 'dbu --help' for more information.\n";
+    exit(status);
+  }
 
   cout << "\
 Use '-D help' for a description of the options, or see find(1)\n\
 \n";
 
-  exit (status);
+  exit(status);
 }

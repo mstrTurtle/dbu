@@ -1,47 +1,47 @@
 [
 {
-  "directory": "/home/turtle/dbackup-updater",
-  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include -isystem /mnt/c/Users/qq769/anaconda3/Library/include    -std=gnu++14 -o CMakeFiles/runTests.dir/test/tests.cpp.o -c /home/turtle/dbackup-updater/test/tests.cpp",
+  "directory": "/home/turtle/dbackup-updater/build",
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/runTests.dir/test/tests.cpp.o -c /home/turtle/dbackup-updater/test/tests.cpp",
   "file": "/home/turtle/dbackup-updater/test/tests.cpp"
 },
 {
-  "directory": "/home/turtle/dbackup-updater",
-  "command": "/usr/bin/c++      -std=gnu++14 -o CMakeFiles/DbuApp.dir/src/Updater.cpp.o -c /home/turtle/dbackup-updater/src/Updater.cpp",
-  "file": "/home/turtle/dbackup-updater/src/Updater.cpp"
+  "directory": "/home/turtle/dbackup-updater/build",
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/DbuApp.dir/src/main.cpp.o -c /home/turtle/dbackup-updater/src/main.cpp",
+  "file": "/home/turtle/dbackup-updater/src/main.cpp"
 },
 {
-  "directory": "/home/turtle/dbackup-updater",
-  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include    -std=gnu++14 -o CMakeFiles/Dbu.dir/src/Downloader.cpp.o -c /home/turtle/dbackup-updater/src/Downloader.cpp",
+  "directory": "/home/turtle/dbackup-updater/build",
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/Dbu.dir/src/Downloader.cpp.o -c /home/turtle/dbackup-updater/src/Downloader.cpp",
   "file": "/home/turtle/dbackup-updater/src/Downloader.cpp"
 },
 {
-  "directory": "/home/turtle/dbackup-updater",
-  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include    -std=gnu++14 -o CMakeFiles/Dbu.dir/src/FtpCommandHelper.cpp.o -c /home/turtle/dbackup-updater/src/FtpCommandHelper.cpp",
+  "directory": "/home/turtle/dbackup-updater/build",
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/Dbu.dir/src/FtpCommandHelper.cpp.o -c /home/turtle/dbackup-updater/src/FtpCommandHelper.cpp",
   "file": "/home/turtle/dbackup-updater/src/FtpCommandHelper.cpp"
 },
 {
-  "directory": "/home/turtle/dbackup-updater",
-  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include    -std=gnu++14 -o CMakeFiles/Dbu.dir/src/FtpControlHandler.cpp.o -c /home/turtle/dbackup-updater/src/FtpControlHandler.cpp",
+  "directory": "/home/turtle/dbackup-updater/build",
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/Dbu.dir/src/FtpControlHandler.cpp.o -c /home/turtle/dbackup-updater/src/FtpControlHandler.cpp",
   "file": "/home/turtle/dbackup-updater/src/FtpControlHandler.cpp"
 },
 {
-  "directory": "/home/turtle/dbackup-updater",
-  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include    -std=gnu++14 -o CMakeFiles/Dbu.dir/src/FtpDataHandler.cpp.o -c /home/turtle/dbackup-updater/src/FtpDataHandler.cpp",
+  "directory": "/home/turtle/dbackup-updater/build",
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/Dbu.dir/src/FtpDataHandler.cpp.o -c /home/turtle/dbackup-updater/src/FtpDataHandler.cpp",
   "file": "/home/turtle/dbackup-updater/src/FtpDataHandler.cpp"
 },
 {
-  "directory": "/home/turtle/dbackup-updater",
-  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include    -std=gnu++14 -o CMakeFiles/Dbu.dir/src/Option.cpp.o -c /home/turtle/dbackup-updater/src/Option.cpp",
+  "directory": "/home/turtle/dbackup-updater/build",
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/Dbu.dir/src/Option.cpp.o -c /home/turtle/dbackup-updater/src/Option.cpp",
   "file": "/home/turtle/dbackup-updater/src/Option.cpp"
 },
 {
-  "directory": "/home/turtle/dbackup-updater",
-  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include    -std=gnu++14 -o CMakeFiles/Dbu.dir/src/utils.cpp.o -c /home/turtle/dbackup-updater/src/utils.cpp",
+  "directory": "/home/turtle/dbackup-updater/build",
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/Dbu.dir/src/utils.cpp.o -c /home/turtle/dbackup-updater/src/utils.cpp",
   "file": "/home/turtle/dbackup-updater/src/utils.cpp"
 },
 {
-  "directory": "/home/turtle/dbackup-updater",
-  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include    -std=gnu++14 -o CMakeFiles/Dbu.dir/src/Updater.cpp.o -c /home/turtle/dbackup-updater/src/Updater.cpp",
+  "directory": "/home/turtle/dbackup-updater/build",
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/Dbu.dir/src/Updater.cpp.o -c /home/turtle/dbackup-updater/src/Updater.cpp",
   "file": "/home/turtle/dbackup-updater/src/Updater.cpp"
 }
 ]

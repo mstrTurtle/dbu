@@ -1,7 +1,8 @@
 #pragma once
-class FtpControlHandler{
+class FtpControlHandler
+{
   int section_no_;
 
   int handle_read();
   int handle_write();
-} ;
+};

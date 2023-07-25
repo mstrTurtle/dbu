@@ -59,5 +59,6 @@
                 "italic": false
             }
         }
-    }
+    },
+    "files.insertFinalNewline": true // 加尾随新行
 }
