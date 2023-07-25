@@ -6,6 +6,7 @@ using std::string;
 
 class Option
 {
+  public:
   /// Returns the singleton instance
   static Option* instance();
 
@@ -28,3 +29,5 @@ protected:
   /// the singleton
   static Option* instance_;
 };
+
+#define OPTION (Option::instance())

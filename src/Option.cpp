@@ -107,11 +107,7 @@ string
 Option::get_actual_path()
 {
   string path = string("/ftp_product_installer/dbackup3/rpm");
-  PathBuilder(path)
-    .add(branch_)
-    .add(sub_branch_)
-    .add(build_)
-    .add(arch_)
-    .add(product_);
+  PathBuilder(path).add(branch_).add(sub_branch_).add(build_).add(arch_);
+  // TODO：在此放一个检测的。需要去检测最新的包。
   return path;
 }
