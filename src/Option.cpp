@@ -66,11 +66,11 @@ Option::parse_args(int argc,
 }
 
 Option::Option() // 构造器给结构体赋初值。
-  : branch_(0)
-  , sub_branch_(0)
-  , build_(0)
-  , arch_(0)
-  , product_(0)
+  : branch_("")
+  , sub_branch_("")
+  , build_("")
+  , arch_("")
+  , product_("")
   , threads_(1)
   , debug_(0)
 {}
@@ -93,7 +93,7 @@ struct PathBuilder
       origin_.push_back('/');
     }
 
-    if (appendix[0] != '/') {
+    if (appendix[0] == '/') {
       origin_ += (appendix.substr(1));
     } else {
       origin_ += appendix;
