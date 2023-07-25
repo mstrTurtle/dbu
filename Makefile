@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/turtle/dbackup-updater
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
@@ -77,6 +66,17 @@ edit_cache:
 edit_cache/fast: edit_cache
 
 .PHONY : edit_cache/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/usr/bin/cmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -111,44 +111,262 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named dbu
+# Target rules for targets named runTests
 
 # Build rule for target.
-dbu: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 dbu
-.PHONY : dbu
+runTests: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 runTests
+.PHONY : runTests
 
 # fast build rule for target.
-dbu/fast:
-	$(MAKE) -f CMakeFiles/dbu.dir/build.make CMakeFiles/dbu.dir/build
-.PHONY : dbu/fast
+runTests/fast:
+	$(MAKE) -f CMakeFiles/runTests.dir/build.make CMakeFiles/runTests.dir/build
+.PHONY : runTests/fast
 
-src/d.o: src/d.cpp.o
+#=============================================================================
+# Target rules for targets named DbuApp
 
-.PHONY : src/d.o
+# Build rule for target.
+DbuApp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 DbuApp
+.PHONY : DbuApp
+
+# fast build rule for target.
+DbuApp/fast:
+	$(MAKE) -f CMakeFiles/DbuApp.dir/build.make CMakeFiles/DbuApp.dir/build
+.PHONY : DbuApp/fast
+
+#=============================================================================
+# Target rules for targets named Dbu
+
+# Build rule for target.
+Dbu: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Dbu
+.PHONY : Dbu
+
+# fast build rule for target.
+Dbu/fast:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/build
+.PHONY : Dbu/fast
+
+src/Downloader.o: src/Downloader.cpp.o
+
+.PHONY : src/Downloader.o
 
 # target to build an object file
-src/d.cpp.o:
-	$(MAKE) -f CMakeFiles/dbu.dir/build.make CMakeFiles/dbu.dir/src/d.cpp.o
-.PHONY : src/d.cpp.o
+src/Downloader.cpp.o:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/Downloader.cpp.o
+.PHONY : src/Downloader.cpp.o
 
-src/d.i: src/d.cpp.i
+src/Downloader.i: src/Downloader.cpp.i
 
-.PHONY : src/d.i
+.PHONY : src/Downloader.i
 
 # target to preprocess a source file
-src/d.cpp.i:
-	$(MAKE) -f CMakeFiles/dbu.dir/build.make CMakeFiles/dbu.dir/src/d.cpp.i
-.PHONY : src/d.cpp.i
+src/Downloader.cpp.i:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/Downloader.cpp.i
+.PHONY : src/Downloader.cpp.i
 
-src/d.s: src/d.cpp.s
+src/Downloader.s: src/Downloader.cpp.s
 
-.PHONY : src/d.s
+.PHONY : src/Downloader.s
 
 # target to generate assembly for a file
-src/d.cpp.s:
-	$(MAKE) -f CMakeFiles/dbu.dir/build.make CMakeFiles/dbu.dir/src/d.cpp.s
-.PHONY : src/d.cpp.s
+src/Downloader.cpp.s:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/Downloader.cpp.s
+.PHONY : src/Downloader.cpp.s
+
+src/FtpCommandHelper.o: src/FtpCommandHelper.cpp.o
+
+.PHONY : src/FtpCommandHelper.o
+
+# target to build an object file
+src/FtpCommandHelper.cpp.o:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/FtpCommandHelper.cpp.o
+.PHONY : src/FtpCommandHelper.cpp.o
+
+src/FtpCommandHelper.i: src/FtpCommandHelper.cpp.i
+
+.PHONY : src/FtpCommandHelper.i
+
+# target to preprocess a source file
+src/FtpCommandHelper.cpp.i:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/FtpCommandHelper.cpp.i
+.PHONY : src/FtpCommandHelper.cpp.i
+
+src/FtpCommandHelper.s: src/FtpCommandHelper.cpp.s
+
+.PHONY : src/FtpCommandHelper.s
+
+# target to generate assembly for a file
+src/FtpCommandHelper.cpp.s:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/FtpCommandHelper.cpp.s
+.PHONY : src/FtpCommandHelper.cpp.s
+
+src/FtpControlHandler.o: src/FtpControlHandler.cpp.o
+
+.PHONY : src/FtpControlHandler.o
+
+# target to build an object file
+src/FtpControlHandler.cpp.o:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/FtpControlHandler.cpp.o
+.PHONY : src/FtpControlHandler.cpp.o
+
+src/FtpControlHandler.i: src/FtpControlHandler.cpp.i
+
+.PHONY : src/FtpControlHandler.i
+
+# target to preprocess a source file
+src/FtpControlHandler.cpp.i:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/FtpControlHandler.cpp.i
+.PHONY : src/FtpControlHandler.cpp.i
+
+src/FtpControlHandler.s: src/FtpControlHandler.cpp.s
+
+.PHONY : src/FtpControlHandler.s
+
+# target to generate assembly for a file
+src/FtpControlHandler.cpp.s:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/FtpControlHandler.cpp.s
+.PHONY : src/FtpControlHandler.cpp.s
+
+src/FtpDataHandler.o: src/FtpDataHandler.cpp.o
+
+.PHONY : src/FtpDataHandler.o
+
+# target to build an object file
+src/FtpDataHandler.cpp.o:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/FtpDataHandler.cpp.o
+.PHONY : src/FtpDataHandler.cpp.o
+
+src/FtpDataHandler.i: src/FtpDataHandler.cpp.i
+
+.PHONY : src/FtpDataHandler.i
+
+# target to preprocess a source file
+src/FtpDataHandler.cpp.i:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/FtpDataHandler.cpp.i
+.PHONY : src/FtpDataHandler.cpp.i
+
+src/FtpDataHandler.s: src/FtpDataHandler.cpp.s
+
+.PHONY : src/FtpDataHandler.s
+
+# target to generate assembly for a file
+src/FtpDataHandler.cpp.s:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/FtpDataHandler.cpp.s
+.PHONY : src/FtpDataHandler.cpp.s
+
+src/Option.o: src/Option.cpp.o
+
+.PHONY : src/Option.o
+
+# target to build an object file
+src/Option.cpp.o:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/Option.cpp.o
+.PHONY : src/Option.cpp.o
+
+src/Option.i: src/Option.cpp.i
+
+.PHONY : src/Option.i
+
+# target to preprocess a source file
+src/Option.cpp.i:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/Option.cpp.i
+.PHONY : src/Option.cpp.i
+
+src/Option.s: src/Option.cpp.s
+
+.PHONY : src/Option.s
+
+# target to generate assembly for a file
+src/Option.cpp.s:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/Option.cpp.s
+.PHONY : src/Option.cpp.s
+
+src/Updater.o: src/Updater.cpp.o
+
+.PHONY : src/Updater.o
+
+# target to build an object file
+src/Updater.cpp.o:
+	$(MAKE) -f CMakeFiles/DbuApp.dir/build.make CMakeFiles/DbuApp.dir/src/Updater.cpp.o
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/Updater.cpp.o
+.PHONY : src/Updater.cpp.o
+
+src/Updater.i: src/Updater.cpp.i
+
+.PHONY : src/Updater.i
+
+# target to preprocess a source file
+src/Updater.cpp.i:
+	$(MAKE) -f CMakeFiles/DbuApp.dir/build.make CMakeFiles/DbuApp.dir/src/Updater.cpp.i
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/Updater.cpp.i
+.PHONY : src/Updater.cpp.i
+
+src/Updater.s: src/Updater.cpp.s
+
+.PHONY : src/Updater.s
+
+# target to generate assembly for a file
+src/Updater.cpp.s:
+	$(MAKE) -f CMakeFiles/DbuApp.dir/build.make CMakeFiles/DbuApp.dir/src/Updater.cpp.s
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/Updater.cpp.s
+.PHONY : src/Updater.cpp.s
+
+src/utils.o: src/utils.cpp.o
+
+.PHONY : src/utils.o
+
+# target to build an object file
+src/utils.cpp.o:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/utils.cpp.o
+.PHONY : src/utils.cpp.o
+
+src/utils.i: src/utils.cpp.i
+
+.PHONY : src/utils.i
+
+# target to preprocess a source file
+src/utils.cpp.i:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/utils.cpp.i
+.PHONY : src/utils.cpp.i
+
+src/utils.s: src/utils.cpp.s
+
+.PHONY : src/utils.s
+
+# target to generate assembly for a file
+src/utils.cpp.s:
+	$(MAKE) -f CMakeFiles/Dbu.dir/build.make CMakeFiles/Dbu.dir/src/utils.cpp.s
+.PHONY : src/utils.cpp.s
+
+test/tests.o: test/tests.cpp.o
+
+.PHONY : test/tests.o
+
+# target to build an object file
+test/tests.cpp.o:
+	$(MAKE) -f CMakeFiles/runTests.dir/build.make CMakeFiles/runTests.dir/test/tests.cpp.o
+.PHONY : test/tests.cpp.o
+
+test/tests.i: test/tests.cpp.i
+
+.PHONY : test/tests.i
+
+# target to preprocess a source file
+test/tests.cpp.i:
+	$(MAKE) -f CMakeFiles/runTests.dir/build.make CMakeFiles/runTests.dir/test/tests.cpp.i
+.PHONY : test/tests.cpp.i
+
+test/tests.s: test/tests.cpp.s
+
+.PHONY : test/tests.s
+
+# target to generate assembly for a file
+test/tests.cpp.s:
+	$(MAKE) -f CMakeFiles/runTests.dir/build.make CMakeFiles/runTests.dir/test/tests.cpp.s
+.PHONY : test/tests.cpp.s
 
 # Help Target
 help:
@@ -156,12 +374,35 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... dbu"
-	@echo "... src/d.o"
-	@echo "... src/d.i"
-	@echo "... src/d.s"
+	@echo "... runTests"
+	@echo "... rebuild_cache"
+	@echo "... DbuApp"
+	@echo "... Dbu"
+	@echo "... src/Downloader.o"
+	@echo "... src/Downloader.i"
+	@echo "... src/Downloader.s"
+	@echo "... src/FtpCommandHelper.o"
+	@echo "... src/FtpCommandHelper.i"
+	@echo "... src/FtpCommandHelper.s"
+	@echo "... src/FtpControlHandler.o"
+	@echo "... src/FtpControlHandler.i"
+	@echo "... src/FtpControlHandler.s"
+	@echo "... src/FtpDataHandler.o"
+	@echo "... src/FtpDataHandler.i"
+	@echo "... src/FtpDataHandler.s"
+	@echo "... src/Option.o"
+	@echo "... src/Option.i"
+	@echo "... src/Option.s"
+	@echo "... src/Updater.o"
+	@echo "... src/Updater.i"
+	@echo "... src/Updater.s"
+	@echo "... src/utils.o"
+	@echo "... src/utils.i"
+	@echo "... src/utils.s"
+	@echo "... test/tests.o"
+	@echo "... test/tests.i"
+	@echo "... test/tests.s"
 .PHONY : help
 
 
