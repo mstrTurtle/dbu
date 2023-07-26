@@ -3,3 +3,4 @@ CMakeFiles
 build
 .clangd
 .vscode
+.cache

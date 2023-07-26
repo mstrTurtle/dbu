@@ -1,7 +1,7 @@
 #include "Option.h"
 
 #include "ace/Get_Opt.h"
-#include <ace/OS_NS_string.h>
+#include "ace/OS_NS_string.h"
 
 Option* Option::instance_ = 0;
 
