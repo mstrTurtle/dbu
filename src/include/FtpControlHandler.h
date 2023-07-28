@@ -1,13 +1,13 @@
-// -*- C++ -*-
-
-//=============================================================================
 /**
- *  @file    FtpControlHandler.h
- *  @details 实现与FTP控制连接交互的类定义。
- *
- *  @author JiayuXiao <xiaojiayu@scutech.com>
+ * @file FtpControlHandler.h
+ * @author JiayuXiao (xiaojiayu@scutech.com)
+ * @brief 实现与FTP控制连接交互的类定义。
+ * @version 0.1
+ * @date 2023-07-28
+ * 
+ * @copyright Copyright (c) 2023
+ * 
  */
-//=============================================================================
 #pragma once
 #include "ace/Event_Handler.h"
 class FtpControlHandler : ACE_Event_Handler

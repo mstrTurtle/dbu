@@ -1,9 +1,23 @@
+/**
+ * @file Option.h
+ * @author JiayuXiao (xiaojiayu@scutech.com)
+ * @brief 解析命令行选项的类
+ * @version 0.1
+ * @date 2023-07-28
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #pragma once
 #include "ace/ARGV.h"
 #include <string>
 
 using std::string;
 
+/**
+ * @brief 选项解析器类
+ * 
+ */
 class Option
 {
 public:

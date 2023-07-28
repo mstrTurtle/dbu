@@ -75,6 +75,10 @@ Option::Option() // 构造器给结构体赋初值。
   , debug_(0)
 {}
 
+/**
+ * @brief 路径构造器
+ * 
+ */
 struct PathBuilder
 {
   string& origin_;

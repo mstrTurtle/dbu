@@ -1,13 +1,13 @@
-// -*- C++ -*-
-
-//=============================================================================
 /**
- *  @file    FtpDataHandler.h
- *  @details 实现文件列表读取与文件下载的类定义。
- *
- *  @author JiayuXiao <xiaojiayu@scutech.com>
+ * @file FtpDataHandler.h
+ * @author JiayuXiao (xiaojiayu@scutech.com)
+ * @brief 实现文件列表读取与文件下载的类定义。
+ * @version 0.1
+ * @date 2023-07-28
+ * 
+ * @copyright Copyright (c) 2023
+ * 
  */
-//=============================================================================
 #pragma once
 #include "ace/Event_Handler.h"
 class FtpDataHandler : ACE_Event_Handler
