@@ -2,7 +2,6 @@
 #include "cstring"
 #include <ace/Log_Msg.h>
 #include <ace/Log_Priority.h>
-#include <boost/filesystem.hpp>
 
 
 /**
@@ -223,6 +222,46 @@ int findMaxNumber(const std::vector<std::string>& lines, std::string& result) {
 #include <string>
 #include <vector>
 
+// combine fetch and toVec
+std::vector<std::string> 
+fetchAsVector(control_socket, cwd){
+        std::vector<std::string> received_lines;
+        fetchNLST(control_socket, cwd, received_lines);
+        std::vector<std::string> v = convertToVector(received_lines);
+				return v;
+}
+
+
+// combine fetch and toVec and filter
+std::vector<std::string> 
+fetchAndFilter(control_socket, cwd, substring)
+{
+	auto v = fetchAsVector(control_socket, cwd);
+	return filterBySubstring(v, substring);
+}
+
+int
+selectOrAbort(std::vector<std::string> v, std::string result, basic_stream s)
+{
+	if (v1.size() == 0) {
+            return 1;
+        } else if (v1.size() == 1) {
+	    result = v[0];	
+            // 处理新的路径
+            // ...
+            return 0;
+        } else {
+	    s << "which do you want?" << endl;
+	    s >> i;
+	    if(i<0 || i > n){
+
+		return 2;
+	    }
+            return 1;
+        }
+}
+
+
 // 函数用于判断主分支并处理分支
 int processBranch(const std::string& cwd, const std::string& branch, const std::string& subbranch) {
     // 1. 判断主分支. dev, master没有次分支。
@@ -233,21 +272,15 @@ int processBranch(const std::string& cwd, const std::string& branch, const std::
         // ...
     } else if (branch == "feature" || branch == "hotfix" || branch == "support") {
         // 继续
-        std::vector<std::string> received_lines;
-        fetchNLST(control_socket, cwd, received_lines);
-        std::vector<std::string> v = convertToVector(received_lines);
-        std::vector<std::string> v1 = filterBySubstring(v, subbranch);
-        if (v1.size() == 0) {
-            return 1;
-        } else if (v1.size() == 1) {
-            std::string newCwd = path_join(cwd, v1[0]);
-            // 处理新的路径
-            // ...
-            return 0;
-        } else {
-            std::cout << "subbranch error, too many possibles" << std::endl;
-            return 1;
-        }
+	auto v = fetchAndFilter(control_socket, cwd, subbranch)
+	if(selectOrAbort(v, result)){
+            std::cout << "subbranch error" << std::endl;
+	}
+	else{
+		path_join(cwd, result);
+	}
+        std::string newCwd = path_join(cwd, v1[0]);
+
     } else {
         return 1;
     }
