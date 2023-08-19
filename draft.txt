@@ -1,0 +1,32 @@
+processBranch cwd:
+  if branch is dev or master:
+    cwd += branch
+    return 0
+  cwd += branch
+  fs = findFolders cwd subbranch
+  case fs:
+	[] -> return ERR_NO_ENTRY
+	[f] -> cwd += f
+	other -> return ERR_CANNOT_KNOW
+
+
+processOption cwd option:
+	fs = findFolders cwd option
+  case fs:
+	[] -> return ERR_NO_ENTRY
+	[f] -> cwd += f
+	other -> return ERR_CANNOT_KNOW
+
+ 
+processTarget cwd:
+ 	fs = findFolders cwd option
+  case fs:
+	[] -> return ERR_NO_ENTRY
+	[f] -> cwd += f
+	other -> return ERR_CANNOT_KNOW
+
+ 
+processVersion cwd:
+	
+processFunctionality cwd:
+	fs = findFolders cwd functionality

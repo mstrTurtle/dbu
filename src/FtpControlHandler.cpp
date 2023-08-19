@@ -1,9 +1,9 @@
 #include "FtpControlHandler.h"
 
 int
-FtpControlHandler::handle_read()
+FtpControlHandler::handle_input(ACE_HANDLE fd = ACE_INVALID_HANDLE)
 {}
 
 int
-FtpControlHandler::handle_write()
+FtpControlHandler::handle_output(ACE_HANDLE fd = ACE_INVALID_HANDLE)
 {}

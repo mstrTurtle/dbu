@@ -77,7 +77,7 @@ Option::Option() // 构造器给结构体赋初值。
 
 /**
  * @brief 路径构造器
- * 
+ *
  */
 struct PathBuilder
 {

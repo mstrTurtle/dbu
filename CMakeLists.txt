@@ -46,9 +46,9 @@ SET(GCC_COVERAGE_COMPILE_FLAGS "-I/usr/include/x86_64-linux-gnu/c++/9 -stdlib=li
 # Locate GTest
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
- 
+
 # Link runTests with what we want to test and the GTest and pthread library
-add_executable(runTests test/tests.cpp)
+add_executable(runTests test/test_installer.cpp src/Installer.cpp)
 target_link_libraries(runTests Dbu gtest pthread)
 
 target_include_directories(runTests
