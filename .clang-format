@@ -42,7 +42,7 @@ BraceWrapping:
   SplitEmptyRecord: false
   SplitEmptyNamespace: true
 BreakBeforeBinaryOperators: None
-BreakBeforeBraces: Mozilla
+BreakBeforeBraces: Stroustrup
 BreakBeforeInheritanceComma: false
 BreakInheritanceList: BeforeComma
 BreakBeforeTernaryOperators: true
@@ -134,4 +134,3 @@ TabWidth:        8
 UseCRLF:         false
 UseTab:          Never
 ...
-
