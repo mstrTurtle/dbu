@@ -23,7 +23,7 @@ using std::string;
 
 using VS = vector<string>;
 
-
+// forward declaration
 void
 fetchNLST(ACE_SOCK_Stream& control_socket,
           const std::string& cwd,
@@ -53,7 +53,7 @@ sniff(char* buffer, int size)
   return 0;
 }
 
-std::string&
+void
 join_path(std::string& origin_, const std::string& appendix)
 {
   if ((appendix.length()) == 0) {
@@ -71,7 +71,7 @@ join_path(std::string& origin_, const std::string& appendix)
     origin_ += appendix;
   }
 
-  return origin_;
+  return;
 }
 
 std::vector<std::string>
@@ -82,10 +82,10 @@ strToLines(string text)
   std::string line;
 
   while (std::getline(iss, line, '\n')) {
-      if(line.length()>=1 && line.back()=='\r'){
-        line.pop_back();
-      }
-      result.push_back(line);
+    if (line.length() >= 1 && line.back() == '\r') {
+      line.pop_back();
+    }
+    result.push_back(line);
   }
   return result;
 }
@@ -99,10 +99,10 @@ strToLines(string text)
  * @return false
  */
 bool
-find(vector<string> v, std::string e){
+find(vector<string> v, std::string e)
+{
   return std::find(v.begin(), v.end(), e) == v.end();
 }
-
 
 /**
  * @brief fuzzy find.
@@ -112,12 +112,13 @@ find(vector<string> v, std::string e){
  * @return VS
  */
 VS
-fzf(VS ss,string e){
+fzf(VS ss, string e)
+{
   VS result;
-  for(auto s: ss){
-    if(s.find(e)!=string::npos){
-      result.emplace_back(s);
-    }
+  for (auto s : ss) {
+      if (s.find(e) != string::npos) {
+        result.emplace_back(s);
+      }
   }
   return result;
 }
@@ -182,10 +183,12 @@ fetchFind(){
   return find(strToLines(s), e);
 }
 
+bool
+fetchExist(){
+  s = fetchNLST(, , , , );
+  return strToLines(s).length() == 1;
+}
 
-// FTP服务器的IP地址和端口号
-const char* FTP_SERVER_IP = "127.0.0.1";
-const u_short FTP_SERVER_PORT = 21;
 
 char buffer[1024];
 ssize_t recv_count;
@@ -254,7 +257,6 @@ fetchNLST(ACE_SOCK_Stream& control_socket,
           u_short data_port,
           std::string& result)
 {
-
   // 建立数据连接
   ACE_SOCK_Stream data_socket;
   ACE_INET_Addr data_addr(data_port, data_ip.c_str());
@@ -307,17 +309,17 @@ processBranch(const std::string& cwd,
               const std::string& branch,
               const std::string& subbranch)
 {
-  // 1. 判断主分支. dev, master没有次分支。
   if (branch == "develop" || branch == "master") {
     join_path(cwd, subbranch);
     return 0;
   }
   else if (branch == "feature" || branch == "hotfix" || branch == "support") {
-    auto b = fetchFind(control_socket, cwd, subbranch);
+    bool b = fetchFind(control_socket, cwd, subbranch);
     if(!b){
       return 2;
     }
     join_path(cwd, subbranch);
+    return 0;
   }
 }
 
@@ -330,7 +332,8 @@ int
 processOption(const std::string& cwd, ACE_SOCK_Stream& control_socket)
 {
   fetchFind();
-  enter();
+  join_path(cwd, option);
+  return 0;
 }
 
 /**
@@ -341,8 +344,12 @@ processOption(const std::string& cwd, ACE_SOCK_Stream& control_socket)
 int
 processTarget(cwd)
 {
-  fetchFind(cwd);
-  enter();
+  if(fetchFind(cwd)){
+    ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
+    return 1;
+  }
+  join_path(cwd, option);
+  return 0;
 }
 
 /**
@@ -365,8 +372,8 @@ processVersion(cwd)
 int
 processFunctionality(cwd)
 {
-  fetchFzf();
-  enter();
+  v = fetchFzf();
+  join_path(cwd, option);
 }
 
 /**

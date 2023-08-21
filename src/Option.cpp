@@ -73,19 +73,20 @@ Option::Option() // 构造器给结构体赋初值。
   , product_("")
   , threads_(1)
   , debug_(0)
-{}
+{
+}
 
 /**
  * @brief 路径构造器
  *
  */
-struct PathBuilder
-{
+struct PathBuilder {
   string& origin_;
 
   PathBuilder(string& origin)
     : origin_(origin)
-  {}
+  {
+  }
 
   PathBuilder& add(const string& appendix)
   {
@@ -99,7 +100,8 @@ struct PathBuilder
 
     if (appendix[0] == '/') {
       origin_ += (appendix.substr(1));
-    } else {
+    }
+    else {
       origin_ += appendix;
     }
 
@@ -107,11 +109,14 @@ struct PathBuilder
   }
 };
 
-string
+std::string
 Option::get_actual_path()
 {
   string path = string("/ftp_product_installer/dbackup3/rpm");
-  PathBuilder(path).add(branch_).add(sub_branch_).add(build_).add(arch_);
+  if(sub_branch_)
+    PathBuilder(path).add(branch_).add(sub_branch_).add(build_).add(arch_);
+  else
+    PathBuilder(path).add(branch_).add(build_).add(arch_);
   // TODO：在此放一个检测的。需要去检测最新的包。
   return path;
 }
