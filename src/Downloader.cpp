@@ -13,10 +13,9 @@
 using Str = std::string;
 using SOCK = ACE_SOCK_Stream;
 
-int
-Downloader::run(Option& option)
-{
-  ::spawnMultiDownloadsAndJoin();
+void
+connectAndGetSize(){
+
 }
 
 /**
@@ -57,4 +56,21 @@ spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads)
   for (auto& t : ts) {
     t.join();
   }
+}
+
+int
+Downloader::run(Option& option)
+{
+  // 初始化ACE
+  ACE::init();
+
+  SOCK sock = connectToFtp("ftp.vim.org");
+
+  // 处理控制连接void
+  spawnDownloadsAndJoin(sock, 4);
+
+  // 关闭ACE
+  ACE::fini();
+
+  return 0;
 }

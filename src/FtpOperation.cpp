@@ -174,22 +174,6 @@ quitAndClose(ACE_SOCK_Stream& control_socket)
   close(control_socket);
 }
 
-int
-run()
-{
-  // 初始化ACE
-  ACE::init();
-
-  SOCK sock = connectToFtp("ftp.vim.org");
-
-  // 处理控制连接void
-  spawnDownloadsAndJoin(sock, 4);
-
-  // 关闭ACE
-  ACE::fini();
-
-  return 0;
-}
 
 /**
  * @brief Retrieves the size of a file from a given socket.

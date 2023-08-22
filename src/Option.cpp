@@ -3,7 +3,11 @@
 #include "ace/Get_Opt.h"
 #include "ace/OS_NS_string.h"
 
-Option* Option::instance_ = 0;
+#include <string>
+
+using std::string;
+
+Option* Option::instance_ = nullptr;
 
 Option*
 Option::instance() // 单例模式实现

@@ -5,9 +5,16 @@
 int
 ACE_TMAIN(int argc, ACE_TCHAR* argv[])
 {
-  Updater updater;
 
+  Sniffer sniffer;
+  sniffer.run();
+
+  Downloader downloader;
+  downloader.run();
+
+  Updater updater;
   if (updater.run(argc, argv) == -1)
     ACE_ERROR_RETURN((LM_ERROR, "%p\n", "updater.run()"), 1);
+
   return 0;
 }
