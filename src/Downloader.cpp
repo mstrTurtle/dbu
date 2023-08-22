@@ -22,9 +22,26 @@ Downloader::run(Option& option)
 const char *FTP_SERVER_IP = "127.0.0.1";
 const u_short FTP_SERVER_PORT = 21;
 
-// 定义控制连接的处理函数
-void handle_control_connection(ACE_SOCK_Stream &control_socket, off_t start_offset = 0, size_t size = 100) {
+using Str = std::string;
+
+
+SOCK connectToFtp(Str ip, int port=21){
+    // 建立控制连接
+    ACE_SOCK_Stream control_socket;
+    ACE_INET_Addr control_addr(port, ip);
+    ACE_SOCK_Connector connector;
+    if (connector.connect(control_socket, control_addr) == -1) {
+        ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
+        return 1;
+    }
+    return control_socket;
+}
+
+SOCK
+loginToFtp(SOCK sock, Str user = "anonymous", Str pass = "")
+{
     char buffer[1024];
+    char comm[1024];
     ssize_t recv_count;
 
     // 接收服务器的欢迎信息
@@ -33,15 +50,31 @@ void handle_control_connection(ACE_SOCK_Stream &control_socket, off_t start_offs
     std::cout << buffer;
 
     // 发送用户名和密码
-    control_socket.send("USER scutech\r\n", 16);
+    sprintf(comm, "USER %s\r\n", user);
+    control_socket.send(comm, strlen(comm));
     recv_count = control_socket.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
 
-    control_socket.send("PASS dingjia\r\n", 6);
+    sprintf(comm, "PASS %s\r\n", pass);
+    control_socket.send(comm, strlen(comm));
     recv_count = control_socket.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
+}
+
+SOCK
+connectAndLoginVimFtp()
+{
+    SOCK sock = connectToFtp("ftp.vim.org");
+    loginToFtp(sock);
+    return sock;
+}
+
+SOCK enterPassiveAndGetDataConnection(SOCK sock){
+    char buffer[1024];
+    ssize_t recv_count;
+
 
     // 发送PASV命令，进入被动模式
     control_socket.send("PASV\r\n", 6);
@@ -65,6 +98,23 @@ void handle_control_connection(ACE_SOCK_Stream &control_socket, off_t start_offs
         ACE_DEBUG((LM_ERROR, "Error connecting to data socket.\n"));
         return;
     }
+
+    return data_socket;
+}
+
+int getFtpFileSize(SOCK sock, const std::string& path);
+
+void downloadOneSegment();
+
+void connectLoginAndDownloadOneSegmentFromVim(SOCK sock, off_t off, size_t size) {
+
+    SOCK sock = connectAndLoginVimFtp();
+    SOCK dsock = enterPassiveAndGetDataConnection(sock);
+}
+
+void downloadOneSegment(SOCK csock, SOCK dsock, Str path, off_t off, size_t size){
+        char buffer[1024];
+    ssize_t recv_count;
 
     // 发送REST命令，设置下载的起始偏移量
     // off_t start_offset = 0; // 设置起始偏移量，单位为字节
@@ -107,29 +157,26 @@ void handle_control_connection(ACE_SOCK_Stream &control_socket, off_t start_offs
     recv_count = control_socket.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
+}
 
+// 定义控制连接的处理函数
+void quitAndClose(ACE_SOCK_Stream &control_socket) {
     // 发送QUIT命令，关闭控制连接
     control_socket.send("QUIT\r\n", 6);
     recv_count = control_socket.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
+    close(control_socket);
 }
 
 int run() {
     // 初始化ACE
     ACE::init();
 
-    // 建立控制连接
-    ACE_SOCK_Stream control_socket;
-    ACE_INET_Addr control_addr(FTP_SERVER_PORT, FTP_SERVER_IP);
-    ACE_SOCK_Connector connector;
-    if (connector.connect(control_socket, control_addr) == -1) {
-        ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
-        return 1;
-    }
+    SOCK sock = connectToFtp("ftp.vim.org");
 
-    // 处理控制连接
-    handle_control_connection(control_socket, 100, 100);
+    // 处理控制连接void
+    spawnDownloadsAndJoin(sock, 4);
 
     // 关闭ACE
     ACE::fini();
@@ -137,3 +184,75 @@ int run() {
     return 0;
 }
 
+using SOCK = ACE_SOCK_Stream;
+
+#include <thread>
+
+/**
+ * @brief Retrieves the size of a file from a given socket.
+ *
+ * This function sends a "SIZE" command to the socket and receives the response
+ * containing the size of the file. The size is extracted from the response and
+ * returned as an integer.
+ *
+ * @param sock The socket to communicate with.
+ * @param path The path of the file.
+ * @return The size of the file as an integer.
+ *
+ * @note This function assumes that the socket is already connected and the
+ * necessary communication functions (e.g., `send`, `recv`) are available.
+ * @note The format of the response is assumed to be "213 <size>", where <size>
+ * is the size of the file.
+ */
+int
+getFtpFileSize(SOCK sock, const std::string& path)
+{
+    char comm[1000];
+    sprintf(comm, "SIZE %s", path.c_str()); // 发送SIZE
+    sock.send(comm);
+    char buffer[1000];
+    sock.recv(buffer);
+    int size;
+    sscanf(buffer, "213 %d", &size); // 接收响应
+    return size;
+}
+
+/**
+ * @brief Spawns multiple threads to download a file in segments and joins them.
+ *
+ * This function divides the file into segments and creates multiple threads to
+ * download each segment concurrently. After all the threads have completed
+ * their tasks, this function waits for them to join before returning.
+ *
+ * @note This function assumes that the necessary variables and functions (e.g.,
+ * `getSize`, `open`) are defined and initialized properly.
+ *
+ * @return void
+ */
+void
+spawnDownloadsAndJoin(SOCK sock, Str path, int threads)
+{
+    std::set<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
+    int fsize = getSize();
+    int fhandle = open(path, O_RDWR);
+    int segsize =
+      static_cast<int>(static_cast<float>(fsize) / threads); // 向下取整
+
+    for (int i = 0; i < threads - 1; i++) {
+        int off = i * segsize;
+        int len = segsize;
+        ts.insert(std::thread(f, sock, off, len));
+
+        std::cout << "Thread " << i << " Start" << std::endl;
+    }
+
+    int finaloff = (threads - 1) * segsize;
+    ts.insert(std::thread(f, sock, finaloff, fsize - finaloff));
+    std::cout << "Thread " << (threads - 1) << " Start" << std::endl;
+
+    std::cout << "Download Complete" << std::endl;
+
+    for (auto& t : ts) {
+        t.join();
+    }
+}
