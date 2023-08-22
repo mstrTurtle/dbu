@@ -8,12 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 ADD_LIBRARY(Dbu STATIC
     src/Downloader.cpp
-    src/FtpCommandHelper.cpp
-    src/FtpControlHandler.cpp
-    src/FtpDataHandler.cpp
-    src/Option.cpp
-    src/utils.cpp
+    src/FtpOperation.cpp
+    src/Sniffer.cpp
     src/Updater.cpp
+    src/Option.cpp
 )
 
 target_include_directories(Dbu
@@ -48,7 +46,7 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
 # Link runTests with what we want to test and the GTest and pthread library
-add_executable(runTests test/test_installer.cpp src/Installer.cpp)
+add_executable(runTests test/test_updater.cpp src/Updater.cpp)
 target_link_libraries(runTests Dbu gtest pthread)
 
 target_include_directories(runTests

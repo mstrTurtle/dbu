@@ -4,9 +4,9 @@
  * @brief 输入路径，提供多线程下载功能、进度跟踪功能。
  * @version 0.1
  * @date 2023-07-28
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 #pragma once
 #include "Option.h"
@@ -22,5 +22,5 @@ class Downloader
 
 public:
   Downloader();
-  int run(Option& option);
+  int run(string path);
 };

@@ -1,5 +1,7 @@
 #include "Downloader.h"
 #include "Option.h"
+#include "FtpOperation.h"
+#include <cstdio>
 
 #include "Option.h"
 #include <ace/INET_Addr.h>
@@ -9,14 +11,10 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <set>
 
 using Str = std::string;
 using SOCK = ACE_SOCK_Stream;
-
-void
-connectAndGetSize(){
-
-}
 
 /**
  * @brief Spawns multiple threads to download a file in segments and joins them.
@@ -33,22 +31,22 @@ connectAndGetSize(){
 void
 spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads)
 {
-  std::set<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
-  int fsize = getSize();
-  int fhandle = open(path, O_RDWR);
+  std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
+  int fsize = getFtpFileSize(sock, path);
+  int fhandle = open(path.c_str(), O_RDWR);
   int segsize =
     static_cast<int>(static_cast<float>(fsize) / threads); // 向下取整
 
   for (int i = 0; i < threads - 1; i++) {
     int off = i * segsize;
     int len = segsize;
-    ts.insert(std::thread(f, sock, off, len));
+    ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim, path, off, len));
 
     std::cout << "Thread " << i << " Start" << std::endl;
   }
 
   int finaloff = (threads - 1) * segsize;
-  ts.insert(std::thread(f, sock, finaloff, fsize - finaloff));
+  ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim, path, finaloff, fsize - finaloff));
   std::cout << "Thread " << (threads - 1) << " Start" << std::endl;
 
   std::cout << "Download Complete" << std::endl;
@@ -59,7 +57,7 @@ spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads)
 }
 
 int
-Downloader::run(Option& option)
+Downloader::run(Str path)
 {
   // 初始化ACE
   ACE::init();
@@ -67,7 +65,7 @@ Downloader::run(Option& option)
   SOCK sock = connectToFtp("ftp.vim.org");
 
   // 处理控制连接void
-  spawnDownloadsAndJoin(sock, 4);
+  spawnMultiDownloadsAndJoin(sock, path, 4);
 
   // 关闭ACE
   ACE::fini();

@@ -1,5 +1,5 @@
-
 #include "Option.h"
+#include "FtpOperation.h"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
 #include <ace/SOCK_Connector.h>
@@ -8,16 +8,15 @@
 #include <string>
 #include <thread>
 
-
 using Str = std::string;
 using SOCK = ACE_SOCK_Stream;
 
 SOCK
-connectToFtp(Str ip, int port = 21)
+connectToFtp(Str ip, int port)
 {
   // 建立控制连接
   ACE_SOCK_Stream control_socket;
-  ACE_INET_Addr control_addr(port, ip);
+  ACE_INET_Addr control_addr(port, ip.c_str());
   ACE_SOCK_Connector connector;
   if (connector.connect(control_socket, control_addr) == -1) {
     ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
@@ -26,8 +25,8 @@ connectToFtp(Str ip, int port = 21)
   return control_socket;
 }
 
-SOCK
-loginToFtp(SOCK sock, Str user = "anonymous", Str pass = "")
+int
+loginToFtp(SOCK control_socket, Str user, Str pass)
 {
   char buffer[1024];
   char comm[1024];
@@ -39,17 +38,19 @@ loginToFtp(SOCK sock, Str user = "anonymous", Str pass = "")
   std::cout << buffer;
 
   // 发送用户名和密码
-  sprintf(comm, "USER %s\r\n", user);
+  sprintf(comm, "USER %s\r\n", user.c_str());
   control_socket.send(comm, strlen(comm));
   recv_count = control_socket.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
   std::cout << buffer;
 
-  sprintf(comm, "PASS %s\r\n", pass);
+  sprintf(comm, "PASS %s\r\n", pass.c_str());
   control_socket.send(comm, strlen(comm));
   recv_count = control_socket.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
   std::cout << buffer;
+
+  return 0;
 }
 
 SOCK
@@ -60,8 +61,8 @@ connectAndLoginVimFtp()
   return sock;
 }
 
-SOCK
-enterPassiveAndGetDataConnection(SOCK sock)
+int
+enterPassiveAndGetDataConnection(SOCK control_socket, SOCK& dsock)
 {
   char buffer[1024];
   ssize_t recv_count;
@@ -92,10 +93,11 @@ enterPassiveAndGetDataConnection(SOCK sock)
   ACE_SOCK_Connector connector;
   if (connector.connect(data_socket, data_addr) == -1) {
     ACE_DEBUG((LM_ERROR, "Error connecting to data socket.\n"));
-    return;
+    return 1;
   }
 
-  return data_socket;
+  dsock = data_socket;
+  return 0;
 }
 
 int
@@ -105,16 +107,17 @@ void
 downloadOneSegment();
 
 void
-connectLoginAndDownloadOneSegmentFromVim(SOCK sock, off_t off, size_t size)
+connectLoginAndDownloadOneSegmentFromVim(Str path, off_t off, size_t size)
 {
   SOCK sock = connectAndLoginVimFtp();
-  SOCK dsock = enterPassiveAndGetDataConnection(sock);
+  SOCK dsock;
+  enterPassiveAndGetDataConnection(sock, dsock);
   downloadOneSegment(sock, dsock, path, off, size);
-  quitAndClose();
+  quitAndClose(sock);
 }
 
 void
-downloadOneSegment(SOCK csock, SOCK dsock, Str path, off_t off, size_t size)
+downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_offset, size_t size)
 {
   char buffer[1024];
   ssize_t recv_count;
@@ -163,15 +166,19 @@ downloadOneSegment(SOCK csock, SOCK dsock, Str path, off_t off, size_t size)
 }
 
 // 定义控制连接的处理函数
-void
+int
 quitAndClose(ACE_SOCK_Stream& control_socket)
 {
+  char buffer[1024];
+  ssize_t recv_count;
+
   // 发送QUIT命令，关闭控制连接
   control_socket.send("QUIT\r\n", 6);
   recv_count = control_socket.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
   std::cout << buffer;
-  close(control_socket);
+  control_socket.close();
+  return 0;
 }
 
 
@@ -196,9 +203,9 @@ getFtpFileSize(SOCK sock, const std::string& path)
 {
   char comm[1000];
   sprintf(comm, "SIZE %s", path.c_str()); // 发送SIZE
-  sock.send(comm);
+  sock.send(comm, strlen(comm));
   char buffer[1000];
-  sock.recv(buffer);
+  sock.recv(buffer, 1000);
   int size;
   sscanf(buffer, "213 %d", &size); // 接收响应
   return size;

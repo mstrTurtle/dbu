@@ -11,7 +11,7 @@
 int main(int argc, char *argv[]) {
     int socket_desc, data_sock;
     struct sockaddr_in server;
-    char *message, server_reply[BUFFER_SIZE];
+    const char *message, server_reply[BUFFER_SIZE];
     FILE *file;
 
     // 创建socket
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     }
 
     // 设置FTP服务器的IP和端口
-    server.sin_addr.s_addr = inet_addr("FTP_SERVER_IP"); 
+    server.sin_addr.s_addr = inet_addr("FTP_SERVER_IP");
     server.sin_family = AF_INET;
     server.sin_port = htons(21);  // FTP服务器默认端口是21
 
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     if (send(socket_desc, message, strlen(message), 0) < 0) {
         puts("Send failed");
         return 1;
-    } 
+    }
 
     // 接收FTP服务器的响应
     if (recv(socket_desc, server_reply, BUFFER_SIZE, 0) < 0) {
@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     if (send(socket_desc, message, strlen(message), 0) < 0) {
         puts("Send failed");
         return 1;
-    } 
+    }
 
     // 接收FTP服务器的响应
     if (recv(socket_desc, server_reply, BUFFER_SIZE, 0) < 0) {
