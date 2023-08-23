@@ -170,9 +170,7 @@ ssize_t recv_count;
  * FTP登录与转入被动
  */
 void
-setupControl(ACE_SOCK_Stream& control_socket,
-             std::string& data_ip,
-             u_short& data_port)
+setupControl(ACE_SOCK_Stream& control_socket)
 {
   // current working directory
   std::string cwd = "/ftp_product_installer/dbackup3/rpm";
@@ -193,25 +191,25 @@ setupControl(ACE_SOCK_Stream& control_socket,
   buffer[recv_count] = '\0';
   std::cout << buffer;
 
-  // 发送PASV命令，进入被动模式
-  control_socket.send("PASV\r\n", 6);
-  recv_count = control_socket.recv(buffer, sizeof(buffer));
-  buffer[recv_count] = '\0';
-  std::cout << buffer;
+  // // 发送PASV命令，进入被动模式
+  // control_socket.send("PASV\r\n", 6);
+  // recv_count = control_socket.recv(buffer, sizeof(buffer));
+  // buffer[recv_count] = '\0';
+  // std::cout << buffer;
 
-  // 解析被动模式响应，获取数据连接IP和端口号
-  unsigned int ip1, ip2, ip3, ip4, port1, port2;
-  sscanf(buffer,
-         "227 Entering Passive Mode (%u,%u,%u,%u,%u,%u)",
-         &ip1,
-         &ip2,
-         &ip3,
-         &ip4,
-         &port1,
-         &port2);
-  data_ip = std::to_string(ip1) + "." + std::to_string(ip2) + "." +
-            std::to_string(ip3) + "." + std::to_string(ip4);
-  data_port = (port1 << 8) + port2;
+  // // 解析被动模式响应，获取数据连接IP和端口号
+  // unsigned int ip1, ip2, ip3, ip4, port1, port2;
+  // sscanf(buffer,
+  //        "227 Entering Passive Mode (%u,%u,%u,%u,%u,%u)",
+  //        &ip1,
+  //        &ip2,
+  //        &ip3,
+  //        &ip4,
+  //        &port1,
+  //        &port2);
+  // data_ip = std::to_string(ip1) + "." + std::to_string(ip2) + "." +
+  //           std::to_string(ip3) + "." + std::to_string(ip4);
+  // data_port = (port1 << 8) + port2;
 }
 
 /**

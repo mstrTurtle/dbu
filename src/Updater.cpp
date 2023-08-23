@@ -21,7 +21,7 @@ Updater::run(int argc, ACE_TCHAR* argv[])
 {
   OPTION->parse_args(argc, argv);
   Downloader d;
-  d.run(*OPTION);
+  d.run("");
   install();
   return 0;
 }

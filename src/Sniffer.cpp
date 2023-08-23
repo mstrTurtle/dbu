@@ -30,37 +30,6 @@ using std::string;
 
 using VS = vector<string>;
 
-struct FtpConn
-{
-  string ip;
-  int port;
-  SOCK sock;
-};
-
-struct SniffHint
-{
-  string cwd;
-  const string branch;
-  const string subbranch;
-  const string option;
-  const string arch;
-  const string product;
-};
-
-class Sniffer final
-{
-private:
-  FtpConn conn;
-  SniffHint hint;
-
-public:
-  Sniffer() = delete;
-  int processBranch();
-  int processOption();
-  int processTarget();
-  int processVersion();
-  int processFunctionality();
-};
 
 // 函数用于判断主分支并处理分支
 int
@@ -90,7 +59,7 @@ Sniffer::processBranch()
 int
 Sniffer::processOption()
 {
-  fetchFind();
+  fetchFind(conn.sock, hint.cwd, hint.option);
   join_path(hint.cwd, hint.option);
   return 0;
 }
@@ -103,11 +72,11 @@ Sniffer::processOption()
 int
 Sniffer::processTarget()
 {
-  if(fetchFind(hint.cwd)){
-    ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
+  if(!fetchFind(conn.sock, hint.cwd, hint.arch)){
+    ACE_DEBUG((LM_ERROR, "你提供的arch信息是错的.\n"));
     return 1;
   }
-  join_path(hint.cwd, hint.option);
+  join_path(hint.cwd, hint.arch);
   return 0;
 }
 
@@ -119,8 +88,10 @@ Sniffer::processTarget()
 int
 Sniffer::processVersion()
 {
-  fetchFindMax();
-  enter();
+  Str result;
+  fetchFindMax(conn.sock, result);
+  join_path(hint.cwd, result);
+  return 0;
 }
 
 /**
@@ -132,8 +103,9 @@ int
 Sniffer::processFunctionality()
 {
   VS v;
-  fetchFzf(conn.sock,hint.cwd,v);
+  int err = fetchFzf(conn.sock,hint.cwd,hint.product, v);
   join_path(hint.cwd, hint.option);
+  return 0;
 }
 
 /**
@@ -148,10 +120,10 @@ Sniffer::run(Str& result)
 
   std::string cwd = "/ftp_product_installer/dbackup3/rpm";
 
-  if (int ret = processBranch() | processOption() | processTarget() |
+  if (int err = processBranch() | processOption() | processTarget() |
             processVersion() | processFunctionality()) {
     std::cout << "处理过程出错了，退出程序" << std::endl;
-    exit(ret);
+    exit(err);
   }
 
   if (quitAndClose(conn.sock)){
@@ -171,7 +143,7 @@ test_main()
 
   // 建立控制连接
   ACE_SOCK_Stream control_socket;
-  ACE_INET_Addr control_addr(FTP_SERVER_PORT, FTP_SERVER_IP);
+  ACE_INET_Addr control_addr("ftp.vim.org", "21");
   ACE_SOCK_Connector connector;
   if (connector.connect(control_socket, control_addr) == -1) {
     ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
@@ -179,9 +151,11 @@ test_main()
   }
 
   // 登录
-  setupControl(control_socket, data_ip, data_port);
+  setupControl(control_socket);
 
-  sniffRun();
+  Sniffer sniffer({"",0,0},{});
+  Str result;
+  sniffer.run(result);
 
 
   // 关闭ACE

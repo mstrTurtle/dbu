@@ -114,10 +114,10 @@ struct PathBuilder {
 };
 
 std::string
-Option::get_to_arch_path()
+Option::get_actual_path()
 {
   string path = string("/ftp_product_installer/dbackup3/rpm");
-  if(sub_branch_)
+  if(sub_branch_!="")
     PathBuilder(path).add(branch_).add(sub_branch_).add(build_).add(arch_);
   else
     PathBuilder(path).add(branch_).add(build_).add(arch_);

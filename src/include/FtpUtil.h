@@ -52,8 +52,8 @@ findMax(const VS& ss, std::string& result);
 int
 fetchFindMax(SOCK control_socket, Str& result);
 
-VS
-fetchFzf(SOCK sock, Str path, Str e);
+int
+fetchFzf(SOCK sock, Str path, Str e, VS& result);
 
 bool
 fetchFind(SOCK sock, Str path, Str e);
@@ -62,6 +62,4 @@ bool
 fetchExist(SOCK sock, Str path);
 
 void
-setupControl(ACE_SOCK_Stream& control_socket,
-             std::string& data_ip,
-             u_short& data_port);
+setupControl(ACE_SOCK_Stream& control_socket);

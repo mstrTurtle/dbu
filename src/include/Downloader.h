@@ -21,6 +21,6 @@ class Downloader
   string save_path_;
 
 public:
-  Downloader();
+  Downloader() = default;
   int run(string path);
 };
