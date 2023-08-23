@@ -77,8 +77,8 @@ loginToFtp(SOCK control_socket, Str user, Str pass)
 /**
  * @brief 建立与vim.org FTP服务器的控制连接并登录。
  *
- * 此函数使用预定义的IP地址"ftp.vim.org"和默认端口号建立与vim.org FTP服务器的控制连接，
- * 并发送预定义的用户名和密码进行登录。
+ * 此函数使用预定义的IP地址"ftp.vim.org"和默认端口号建立与vim.org
+ * FTP服务器的控制连接， 并发送预定义的用户名和密码进行登录。
  *
  * @return 如果成功建立并登录，则返回控制连接的套接字；如果出现错误，则返回1。
  */
@@ -151,9 +151,12 @@ int
 getFtpFileSize(SOCK sock, const std::string& path);
 
 void
-connectLoginAndDownloadOneSegmentFromVim(Str path, off_t off, size_t size, int part_id)
+connectLoginAndDownloadOneSegmentFromVim(Str path,
+                                         off_t off,
+                                         size_t size,
+                                         int part_id)
 {
-  std::cout << "calling downOneSeg "<< off << ", " << size << "\n";
+  std::cout << "calling downOneSeg " << off << ", " << size << "\n";
   SOCK sock = connectAndLoginVimFtp();
   SOCK dsock;
   enterPassiveAndGetDataConnection(sock, dsock);
@@ -277,7 +280,6 @@ quitAndClose(ACE_SOCK_Stream& control_socket)
   return 0;
 }
 
-
 /**
  * @brief 获取FTP服务器上文件的大小。
  *
@@ -294,22 +296,18 @@ getFtpFileSize(SOCK sock, const std::string& path)
 
   ssize_t recv_count;
 
-
   char comm[1000];
   sprintf(comm, "SIZE %s\r\n", path.c_str()); // 发送SIZE
   sock.send(comm, strlen(comm));
-
 
   char buffer[1000];
   recv_count = sock.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
 
-
   std::cout << "recieved size. buffer is " << buffer << "\n";
 
   int size;
   sscanf(buffer, "213 %d", &size); // 接收响应
-
 
   return size;
 }

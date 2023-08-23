@@ -4,9 +4,9 @@
  * @brief 解析命令行选项的类
  * @version 0.1
  * @date 2023-07-28
- * 
+ *
  * @copyright Copyright (c) 2023
- * 
+ *
  */
 #pragma once
 #include "ace/ARGV.h"
@@ -14,16 +14,25 @@
 
 using std::string;
 
+
 /**
- * @brief 选项解析器类
- * 
+ * @class Option
+ * @brief Option类用于解析命令行参数并存储选项值
  */
 class Option
 {
 public:
-  /// Returns the singleton instance
+  /**
+   * @brief 获取Option类的唯一实例
+   * @return Option类的唯一实例指针
+   */
   static Option* instance();
 
+  /**
+   * @brief 解析命令行参数并设置选项值
+   * @param argc 命令行参数数量
+   * @param argv 命令行参数数组
+   */
   void parse_args(int argc, ACE_TCHAR* argv[]);
 
   string branch_;
@@ -34,13 +43,22 @@ public:
   int threads_;
   bool debug_;
 
+  /**
+   * @brief 获取实际路径字符串
+   * @return 实际路径字符串
+   */
   string get_actual_path();
 
 protected:
-  Option(); // 放protected里，因为要确保单例。
-  // protected constructor, singleton
+  /**
+   * @brief Option类的构造函数
+   */
+  Option();
 
-  /// the singleton
+
+  /**
+   * @brief Option类的唯一实例指针
+   */
   static Option* instance_;
 };
 

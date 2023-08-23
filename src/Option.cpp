@@ -81,17 +81,29 @@ Option::Option() // 构造器给结构体赋初值。
 }
 
 /**
- * @brief 路径构造器
- *
+ * @struct PathBuilder
+ * @brief PathBuilder结构体用于构建路径字符串
  */
 struct PathBuilder {
+  /**
+   * @brief 初始路径字符串
+   */
   string& origin_;
 
+  /**
+   * @brief 构造函数
+   * @param origin 初始路径字符串
+   */
   PathBuilder(string& origin)
     : origin_(origin)
   {
   }
 
+  /**
+   * @brief 将附加字符串追加到路径字符串中
+   * @param appendix 附加字符串
+   * @return 修改后的PathBuilder对象的引用
+   */
   PathBuilder& add(const string& appendix)
   {
     if ((appendix.length()) == 0) {
