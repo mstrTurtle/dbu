@@ -1,4 +1,4 @@
-#include "Updater.h"
+#include "Installer.h"
 #include "Downloader.h"
 #include "Option.h"
 #include "ace/Log_Msg.h"
@@ -12,7 +12,7 @@
  * @return int
  */
 int
-Updater::run()
+Installer::run()
 {
   // 构造命令
   ACE_Process_Options options;

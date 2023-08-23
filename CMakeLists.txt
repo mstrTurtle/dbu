@@ -11,7 +11,7 @@ ADD_LIBRARY(Dbu STATIC
     src/FtpOperation.cpp
     src/FtpUtil.cpp
     src/Sniffer.cpp
-    src/Updater.cpp
+    src/Installer.cpp
     src/Option.cpp
 )
 
@@ -47,7 +47,7 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
 # Link runTests with what we want to test and the GTest and pthread library
-add_executable(runTests test/test_updater.cpp src/Updater.cpp)
+add_executable(runTests test/test_installer.cpp src/Installer.cpp)
 target_link_libraries(runTests Dbu gtest pthread)
 
 target_include_directories(runTests

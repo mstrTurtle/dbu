@@ -1,7 +1,7 @@
 #include "Downloader.h"
 #include "Option.h"
 #include "Sniffer.h"
-#include "Updater.h"
+#include "Installer.h"
 #include "ace/Log_Msg.h"
 
 int
