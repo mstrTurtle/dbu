@@ -46,6 +46,7 @@ loginToFtp(SOCK control_socket, Str user, Str pass)
 
   sprintf(comm, "PASS %s\r\n", pass.c_str());
   control_socket.send(comm, strlen(comm));
+  sleep(1);
   recv_count = control_socket.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
   std::cout << buffer;
@@ -66,11 +67,13 @@ enterPassiveAndGetDataConnection(SOCK control_socket, SOCK& dsock)
 {
   char buffer[1024];
   ssize_t recv_count;
-
+  std::cout << "to pasv\n";
   // 发送PASV命令，进入被动模式
   control_socket.send("PASV\r\n", 6);
+  std::cout << "sent\n";
   recv_count = control_socket.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
+  std::cout << "recved\n";
   std::cout << buffer;
 
   // 解析被动模式响应，获取数据连接IP和端口号
@@ -87,12 +90,18 @@ enterPassiveAndGetDataConnection(SOCK control_socket, SOCK& dsock)
                         std::to_string(ip3) + "." + std::to_string(ip4);
   u_short data_port = (port1 << 8) + port2;
 
+  ACE_DEBUG((LM_DEBUG, "got %s, %d\n", data_ip.c_str(), data_port));
+
   // 建立数据连接
   ACE_SOCK_Stream data_socket;
   ACE_INET_Addr data_addr(data_port, data_ip.c_str());
   ACE_SOCK_Connector connector;
+  std::cout << "sleeping\n";
+  sleep(2);
+  std::cout << "awake\n";
   if (connector.connect(data_socket, data_addr) == -1) {
     ACE_DEBUG((LM_ERROR, "Error connecting to data socket.\n"));
+    exit(0);
     return 1;
   }
 
@@ -131,7 +140,7 @@ downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_
   std::cout << buffer;
 
   // 发送RETR命令
-  const char* file_name = "file_to_download.txt";
+  const char* file_name = path.c_str();
   ACE_OS::sprintf(buffer, "RETR %s\r\n", file_name);
   control_socket.send(buffer, ACE_OS::strlen(buffer));
   recv_count = control_socket.recv(buffer, sizeof(buffer));
@@ -201,12 +210,15 @@ quitAndClose(ACE_SOCK_Stream& control_socket)
 int
 getFtpFileSize(SOCK sock, const std::string& path)
 {
+  ssize_t recv_count;
   char comm[1000];
   sprintf(comm, "SIZE %s", path.c_str()); // 发送SIZE
   sock.send(comm, strlen(comm));
   char buffer[1000];
   sock.recv(buffer, 1000);
+  buffer[recv_count] = '\0';
   int size;
   sscanf(buffer, "213 %d", &size); // 接收响应
+  std::cout << "recieved size. buffer is " << buffer << "\n";
   return size;
 }

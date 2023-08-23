@@ -20,8 +20,8 @@ int
 Updater::run(int argc, ACE_TCHAR* argv[])
 {
   OPTION->parse_args(argc, argv);
-  Downloader d;
-  d.run("");
+  // Downloader d;
+  // d.run();
   install();
   return 0;
 }

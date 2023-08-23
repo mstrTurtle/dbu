@@ -254,3 +254,84 @@ fetchNLST(ACE_SOCK_Stream& control_socket,
   result =  received_lines;
   return;
 }
+
+#include <ace/INET_Addr.h>
+#include <ace/Log_Msg.h>
+#include <ace/OS.h>
+#include <ace/SOCK_Stream.h>
+#include <iostream>
+#include <ace/Message_Block.h>
+
+std::string receiveLine(ACE_SOCK_Stream& socket, ACE_Message_Block& messageBlock)
+{
+  std::string line;
+
+  while (true) {
+    ssize_t bytesRead = socket.recv(messageBlock.wr_ptr(), messageBlock.space());
+
+    if (bytesRead <= 0) {
+      // 出现错误或连接关闭
+      ACE_DEBUG((LM_ERROR, "Error receiving data from socket.\n"));
+      break;
+    }
+
+    messageBlock.wr_ptr(bytesRead);
+
+    char* newlinePos = std::find(messageBlock.rd_ptr(), messageBlock.wr_ptr(), '\n');
+
+    if (newlinePos != messageBlock.wr_ptr()) {
+      // 找到换行符，提取一行数据
+      ssize_t lineLength = newlinePos - messageBlock.rd_ptr() + 1;
+      line.append(messageBlock.rd_ptr(), lineLength);
+
+      // 移动消息块的读指针
+      messageBlock.rd_ptr(lineLength);
+
+      break;
+    }
+
+    // 没有找到换行符，继续接收数据
+    // messageBlock.expand(1024); // 扩展消息块的大小
+  }
+
+  return line;
+}
+
+using MB = ACE_Message_Block;
+
+class LinedSock{
+  SOCK sock;
+  MB block{1024};
+
+  LinedSock(SOCK sock_):sock(sock_){
+  }
+  int getLine(Str& result){
+    result = receiveLine(sock, block);
+    return 0;
+  }
+};
+
+int main()
+{
+  ACE_INET_Addr serverAddr("127.0.0.1:12345");
+  ACE_SOCK_Stream clientSocket;
+
+  if (clientSocket.connect(serverAddr) == -1) {
+    ACE_DEBUG((LM_ERROR, "Error connecting to the server.\n"));
+    return 1;
+  }
+
+  ACE_Message_Block messageBlock(1024); // 设置消息块大小为1024字节
+
+  // 第一次调用 receiveLine
+  std::string receivedLine = receiveLine(clientSocket, messageBlock);
+  std::cout << "Received line 1: " << receivedLine << std::endl;
+
+  // 第二次调用 receiveLine
+  receivedLine = receiveLine(clientSocket, messageBlock);
+  std::cout << "Received line 2: " << receivedLine << std::endl;
+
+  clientSocket.close();
+
+  return 0;
+}

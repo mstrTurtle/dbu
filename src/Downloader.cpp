@@ -31,11 +31,14 @@ using SOCK = ACE_SOCK_Stream;
 void
 spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads)
 {
+  std::cout << "spawning\n";
   std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
   int fsize = getFtpFileSize(sock, path);
   int fhandle = open(path.c_str(), O_RDWR);
   int segsize =
     static_cast<int>(static_cast<float>(fsize) / threads); // 向下取整
+
+  std::cout << "got size "<< fsize <<"\n";
 
   for (int i = 0; i < threads - 1; i++) {
     int off = i * segsize;
@@ -57,7 +60,7 @@ spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads)
 }
 
 int
-Downloader::run(Str path)
+Downloader::run()
 {
   // 初始化ACE
   ACE::init();
@@ -65,7 +68,7 @@ Downloader::run(Str path)
   SOCK sock = connectToFtp("ftp.vim.org");
 
   // 处理控制连接void
-  spawnMultiDownloadsAndJoin(sock, path, 4);
+  spawnMultiDownloadsAndJoin(sock, filepath_, threads_);
 
   // 关闭ACE
   ACE::fini();

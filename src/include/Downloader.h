@@ -17,10 +17,10 @@ using std::string;
 class Downloader
 {
   string filepath_;
-  string threads_;
+  int threads_;
   string save_path_;
 
 public:
-  Downloader() = default;
-  int run(string path);
+  Downloader(string path, int threads):filepath_(path), threads_(threads){}
+  int run();
 };
