@@ -1,5 +1,6 @@
 #include "Option.h"
 #include "FtpOperation.h"
+#include "FtpUtil.h"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
 #include <ace/SOCK_Connector.h>
@@ -138,6 +139,7 @@ downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_
   recv_count = control_socket.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
   std::cout << buffer;
+  std::cout << "sent rest\n";
 
   // 发送RETR命令
   const char* file_name = path.c_str();
@@ -145,10 +147,15 @@ downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_
   control_socket.send(buffer, ACE_OS::strlen(buffer));
   recv_count = control_socket.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
+  if(getStatusCode(buffer) == 550){
+    std::cout << "open error\n";
+    exit(0);
+  }
   std::cout << buffer;
+  std::cout << "sent retr\n";
 
   // 下载文件
-  FILE* file = ACE_OS::fopen(file_name, "wb");
+  FILE* file = ACE_OS::fopen("downloadfile", "wb");
   if (file) {
     ssize_t total_received = 0;
     while ((recv_count = data_socket.recv(buffer, sizeof(buffer))) > 0) {

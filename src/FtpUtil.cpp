@@ -311,27 +311,15 @@ class LinedSock{
   }
 };
 
-int main()
-{
-  ACE_INET_Addr serverAddr("127.0.0.1:12345");
-  ACE_SOCK_Stream clientSocket;
-
-  if (clientSocket.connect(serverAddr) == -1) {
-    ACE_DEBUG((LM_ERROR, "Error connecting to the server.\n"));
-    return 1;
-  }
-
-  ACE_Message_Block messageBlock(1024); // 设置消息块大小为1024字节
-
-  // 第一次调用 receiveLine
-  std::string receivedLine = receiveLine(clientSocket, messageBlock);
-  std::cout << "Received line 1: " << receivedLine << std::endl;
-
-  // 第二次调用 receiveLine
-  receivedLine = receiveLine(clientSocket, messageBlock);
-  std::cout << "Received line 2: " << receivedLine << std::endl;
-
-  clientSocket.close();
-
-  return 0;
+int getStatusCode(const char* line){
+  if(strlen(line)<3) return -1;
+  char buf[4];
+  strncpy(buf,line,3);
+  return atoi(buf);
 }
+
+int getStatusCode(Str line){
+  int i = std::atoi(line.substr(0,3).c_str());
+  return i;
+}
+

@@ -63,3 +63,7 @@ fetchExist(SOCK sock, Str path);
 
 void
 setupControl(ACE_SOCK_Stream& control_socket);
+
+int getStatusCode(const char* line);
+
+int getStatusCode(Str line);

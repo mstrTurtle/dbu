@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 ADD_LIBRARY(Dbu STATIC
     src/Downloader.cpp
     src/FtpOperation.cpp
+    src/FtpUtil.cpp
     src/Sniffer.cpp
     src/Updater.cpp
     src/Option.cpp
