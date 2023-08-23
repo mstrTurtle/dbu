@@ -43,13 +43,14 @@ spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads)
   for (int i = 0; i < threads - 1; i++) {
     int off = i * segsize;
     int len = segsize;
-    ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim, path, off, len));
+
+    ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim, path, off, len,i));
 
     std::cout << "Thread " << i << " Start" << std::endl;
   }
 
   int finaloff = (threads - 1) * segsize;
-  ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim, path, finaloff, fsize - finaloff));
+  ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim, path, finaloff, fsize - finaloff,threads-1));
   std::cout << "Thread " << (threads - 1) << " Start" << std::endl;
 
   std::cout << "Download Complete" << std::endl;
@@ -65,7 +66,7 @@ Downloader::run()
   // 初始化ACE
   ACE::init();
 
-  SOCK sock = connectToFtp("ftp.vim.org");
+  SOCK sock = connectAndLoginVimFtp();
 
   // 处理控制连接void
   spawnMultiDownloadsAndJoin(sock, filepath_, threads_);

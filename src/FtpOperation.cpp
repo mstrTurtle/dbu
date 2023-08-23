@@ -114,23 +114,30 @@ int
 getFtpFileSize(SOCK sock, const std::string& path);
 
 void
-downloadOneSegment();
-
-void
-connectLoginAndDownloadOneSegmentFromVim(Str path, off_t off, size_t size)
+connectLoginAndDownloadOneSegmentFromVim(Str path, off_t off, size_t size, int part_id)
 {
+  std::cout << "calling downOneSeg "<< off << ", " << size << "\n";
   SOCK sock = connectAndLoginVimFtp();
   SOCK dsock;
   enterPassiveAndGetDataConnection(sock, dsock);
-  downloadOneSegment(sock, dsock, path, off, size);
+  downloadOneSegment(sock, dsock, path, off, size, part_id);
   quitAndClose(sock);
 }
 
 void
-downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_offset, size_t size)
+downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_offset, size_t size, int part_id)
 {
   char buffer[1024];
   ssize_t recv_count;
+
+  // 发送TYPE I命令，进入BINARY模式
+  // off_t start_offset = 0; // 设置起始偏移量，单位为字节
+  ACE_OS::sprintf(buffer, "TYPE I\r\n");
+  control_socket.send(buffer, ACE_OS::strlen(buffer));
+  recv_count = control_socket.recv(buffer, sizeof(buffer));
+  buffer[recv_count] = '\0';
+  std::cout << buffer;
+  std::cout << "sent part i\n";
 
   // 发送REST命令，设置下载的起始偏移量
   // off_t start_offset = 0; // 设置起始偏移量，单位为字节
@@ -147,30 +154,41 @@ downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_
   control_socket.send(buffer, ACE_OS::strlen(buffer));
   recv_count = control_socket.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
-  if(getStatusCode(buffer) == 550){
-    std::cout << "open error\n";
-    exit(0);
-  }
+  // if(getStatusCode(buffer) != 550){
+  //   std::cout << "open error\n";
+  //   exit(0);
+  // }
   std::cout << buffer;
   std::cout << "sent retr\n";
 
+  char fname[100];
+  sprintf(fname, "downloadfile.%d", part_id);
+
   // 下载文件
-  FILE* file = ACE_OS::fopen("downloadfile", "wb");
-  if (file) {
-    ssize_t total_received = 0;
-    while ((recv_count = data_socket.recv(buffer, sizeof(buffer))) > 0) {
-      ssize_t remaining = recv_count;
-      if (total_received + remaining > size) {
-        remaining = size - total_received;
-      }
-      ACE_OS::fwrite(buffer, 1, remaining, file);
-      total_received += remaining;
-      if (total_received >= size) {
-        break;
-      }
-    }
-    ACE_OS::fclose(file);
+  FILE* file = ACE_OS::fopen(fname, "wb");
+  if (!file){
+    std::cout << "Open File Error\n";
+    exit(0);
   }
+  std::cout << "I'm " << part_id << " , I will get " << size << "\n";
+  ssize_t total_received = 0;
+  while ((recv_count = data_socket.recv(buffer, sizeof(buffer))) > 0) {
+    std::cout << "I'm " << part_id << " , I received " << recv_count << "\n";
+    ssize_t remaining = recv_count;
+    if (total_received + remaining > size) {
+      remaining = size - total_received;
+    }
+    ACE_OS::fwrite(buffer, 1, remaining, file);
+    std::cout << "I'm " << part_id << " , I wrote " << remaining << "\n";
+    total_received += remaining;
+    if (total_received >= size) {
+      break;
+    }
+  }
+
+  std::cout << "I'm " << part_id << " , I have got " << total_received << "\n";
+  ACE_OS::fclose(file);
+
 
   // 关闭数据连接
   data_socket.close();
@@ -217,15 +235,26 @@ quitAndClose(ACE_SOCK_Stream& control_socket)
 int
 getFtpFileSize(SOCK sock, const std::string& path)
 {
+  std::cout << "Getting Ftp Size\n";
+
   ssize_t recv_count;
+
+
   char comm[1000];
-  sprintf(comm, "SIZE %s", path.c_str()); // 发送SIZE
+  sprintf(comm, "SIZE %s\r\n", path.c_str()); // 发送SIZE
   sock.send(comm, strlen(comm));
+
+
   char buffer[1000];
-  sock.recv(buffer, 1000);
+  recv_count = sock.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
+
+
+  std::cout << "recieved size. buffer is " << buffer << "\n";
+
   int size;
   sscanf(buffer, "213 %d", &size); // 接收响应
-  std::cout << "recieved size. buffer is " << buffer << "\n";
+
+
   return size;
 }
