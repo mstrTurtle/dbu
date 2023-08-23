@@ -1,29 +1,21 @@
 #include "Sniffer.h"
 #include "FtpOperation.h"
-#include "cstring"
-#include <ace/Log_Msg.h>
-#include <ace/Log_Priority.h>
-#include <algorithm>
-#include <string>
-#include <vector>
-#include <tuple>
-
 #include "FtpUtil.h"
-#include "FtpOperation.h"
 #include "Option.h"
-
+#include "cstring"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
+#include <ace/Log_Msg.h>
+#include <ace/Log_Priority.h>
 #include <ace/SOCK_Connector.h>
 #include <ace/SOCK_Stream.h>
-#include <iostream>
-
+#include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <vector>
-#include <cstring>
-
 
 using std::vector;
 using std::string;

@@ -67,3 +67,6 @@ setupControl(ACE_SOCK_Stream& control_socket);
 int getStatusCode(const char* line);
 
 int getStatusCode(Str line);
+
+int
+getRegularName(string path, string& result);

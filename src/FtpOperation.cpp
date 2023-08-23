@@ -1,6 +1,6 @@
-#include "Option.h"
 #include "FtpOperation.h"
 #include "FtpUtil.h"
+#include "Option.h"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
 #include <ace/SOCK_Connector.h>
@@ -12,6 +12,15 @@
 using Str = std::string;
 using SOCK = ACE_SOCK_Stream;
 
+/**
+ * @brief 建立与FTP服务器的控制连接。
+ *
+ * 此函数使用给定的IP地址和端口号建立与FTP服务器的控制连接。
+ *
+ * @param ip FTP服务器的IP地址。
+ * @param port FTP服务器的端口号。
+ * @return 如果成功建立控制连接，则返回控制连接的套接字；如果出现错误，则返回1。
+ */
 SOCK
 connectToFtp(Str ip, int port)
 {
@@ -26,6 +35,16 @@ connectToFtp(Str ip, int port)
   return control_socket;
 }
 
+/**
+ * @brief 登录到FTP服务器。
+ *
+ * 此函数向FTP服务器发送用户名和密码以进行登录。
+ *
+ * @param control_socket 控制连接的套接字。
+ * @param user FTP服务器的用户名。
+ * @param pass FTP服务器的密码。
+ * @return 如果成功登录，则返回0；如果出现错误，则返回1。
+ */
 int
 loginToFtp(SOCK control_socket, Str user, Str pass)
 {
@@ -55,6 +74,14 @@ loginToFtp(SOCK control_socket, Str user, Str pass)
   return 0;
 }
 
+/**
+ * @brief 建立与vim.org FTP服务器的控制连接并登录。
+ *
+ * 此函数使用预定义的IP地址"ftp.vim.org"和默认端口号建立与vim.org FTP服务器的控制连接，
+ * 并发送预定义的用户名和密码进行登录。
+ *
+ * @return 如果成功建立并登录，则返回控制连接的套接字；如果出现错误，则返回1。
+ */
 SOCK
 connectAndLoginVimFtp()
 {
@@ -63,6 +90,16 @@ connectAndLoginVimFtp()
   return sock;
 }
 
+/**
+ * @brief 进入被动模式并建立数据连接。
+ *
+ * 此函数向FTP服务器发送PASV命令以进入被动模式，并解析响应以获取数据连接的IP地址和端口号。
+ * 然后，它使用获取的IP地址和端口号建立数据连接。
+ *
+ * @param control_socket 控制连接的套接字。
+ * @param dsock 数据连接的套接字。
+ * @return 如果成功建立数据连接，则返回0；如果出现错误，则返回1。
+ */
 int
 enterPassiveAndGetDataConnection(SOCK control_socket, SOCK& dsock)
 {
@@ -124,8 +161,27 @@ connectLoginAndDownloadOneSegmentFromVim(Str path, off_t off, size_t size, int p
   quitAndClose(sock);
 }
 
+/**
+ * @brief 从FTP服务器下载文件的一部分。
+ *
+ * 此函数使用提供的控制套接字和数据套接字从FTP服务器下载文件的一部分。
+ *
+ * @param control_socket 用于向FTP服务器发送命令的控制套接字。
+ * @param data_socket 用于接收文件数据的数据套接字。
+ * @param path FTP服务器上文件的路径。
+ * @param start_offset 要下载的部分的起始偏移量。
+ * @param size 要下载的部分的大小。
+ * @param part_id 正在下载的部分的ID。
+ *
+ * @note 此函数假设控制套接字和数据套接字已经连接到FTP服务器。
+ */
 void
-downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_offset, size_t size, int part_id)
+downloadOneSegment(SOCK control_socket,
+                   SOCK data_socket,
+                   Str path,
+                   off_t start_offset,
+                   size_t size,
+                   int part_id)
 {
   char buffer[1024];
   ssize_t recv_count;
@@ -166,7 +222,7 @@ downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_
 
   // 下载文件
   FILE* file = ACE_OS::fopen(fname, "wb");
-  if (!file){
+  if (!file) {
     std::cout << "Open File Error\n";
     exit(0);
   }
@@ -189,7 +245,6 @@ downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_
   std::cout << "I'm " << part_id << " , I have got " << total_received << "\n";
   ACE_OS::fclose(file);
 
-
   // 关闭数据连接
   data_socket.close();
 
@@ -199,7 +254,14 @@ downloadOneSegment(SOCK control_socket, SOCK data_socket, Str path, off_t start_
   std::cout << buffer;
 }
 
-// 定义控制连接的处理函数
+/**
+ * @brief 关闭控制连接并退出FTP服务器。
+ *
+ * 此函数发送QUIT命令关闭控制连接，并从FTP服务器退出。
+ *
+ * @param control_socket 控制连接的套接字。
+ * @return 返回值为0表示成功关闭控制连接和退出FTP服务器，否则表示出现错误。
+ */
 int
 quitAndClose(ACE_SOCK_Stream& control_socket)
 {
@@ -217,20 +279,13 @@ quitAndClose(ACE_SOCK_Stream& control_socket)
 
 
 /**
- * @brief Retrieves the size of a file from a given socket.
+ * @brief 获取FTP服务器上文件的大小。
  *
- * This function sends a "SIZE" command to the socket and receives the response
- * containing the size of the file. The size is extracted from the response and
- * returned as an integer.
+ * 此函数向FTP服务器发送SIZE命令以获取指定文件的大小。
  *
- * @param sock The socket to communicate with.
- * @param path The path of the file.
- * @return The size of the file as an integer.
- *
- * @note This function assumes that the socket is already connected and the
- * necessary communication functions (e.g., `send`, `recv`) are available.
- * @note The format of the response is assumed to be "213 <size>", where <size>
- * is the size of the file.
+ * @param sock 控制连接的套接字。
+ * @param path 文件的路径。
+ * @return 返回文件的大小（以字节为单位），如果获取失败则返回-1。
  */
 int
 getFtpFileSize(SOCK sock, const std::string& path)

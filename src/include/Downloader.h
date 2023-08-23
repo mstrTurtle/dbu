@@ -14,13 +14,17 @@
 
 using std::string;
 
-class Downloader
-{
+class Downloader {
   string filepath_;
   int threads_;
-  string save_path_;
+  string savepath_;
 
 public:
-  Downloader(string path, int threads):filepath_(path), threads_(threads){}
+  Downloader(string path, int threads, string savepath)
+    : filepath_(path)
+    , threads_(threads)
+    , savepath_(savepath)
+  {
+  }
   int run();
 };

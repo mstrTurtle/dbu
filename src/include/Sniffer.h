@@ -1,48 +1,36 @@
 #pragma once
 
-#include "Sniffer.h"
 #include "FtpOperation.h"
-#include "cstring"
-#include <ace/Log_Msg.h>
-#include <ace/Log_Priority.h>
-#include <algorithm>
-#include <string>
-#include <vector>
-#include <tuple>
-
 #include "FtpUtil.h"
-#include "FtpOperation.h"
 #include "Option.h"
-
+#include "Sniffer.h"
+#include "cstring"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
+#include <ace/Log_Msg.h>
+#include <ace/Log_Priority.h>
 #include <ace/SOCK_Connector.h>
 #include <ace/SOCK_Stream.h>
-#include <iostream>
-
+#include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <vector>
-#include <cstring>
-
 
 using std::vector;
 using std::string;
 
 using VS = vector<string>;
 
-
-
-struct FtpConn
-{
+struct FtpConn {
   string ip;
   int port;
   SOCK sock;
 };
 
-struct SniffHint
-{
+struct SniffHint {
   const string branch;
   const string subbranch;
   const string option;
@@ -50,8 +38,7 @@ struct SniffHint
   const string product;
 };
 
-class Sniffer final
-{
+class Sniffer final {
 private:
   FtpConn conn;
   SniffHint hint;
@@ -59,7 +46,9 @@ private:
 
 public:
   Sniffer() = delete;
-  Sniffer(FtpConn conn_, SniffHint hint_):conn(conn_),hint(hint_){};
+  Sniffer(FtpConn conn_, SniffHint hint_)
+    : conn(conn_)
+    , hint(hint_){};
   int processBranch();
   int processOption();
   int processTarget();

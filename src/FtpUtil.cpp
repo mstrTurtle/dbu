@@ -1,6 +1,14 @@
 #include "FtpUtil.h"
 #include "FtpOperation.h"
 
+
+#include <ace/INET_Addr.h>
+#include <ace/Log_Msg.h>
+#include <ace/OS.h>
+#include <ace/SOCK_Stream.h>
+#include <iostream>
+#include <ace/Message_Block.h>
+
 /**
  * @brief 输入Option，输出嗅探到的文件路径
  *
@@ -41,6 +49,17 @@ join_path(std::string& origin_, const std::string& appendix)
   }
 
   return;
+}
+
+int
+getRegularName(string path, string& result)
+{
+  if (path.back() == '/') {
+    return 1;
+  }
+  size_t pos = path.rfind("/");
+  result = path.substr(pos);
+  return 0;
 }
 
 std::vector<std::string>
@@ -190,26 +209,6 @@ setupControl(ACE_SOCK_Stream& control_socket)
   recv_count = control_socket.recv(buffer, sizeof(buffer));
   buffer[recv_count] = '\0';
   std::cout << buffer;
-
-  // // 发送PASV命令，进入被动模式
-  // control_socket.send("PASV\r\n", 6);
-  // recv_count = control_socket.recv(buffer, sizeof(buffer));
-  // buffer[recv_count] = '\0';
-  // std::cout << buffer;
-
-  // // 解析被动模式响应，获取数据连接IP和端口号
-  // unsigned int ip1, ip2, ip3, ip4, port1, port2;
-  // sscanf(buffer,
-  //        "227 Entering Passive Mode (%u,%u,%u,%u,%u,%u)",
-  //        &ip1,
-  //        &ip2,
-  //        &ip3,
-  //        &ip4,
-  //        &port1,
-  //        &port2);
-  // data_ip = std::to_string(ip1) + "." + std::to_string(ip2) + "." +
-  //           std::to_string(ip3) + "." + std::to_string(ip4);
-  // data_port = (port1 << 8) + port2;
 }
 
 /**
@@ -254,20 +253,14 @@ fetchNLST(ACE_SOCK_Stream& control_socket,
   result =  received_lines;
   return;
 }
-
-#include <ace/INET_Addr.h>
-#include <ace/Log_Msg.h>
-#include <ace/OS.h>
-#include <ace/SOCK_Stream.h>
-#include <iostream>
-#include <ace/Message_Block.h>
-
-std::string receiveLine(ACE_SOCK_Stream& socket, ACE_Message_Block& messageBlock)
+std::string
+receiveLine(ACE_SOCK_Stream& socket, ACE_Message_Block& messageBlock)
 {
   std::string line;
 
   while (true) {
-    ssize_t bytesRead = socket.recv(messageBlock.wr_ptr(), messageBlock.space());
+    ssize_t bytesRead =
+      socket.recv(messageBlock.wr_ptr(), messageBlock.space());
 
     if (bytesRead <= 0) {
       // 出现错误或连接关闭
@@ -277,7 +270,8 @@ std::string receiveLine(ACE_SOCK_Stream& socket, ACE_Message_Block& messageBlock
 
     messageBlock.wr_ptr(bytesRead);
 
-    char* newlinePos = std::find(messageBlock.rd_ptr(), messageBlock.wr_ptr(), '\n');
+    char* newlinePos =
+      std::find(messageBlock.rd_ptr(), messageBlock.wr_ptr(), '\n');
 
     if (newlinePos != messageBlock.wr_ptr()) {
       // 找到换行符，提取一行数据
@@ -299,27 +293,34 @@ std::string receiveLine(ACE_SOCK_Stream& socket, ACE_Message_Block& messageBlock
 
 using MB = ACE_Message_Block;
 
-class LinedSock{
+class LinedSock {
   SOCK sock;
-  MB block{1024};
+  MB block{ 1024 };
 
-  LinedSock(SOCK sock_):sock(sock_){
+  LinedSock(SOCK sock_)
+    : sock(sock_)
+  {
   }
-  int getLine(Str& result){
+  int getLine(Str& result)
+  {
     result = receiveLine(sock, block);
     return 0;
   }
 };
 
-int getStatusCode(const char* line){
-  if(strlen(line)<3) return -1;
+int
+getStatusCode(const char* line)
+{
+  if (strlen(line) < 3)
+    return -1;
   char buf[4];
-  strncpy(buf,line,3);
+  strncpy(buf, line, 3);
   return atoi(buf);
 }
 
-int getStatusCode(Str line){
-  int i = std::atoi(line.substr(0,3).c_str());
+int
+getStatusCode(Str line)
+{
+  int i = std::atoi(line.substr(0, 3).c_str());
   return i;
 }
-

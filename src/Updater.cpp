@@ -6,33 +6,13 @@
 #include "ace/Process.h"
 #include <iostream>
 
-int
-install();
-
-/**
- * @brief 按顺序地先解析参数，然后下载东西，然后安装。
- *
- * @param argc
- * @param argv
- * @return int
- */
-int
-Updater::run(int argc, ACE_TCHAR* argv[])
-{
-  OPTION->parse_args(argc, argv);
-  // Downloader d;
-  // d.run();
-  install();
-  return 0;
-}
-
 /**
  * @brief 执行安装脚本
  *
  * @return int
  */
 int
-install()
+Updater::run()
 {
   // 构造命令
   ACE_Process_Options options;
