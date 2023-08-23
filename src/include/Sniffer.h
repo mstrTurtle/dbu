@@ -43,7 +43,6 @@ struct FtpConn
 
 struct SniffHint
 {
-  string cwd;
   const string branch;
   const string subbranch;
   const string option;
@@ -56,6 +55,7 @@ class Sniffer final
 private:
   FtpConn conn;
   SniffHint hint;
+  string cwd;
 
 public:
   Sniffer() = delete;

@@ -36,16 +36,16 @@ int
 Sniffer::processBranch()
 {
   if (hint.branch == "develop" || hint.branch == "master") {
-    join_path(hint.cwd, hint.subbranch);
+    join_path(cwd, hint.subbranch);
     return 0;
   }
   else if (hint.branch == "feature" || hint.branch == "hotfix" ||
            hint.branch == "support") {
-    bool b = fetchFind(conn.sock, hint.cwd, hint.subbranch);
+    bool b = fetchFind(conn.sock, cwd, hint.subbranch);
     if (!b) {
       return 2;
     }
-    join_path(hint.cwd, hint.subbranch);
+    join_path(cwd, hint.subbranch);
     return 0;
   }
   return 0;
@@ -59,8 +59,8 @@ Sniffer::processBranch()
 int
 Sniffer::processOption()
 {
-  fetchFind(conn.sock, hint.cwd, hint.option);
-  join_path(hint.cwd, hint.option);
+  fetchFind(conn.sock, cwd, hint.option);
+  join_path(cwd, hint.option);
   return 0;
 }
 
@@ -72,11 +72,11 @@ Sniffer::processOption()
 int
 Sniffer::processTarget()
 {
-  if(!fetchFind(conn.sock, hint.cwd, hint.arch)){
+  if(!fetchFind(conn.sock, cwd, hint.arch)){
     ACE_DEBUG((LM_ERROR, "你提供的arch信息是错的.\n"));
     return 1;
   }
-  join_path(hint.cwd, hint.arch);
+  join_path(cwd, hint.arch);
   return 0;
 }
 
@@ -90,7 +90,7 @@ Sniffer::processVersion()
 {
   Str result;
   fetchFindMax(conn.sock, result);
-  join_path(hint.cwd, result);
+  join_path(cwd, result);
   return 0;
 }
 
@@ -103,8 +103,8 @@ int
 Sniffer::processFunctionality()
 {
   VS v;
-  int err = fetchFzf(conn.sock,hint.cwd,hint.product, v);
-  join_path(hint.cwd, hint.option);
+  int err = fetchFzf(conn.sock,cwd,hint.product, v);
+  join_path(cwd, hint.option);
   return 0;
 }
 
@@ -130,7 +130,7 @@ Sniffer::run(Str& result)
     return 1;
   }
 
-  result = hint.cwd;
+  result = cwd;
   return 0;
 
 }
