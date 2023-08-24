@@ -24,12 +24,6 @@ using std::string;
 
 using VS = vector<string>;
 
-struct FtpConn {
-  string ip;
-  int port;
-  SOCK sock;
-};
-
 struct SniffHint {
   const string branch;
   const string subbranch;
@@ -40,14 +34,17 @@ struct SniffHint {
 
 class Sniffer final {
 private:
-  FtpConn conn;
+  struct {
+    ACE_INET_Addr addr;
+    SOCK sock;
+  } conn;
   SniffHint hint;
   string cwd;
 
 public:
   Sniffer() = delete;
-  Sniffer(FtpConn conn_, SniffHint hint_)
-    : conn(conn_)
+  Sniffer(ACE_INET_Addr addr_, SOCK sock_, SniffHint hint_)
+    : conn({ .addr = addr_, .sock = sock_ })
     , hint(hint_){};
   int processBranch();
   int processOption();

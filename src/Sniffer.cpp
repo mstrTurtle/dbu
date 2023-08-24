@@ -145,7 +145,7 @@ test_main()
   // 登录
   setupControl(control_socket);
 
-  Sniffer sniffer({"",0,0},{});
+  Sniffer sniffer(control_addr,control_socket,{});
   Str result;
   sniffer.run(result);
 
