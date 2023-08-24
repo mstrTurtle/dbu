@@ -7,11 +7,25 @@
 int
 ACE_TMAIN(int argc, ACE_TCHAR* argv[])
 {
+  OPTION->parse_args(argc, argv);
+  SniffHint hint = convertOptionToSniffHint(*OPTION);
 
-  // Sniffer sniffer;
-  // sniffer.run();
+  ACE_INET_Addr addr(21, "ftp.vim.org");
 
-  Downloader downloader("/pub/robots.txt",1, "robots.txt");
+  SOCK sock;
+
+  ACE_SOCK_Connector connector;
+  if (connector.connect(sock, addr) == -1) {
+    ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
+    return 1;
+  }
+
+  Sniffer sniffer(addr,sock,hint);
+
+  string path;
+  sniffer.run(path);
+
+  Downloader downloader("/pub/robots.txt",OPTION->threads_, "robots.txt");
 
   downloader.run();
 

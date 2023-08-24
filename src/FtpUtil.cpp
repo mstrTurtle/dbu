@@ -135,9 +135,15 @@ findMax(const VS& ss, std::string& result)
 }
 
 /**
- * @brief 组合出findMax函数
+ * @brief 获取文件列表并查找最大值
  *
- * @return int
+ * 该函数通过与服务器建立的套接字sock，获取指定路径path下的文件列表，
+ * 并在文件列表中查找最大值，并将结果存储在给定的result字符串中。
+ *
+ * @param sock 与服务器建立的套接字。
+ * @param path 指定的路径。
+ * @param result 存储最大值的字符串。
+ * @return 如果成功获取并查找最大值，则返回0；否则返回非零值。
  */
 int
 fetchFindMax(SOCK sock, Str path, Str& result){
@@ -148,17 +154,24 @@ fetchFindMax(SOCK sock, Str path, Str& result){
 }
 
 /**
- * @brief 组合出fzf函数
+ * @brief 获取文件列表并使用FZF过滤
  *
- * @return true
- * @return false
+ * 该函数通过与服务器建立的套接字sock，获取指定路径path下的文件列表，
+ * 并使用FZF过滤出匹配给定模式e的文件列表。
+ *
+ * @param sock 与服务器建立的套接字。
+ * @param path 指定的路径。
+ * @param e 过滤模式。
+ * @param result 存储过滤后的文件列表的向量。
+ * @return 如果成功获取并过滤文件列表，则返回0；否则返回非零值。
  */
-VS
-fetchFzf(SOCK sock, Str path, Str e)
+int
+fetchFzf(SOCK sock, Str path, Str e, VS& result)
 {
   Str s;
   fetchNLST(sock, path, s);
-  return fzf(strToLines(s), e);
+  result = fzf(strToLines(s), e);
+  return 0;
 }
 
 /**

@@ -53,3 +53,6 @@ public:
   int processFunctionality();
   int run(Str& result);
 };
+
+SniffHint
+convertOptionToSniffHint(const Option& option);

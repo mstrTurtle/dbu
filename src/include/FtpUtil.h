@@ -50,7 +50,7 @@ int
 findMax(const VS& ss, std::string& result);
 
 int
-fetchFindMax(SOCK control_socket, Str& result);
+fetchFindMax(SOCK sock, Str path, Str& result);
 
 int
 fetchFzf(SOCK sock, Str path, Str e, VS& result);
