@@ -28,9 +28,16 @@ Option::instance() // 单例模式实现
   return Option::instance_;
 }
 
+/**
+ * @brief 解析命令行参数并给选项结构体赋值。
+ *
+ * @param argc 参数个数
+ * @param argv 参数数组
+ *
+ * 此函数会解析命令行参数，并根据参数的不同情况进行相应的操作，并记录日志。
+ */
 void
-Option::parse_args(int argc,
-                   ACE_TCHAR* argv[]) // 此函数给结构体赋上值，并且视情况打Log
+Option::parse_args(int argc, ACE_TCHAR* argv[])
 {
   ACE_Get_Opt get_opt(argc, argv, ACE_TEXT("b:s:u:a:p:t:d"));
 
@@ -74,6 +81,11 @@ Option::parse_args(int argc,
   }
 }
 
+/**
+ * @brief Option类的构造函数，用于给选项结构体赋初值。
+ *
+ * 构造函数会将选项结构体的各个成员变量初始化为默认值。
+ */
 Option::Option() // 构造器给结构体赋初值。
   : branch_("")
   , sub_branch_("")
@@ -85,7 +97,7 @@ Option::Option() // 构造器给结构体赋初值。
 {
 }
 
-std::string
+[[deprecated]] std::string
 Option::get_actual_path()
 {
   string path = string("/ftp_product_installer/dbackup3/rpm");
