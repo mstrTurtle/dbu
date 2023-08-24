@@ -10,20 +10,31 @@
  */
 #pragma once
 #include "Option.h"
+#include "FtpOperation.h"
 #include <string>
 
+#include <ace/SOCK_Connector.h>
+#include <ace/SOCK_Stream.h>
+
 using std::string;
+
+using Str = std::string;
+using SOCK = ACE_SOCK_Stream;
 
 class Downloader {
   string filepath_;
   int threads_;
   string savepath_;
+  SOCK sock_;
+  SockCreator sock_creator_;
 
 public:
-  Downloader(string path, int threads, string savepath)
+  Downloader(string path, int threads, string savepath, SOCK sock, SockCreator sock_creator)
     : filepath_(path)
     , threads_(threads)
     , savepath_(savepath)
+    , sock_(sock)
+    , sock_creator_(sock_creator)
   {
   }
   int run();

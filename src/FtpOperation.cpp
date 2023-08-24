@@ -74,21 +74,6 @@ loginToFtp(SOCK control_socket, Str user, Str pass)
   return 0;
 }
 
-/**
- * @brief 建立与vim.org FTP服务器的控制连接并登录。
- *
- * 此函数使用预定义的IP地址"ftp.vim.org"和默认端口号建立与vim.org
- * FTP服务器的控制连接， 并发送预定义的用户名和密码进行登录。
- *
- * @return 如果成功建立并登录，则返回控制连接的套接字；如果出现错误，则返回1。
- */
-SOCK
-connectAndLoginVimFtp()
-{
-  SOCK sock = connectToFtp("ftp.vim.org");
-  loginToFtp(sock);
-  return sock;
-}
 
 /**
  * @brief 进入被动模式并建立数据连接。
@@ -151,14 +136,14 @@ int
 getFtpFileSize(SOCK sock, const std::string& path);
 
 void
-connectLoginAndDownloadOneSegmentFromVim(Str path,
-                                         off_t off,
-                                         size_t size,
-                                         int part_id,
-                                         FILE* file)
+enterPassiveAndDownloadOneSegmentAndClose(Str path,
+                          off_t off,
+                          size_t size,
+                          int part_id,
+                          FILE* file,
+                          SOCK sock)
 {
   std::cout << "calling downOneSeg " << off << ", " << size << "\n";
-  SOCK sock = connectAndLoginVimFtp();
   SOCK dsock;
   enterPassiveAndGetDataConnection(sock, dsock);
   downloadOneSegment(sock, dsock, path, off, size, part_id, file);

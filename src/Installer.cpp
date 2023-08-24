@@ -19,7 +19,7 @@ Installer::run()
   options.command_line(ACE_TEXT("%") ACE_TEXT_PRIs ACE_TEXT(" -i") ACE_TEXT("%")
                          ACE_TEXT_PRIs,
                        "rpm",
-                       "aa.rpm");
+                       "download.rpm");
   // spawn新进程
   ACE_Process new_process;
   if (new_process.spawn(options) == -1) {

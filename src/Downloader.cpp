@@ -7,15 +7,11 @@
 #include "Option.h"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
-#include <ace/SOCK_Connector.h>
-#include <ace/SOCK_Stream.h>
 #include <iostream>
 #include <set>
 #include <string>
 #include <thread>
 
-using Str = std::string;
-using SOCK = ACE_SOCK_Stream;
 
 
 /**
@@ -82,7 +78,7 @@ openNFile(int n, vector<FILE*>& result)
  * @return 如果下载和合并过程成功，则返回0；否则返回非零值。
  */
 int
-spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads, const char* savepath)
+spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads, const char* savepath, SockCreator createSock)
 {
   std::cout << "spawning\n";
   std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
@@ -102,19 +98,24 @@ spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads, const char* savepat
   for (int i = 0; i < threads - 1; i++) {
     int off = i * segsize;
     int len = segsize;
+    SOCK newSock;
+    createSock(newSock);
     ts.emplace_back(std::thread(
-      connectLoginAndDownloadOneSegmentFromVim, path, off, len, i, fs[i]));
+      enterPassiveAndDownloadOneSegmentAndClose, path, off, len, i, fs[i], newSock));
 
     std::cout << "Thread " << i << " Start" << std::endl;
   }
 
   int finaloff = (threads - 1) * segsize;
-  ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim,
+  SOCK newSock;
+  createSock(newSock);
+  ts.emplace_back(std::thread(enterPassiveAndDownloadOneSegmentAndClose,
                               path,
                               finaloff,
                               fsize - finaloff,
                               threads - 1,
-                              fs.back()));
+                              fs.back(),
+                              newSock));
   std::cout << "Thread " << (threads - 1) << " Start" << std::endl;
 
   std::cout << "Download Complete" << std::endl;
@@ -138,7 +139,8 @@ spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads, const char* savepat
 /**
  * @brief 下载器运行函数
  *
- * 该函数是下载器的主要运行函数。它通过初始化ACE库，建立与服务器的连接并登录，然后调用spawnMultiDownloadsAndJoin函数进行多线程下载和合并操作，最后关闭ACE库。
+ * 该函数是下载器的主要运行函数。它通过初始化ACE库，建立与服务器的连接并登录，然后调用
+ * spawnMultiDownloadsAndJoin 函数进行多线程下载和合并操作，最后关闭ACE库。
  *
  * @return 如果运行成功，则返回0；否则返回非零值。
  */
@@ -148,10 +150,9 @@ Downloader::run()
   // 初始化ACE
   ACE::init();
 
-  SOCK sock = connectAndLoginVimFtp();
-
   // 处理控制连接void
-  spawnMultiDownloadsAndJoin(sock, filepath_, threads_, savepath_.c_str());
+  spawnMultiDownloadsAndJoin(
+    sock_, filepath_, threads_, savepath_.c_str(), sock_creator_);
 
   // 关闭ACE
   ACE::fini();

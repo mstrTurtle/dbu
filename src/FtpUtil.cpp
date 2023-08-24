@@ -337,3 +337,25 @@ getStatusCode(Str line)
   int i = std::atoi(line.substr(0, 3).c_str());
   return i;
 }
+
+SockCreator
+makeLoginedSockCreator(const ACE_INET_Addr& ftpAddress,
+                       const std::string& username,
+                       const std::string& password)
+{
+  return [=](SOCK& sock) {
+    // 连接到对端地址
+    ACE_SOCK_Connector connector;
+    if (connector.connect(sock, ftpAddress) == -1) {
+      std::cerr << "Failed to connect to FTP server." << std::endl;
+      return 1;
+    }
+    // 登录到FTP服务器
+    if (loginToFtp(sock, username, password)) {
+      std::cerr << "Failed to login to FTP server." << std::endl;
+      sock.close();
+      return 1;
+    }
+    return 0;
+  };
+}

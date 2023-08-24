@@ -1,37 +1,51 @@
 #include "Downloader.h"
+#include "FtpOperation.h"
 #include "Option.h"
 #include "Sniffer.h"
 #include "Installer.h"
 #include "ace/Log_Msg.h"
 
+
 int
 ACE_TMAIN(int argc, ACE_TCHAR* argv[])
 {
+  // ftp控制连接的sock工厂
+  ACE_INET_Addr addr(21, "ftp.vim.org");
+  SockCreator sockCreator = makeLoginedSockCreator(addr, "anonymous", "");
+
+  // parse args
   OPTION->parse_args(argc, argv);
   SniffHint hint = convertOptionToSniffHint(*OPTION);
 
-  ACE_INET_Addr addr(21, "ftp.vim.org");
+  std::cout << hint;
 
+  exit(0);
+
+  // 连接到端点
   SOCK sock;
+  sockCreator(sock);
 
-  ACE_SOCK_Connector connector;
-  if (connector.connect(sock, addr) == -1) {
-    ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
-    return 1;
-  }
+  // run sniffer，查找最新版本的product
 
-  Sniffer sniffer(addr,sock,hint);
+  Sniffer sniffer(addr, sock, hint);
 
   string path;
   sniffer.run(path);
 
-  Downloader downloader("/pub/robots.txt",OPTION->threads_, "robots.txt");
+
+  std::cout << "Sniffer done, got path: " << path << std::endl;
+  exit(0);
+
+  // run downloader, 多线程下载
+  Downloader downloader(
+    "/pub/robots.txt", OPTION->threads_, "download.rpm", sock, sockCreator);
 
   downloader.run();
 
-  // Updater updater;
-  // if (updater.run(argc, argv) == -1)
-  //   ACE_ERROR_RETURN((LM_ERROR, "%p\n", "updater.run()"), 1);
+  // run installer，安装
+  Installer installer;
+  if (installer.run() == -1)
+    ACE_ERROR_RETURN((LM_ERROR, "%p\n", "updater.run() error"), 1);
 
   return 0;
 }

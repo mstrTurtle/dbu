@@ -30,6 +30,15 @@ struct SniffHint {
   const string option;
   const string arch;
   const string product;
+
+  friend std::ostream& operator<<(std::ostream& os, const SniffHint& hint) {
+    os << "Branch: " << hint.branch << std::endl;
+    os << "Subbranch: " << hint.subbranch << std::endl;
+    os << "Option: " << hint.option << std::endl;
+    os << "Arch: " << hint.arch << std::endl;
+    os << "Product: " << hint.product << std::endl;
+    return os;
+  }
 };
 
 class Sniffer final {
