@@ -88,7 +88,7 @@ strToLines(string text)
 bool
 find(vector<string> v, std::string e)
 {
-  return std::find(v.begin(), v.end(), e) == v.end();
+  return std::find(v.begin(), v.end(), e) != v.end();
 }
 
 /**

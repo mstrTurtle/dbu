@@ -27,6 +27,7 @@ using VS = vector<string>;
 int
 Sniffer::processBranch()
 {
+  std::cout << "In Process Branch\n";
   if (hint.branch == "develop" || hint.branch == "master") {
     join_path(cwd, hint.subbranch);
     return 0;
@@ -51,6 +52,7 @@ Sniffer::processBranch()
 int
 Sniffer::processOption()
 {
+  std::cout << "In Process Option\n";
   fetchFind(conn.sock, cwd, hint.option);
   join_path(cwd, hint.option);
   return 0;
@@ -64,6 +66,7 @@ Sniffer::processOption()
 int
 Sniffer::processTarget()
 {
+  std::cout << "In Process Target\n";
   if(!fetchFind(conn.sock, cwd, hint.arch)){
     ACE_DEBUG((LM_ERROR, "你提供的arch信息是错的.\n"));
     return 1;
@@ -80,6 +83,7 @@ Sniffer::processTarget()
 int
 Sniffer::processVersion()
 {
+  std::cout << "In Process Version\n";
   Str result;
   fetchFindMax(conn.sock, cwd, result);
   join_path(cwd, result);
@@ -94,6 +98,7 @@ Sniffer::processVersion()
 int
 Sniffer::processFunctionality()
 {
+  std::cout << "In Process Functionality\n";
   VS v;
   int err = fetchFzf(conn.sock,cwd,hint.product, v);
   join_path(cwd, hint.option);
@@ -107,13 +112,10 @@ Sniffer::processFunctionality()
 int
 Sniffer::run(Str& result)
 {
-  std::string data_ip;
-  u_short data_port;
+  cwd = "/ftp_product_installer/dbackup3/rpm";
 
-  std::string cwd = "/ftp_product_installer/dbackup3/rpm";
-
-  if (int err = processBranch() | processOption() | processTarget() |
-            processVersion() | processFunctionality()) {
+  if (int err = processBranch() || processOption() || processTarget() ||
+                processVersion() || processFunctionality()) {
     std::cout << "处理过程出错了，退出程序" << std::endl;
     exit(err);
   }

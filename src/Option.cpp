@@ -44,7 +44,7 @@ Option::parse_args(int argc, ACE_TCHAR* argv[])
   int c;
 
   while ((c = get_opt()) != -1) {
-    ACE_DEBUG((LM_DEBUG, "got %c \n", c));
+    // ACE_DEBUG((LM_DEBUG, "got %c \n", c));
     switch (c) {
       case 'd':
         this->debug_ = 1;
@@ -102,4 +102,17 @@ Option::get_actual_path()
 {
   string path = string("/ftp_product_installer/dbackup3/rpm");
   return path;
+}
+
+std::ostream& operator<<(std::ostream& os, const Option& option)
+{
+  os << "branch: " << option.branch_ << std::endl;
+  os << "sub_branch: " << option.sub_branch_ << std::endl;
+  os << "build: " << option.build_ << std::endl;
+  os << "arch: " << option.arch_ << std::endl;
+  os << "product: " << option.product_ << std::endl;
+  os << "threads: " << option.threads_ << std::endl;
+  os << "debug: " << option.debug_ << std::endl;
+
+  return os;
 }

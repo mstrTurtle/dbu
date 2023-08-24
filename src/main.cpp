@@ -16,9 +16,8 @@ ACE_TMAIN(int argc, ACE_TCHAR* argv[])
   OPTION->parse_args(argc, argv);
   SniffHint hint = convertOptionToSniffHint(*OPTION);
 
-  std::cout << hint;
+  std::cout << (*OPTION);
 
-  exit(0);
 
   // 连接到端点
   SOCK sock;

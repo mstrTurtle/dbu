@@ -49,6 +49,8 @@ public:
    */
   string get_actual_path();
 
+  friend std::ostream& operator<<(std::ostream& os, const Option& option);
+
 protected:
   /**
    * @brief Option类的构造函数
