@@ -26,7 +26,9 @@ using SOCK = ACE_SOCK_Stream;
  * @param inputFiles 存储输入文件的FILE*句柄的向量。
  * @param outputFile 表示输出文件的FILE*句柄。
  */
-void aggregateFiles(const std::vector<FILE*>& inputFiles, FILE* outputFile) {
+void
+aggregateFiles(const std::vector<FILE*>& inputFiles, FILE* outputFile)
+{
   for (const auto& inputFile : inputFiles) {
     // 将输入文件的读取位置移动到文件末尾
     fseek(inputFile, 0, SEEK_END);
@@ -44,9 +46,20 @@ void aggregateFiles(const std::vector<FILE*>& inputFiles, FILE* outputFile) {
   }
 }
 
-int openNFile(int n, vector<FILE*>& result){
+/**
+ * @brief 打开多个文件
+ *
+ * 该函数用于打开多个文件，并将打开的文件指针存储在给定的vector中。
+ *
+ * @param n 要打开的文件数量。
+ * @param result 存储打开的文件指针的vector。
+ * @return 如果成功打开所有文件，则返回0；否则返回非零值。
+ */
+int
+openNFile(int n, vector<FILE*>& result)
+{
   char fname[100];
-  for(int i = 0; i < n; i++){
+  for (int i = 0; i < n; i++) {
     sprintf(fname, "downloadfile.%d", i);
     FILE* file = ACE_OS::fopen(fname, "w+b");
     if (!file) {
@@ -58,20 +71,17 @@ int openNFile(int n, vector<FILE*>& result){
   return 0;
 }
 
-
 /**
- * @brief Spawns multiple threads to download a file in segments and joins them.
+ * @brief 多线程下载并合并函数
  *
- * This function divides the file into segments and creates multiple threads to
- * download each segment concurrently. After all the threads have completed
- * their tasks, this function waits for them to join before returning.
+ * 该函数通过创建多个线程来下载指定文件的不同片段，并将下载的片段合并成一个完整的文件。
  *
- * @note This function assumes that the necessary variables and functions (e.g.,
- * `getSize`, `open`) are defined and initialized properly.
- *
- * @return void
+ * @param sock 表示与服务器建立的套接字连接。
+ * @param path 表示要下载的文件的路径。
+ * @param threads 表示要使用的下载线程数量。
+ * @return 如果下载和合并过程成功，则返回0；否则返回非零值。
  */
-void
+int
 spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads)
 {
   std::cout << "spawning\n";
@@ -82,21 +92,29 @@ spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads)
   int segsize =
     static_cast<int>(static_cast<float>(fsize) / threads); // 向下取整
 
-  std::cout << "got size "<< fsize <<"\n";
+  std::cout << "got size " << fsize << "\n";
 
-
-  openNFile(threads, fs);
+  if (openNFile(threads, fs)) {
+    std::cout << "open failed\n";
+    return 1;
+  }
 
   for (int i = 0; i < threads - 1; i++) {
     int off = i * segsize;
     int len = segsize;
-    ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim, path, off, len,i, fs[i]));
+    ts.emplace_back(std::thread(
+      connectLoginAndDownloadOneSegmentFromVim, path, off, len, i, fs[i]));
 
     std::cout << "Thread " << i << " Start" << std::endl;
   }
 
   int finaloff = (threads - 1) * segsize;
-  ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim, path, finaloff, fsize - finaloff,threads-1, fs.back()));
+  ts.emplace_back(std::thread(connectLoginAndDownloadOneSegmentFromVim,
+                              path,
+                              finaloff,
+                              fsize - finaloff,
+                              threads - 1,
+                              fs.back()));
   std::cout << "Thread " << (threads - 1) << " Start" << std::endl;
 
   std::cout << "Download Complete" << std::endl;
@@ -105,18 +123,25 @@ spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads)
     t.join();
   }
 
-
   FILE* file = ACE_OS::fopen("result", "wb");
   aggregateFiles(fs, file);
 
-
-  for(auto& f: fs){
+  for (auto& f : fs) {
     ACE_OS::fclose(f);
   }
 
   ACE_OS::fclose(file);
+
+  return 0;
 }
 
+/**
+ * @brief 下载器运行函数
+ *
+ * 该函数是下载器的主要运行函数。它通过初始化ACE库，建立与服务器的连接并登录，然后调用spawnMultiDownloadsAndJoin函数进行多线程下载和合并操作，最后关闭ACE库。
+ *
+ * @return 如果运行成功，则返回0；否则返回非零值。
+ */
 int
 Downloader::run()
 {
