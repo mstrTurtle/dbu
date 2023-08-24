@@ -1,10 +1,9 @@
 #include "Downloader.h"
 #include "FtpOperation.h"
+#include "Installer.h"
 #include "Option.h"
 #include "Sniffer.h"
-#include "Installer.h"
 #include "ace/Log_Msg.h"
-
 
 int
 ACE_TMAIN(int argc, ACE_TCHAR* argv[])
@@ -31,7 +30,6 @@ ACE_TMAIN(int argc, ACE_TCHAR* argv[])
 
   string path;
   sniffer.run(path);
-
 
   std::cout << "Sniffer done, got path: " << path << std::endl;
   exit(0);

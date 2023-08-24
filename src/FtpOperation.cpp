@@ -74,7 +74,6 @@ loginToFtp(SOCK control_socket, Str user, Str pass)
   return 0;
 }
 
-
 /**
  * @brief 进入被动模式并建立数据连接。
  *
@@ -137,11 +136,11 @@ getFtpFileSize(SOCK sock, const std::string& path);
 
 void
 enterPassiveAndDownloadOneSegmentAndClose(Str path,
-                          off_t off,
-                          size_t size,
-                          int part_id,
-                          FILE* file,
-                          SOCK sock)
+                                          off_t off,
+                                          size_t size,
+                                          int part_id,
+                                          FILE* file,
+                                          SOCK sock)
 {
   std::cout << "calling downOneSeg " << off << ", " << size << "\n";
   SOCK dsock;
@@ -206,7 +205,6 @@ downloadOneSegment(SOCK control_socket,
   // }
   std::cout << buffer;
   std::cout << "sent retr\n";
-
 
   // 下载文件
   std::cout << "I'm " << part_id << " , I will get " << size << "\n";

@@ -12,8 +12,6 @@
 #include <string>
 #include <thread>
 
-
-
 /**
  * @brief 将多个文件聚合到一个文件中。
  *
@@ -78,7 +76,11 @@ openNFile(int n, vector<FILE*>& result)
  * @return 如果下载和合并过程成功，则返回0；否则返回非零值。
  */
 int
-spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads, const char* savepath, SockCreator createSock)
+spawnMultiDownloadsAndJoin(SOCK sock,
+                           Str path,
+                           int threads,
+                           const char* savepath,
+                           SockCreator createSock)
 {
   std::cout << "spawning\n";
   std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
@@ -100,8 +102,13 @@ spawnMultiDownloadsAndJoin(SOCK sock, Str path, int threads, const char* savepat
     int len = segsize;
     SOCK newSock;
     createSock(newSock);
-    ts.emplace_back(std::thread(
-      enterPassiveAndDownloadOneSegmentAndClose, path, off, len, i, fs[i], newSock));
+    ts.emplace_back(std::thread(enterPassiveAndDownloadOneSegmentAndClose,
+                                path,
+                                off,
+                                len,
+                                i,
+                                fs[i],
+                                newSock));
 
     std::cout << "Thread " << i << " Start" << std::endl;
   }

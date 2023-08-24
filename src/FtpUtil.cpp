@@ -1,13 +1,12 @@
 #include "FtpUtil.h"
 #include "FtpOperation.h"
 
-
 #include <ace/INET_Addr.h>
 #include <ace/Log_Msg.h>
+#include <ace/Message_Block.h>
 #include <ace/OS.h>
 #include <ace/SOCK_Stream.h>
 #include <iostream>
-#include <ace/Message_Block.h>
 
 /**
  * @brief 输入Option，输出嗅探到的文件路径
@@ -104,9 +103,9 @@ fzf(VS ss, string e)
 {
   VS result;
   for (auto s : ss) {
-      if (s.find(e) != string::npos) {
-        result.emplace_back(s);
-      }
+    if (s.find(e) != string::npos) {
+      result.emplace_back(s);
+    }
   }
   return result;
 }
@@ -116,7 +115,7 @@ int
 findMax(const VS& ss, std::string& result)
 {
   std::string line;
-  std::tuple<int, int, int> maxNumber{0, 0, 0};
+  std::tuple<int, int, int> maxNumber{ 0, 0, 0 };
   if (ss.size() < 1)
     return 1;
 
@@ -125,7 +124,7 @@ findMax(const VS& ss, std::string& result)
     int a, b, c;
     char dot;
     sscanf(line.c_str(), "%d.%d.%d", &a, &b, &c);
-    std::tuple<int, int, int> currentNumber{a, b, c};
+    std::tuple<int, int, int> currentNumber{ a, b, c };
     if (maxNumber < currentNumber) {
       maxNumber = currentNumber;
       result = line;
@@ -146,9 +145,10 @@ findMax(const VS& ss, std::string& result)
  * @return 如果成功获取并查找最大值，则返回0；否则返回非零值。
  */
 int
-fetchFindMax(SOCK sock, Str path, Str& result){
+fetchFindMax(SOCK sock, Str path, Str& result)
+{
   Str s;
-  fetchNLST(sock,path, s);
+  fetchNLST(sock, path, s);
   findMax(strToLines(s), result);
   return 0;
 }
@@ -263,7 +263,7 @@ fetchNLST(ACE_SOCK_Stream& control_socket,
   std::cout << buffer;
 
   // 结束流程并返回值
-  result =  received_lines;
+  result = received_lines;
   return;
 }
 std::string

@@ -67,11 +67,11 @@ Option::parse_args(int argc,
     }
   }
 
-    if (this->branch_=="") // hostname和filename不可不输入
-    {
-      printUsage(argv[0]);
-      ACE_OS::exit(1);
-    }
+  if (this->branch_ == "") // hostname和filename不可不输入
+  {
+    printUsage(argv[0]);
+    ACE_OS::exit(1);
+  }
 }
 
 Option::Option() // 构造器给结构体赋初值。
