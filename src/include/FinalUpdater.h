@@ -11,3 +11,11 @@ convertOptionToSniffHint(const Option& option)
                           .product = option.product_ };
   return sniffHint;
 }
+
+
+class
+FinalUpdater{
+    Option option;
+    int run();
+
+};

@@ -154,13 +154,14 @@ void
 connectLoginAndDownloadOneSegmentFromVim(Str path,
                                          off_t off,
                                          size_t size,
-                                         int part_id)
+                                         int part_id,
+                                         FILE* file)
 {
   std::cout << "calling downOneSeg " << off << ", " << size << "\n";
   SOCK sock = connectAndLoginVimFtp();
   SOCK dsock;
   enterPassiveAndGetDataConnection(sock, dsock);
-  downloadOneSegment(sock, dsock, path, off, size, part_id);
+  downloadOneSegment(sock, dsock, path, off, size, part_id, file);
   quitAndClose(sock);
 }
 
@@ -184,7 +185,8 @@ downloadOneSegment(SOCK control_socket,
                    Str path,
                    off_t start_offset,
                    size_t size,
-                   int part_id)
+                   int part_id,
+                   FILE* file)
 {
   char buffer[1024];
   ssize_t recv_count;
@@ -220,15 +222,8 @@ downloadOneSegment(SOCK control_socket,
   std::cout << buffer;
   std::cout << "sent retr\n";
 
-  char fname[100];
-  sprintf(fname, "downloadfile.%d", part_id);
 
   // 下载文件
-  FILE* file = ACE_OS::fopen(fname, "wb");
-  if (!file) {
-    std::cout << "Open File Error\n";
-    exit(0);
-  }
   std::cout << "I'm " << part_id << " , I will get " << size << "\n";
   ssize_t total_received = 0;
   while ((recv_count = data_socket.recv(buffer, sizeof(buffer))) > 0) {
@@ -246,7 +241,6 @@ downloadOneSegment(SOCK control_socket,
   }
 
   std::cout << "I'm " << part_id << " , I have got " << total_received << "\n";
-  ACE_OS::fclose(file);
 
   // 关闭数据连接
   data_socket.close();
