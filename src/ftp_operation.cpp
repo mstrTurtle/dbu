@@ -1,6 +1,5 @@
-#include "ftp_operation.h"
-#include "ftp_util.h"
 #include "option.h"
+#include "ftp_operation.h"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
 #include <ace/SOCK_Connector.h>
@@ -9,7 +8,6 @@
 #include <string>
 #include <thread>
 #include <sstream>
-
 
 /**
  * @brief 建立与FTP服务器的控制连接。
@@ -44,30 +42,33 @@ SOCK connect_to_ftp(string ip, int port)
  * @param pass FTP服务器的密码。
  * @return 如果成功登录，则返回0；如果出现错误，则返回1。
  */
-int login_to_ftp(SOCK sock, string user, string pass)
+int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
 {
-    char buffer[1024];
-    char comm[1024];
-    ssize_t recv_count;
+    string c, t;
 
     // 接收服务器的欢迎信息
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << buffer;
+    if (cli.receive_reply(c, t)) {
+        std::cout << "Error receiving welcome message from server."
+                  << std::endl;
+        return 1;
+    }
+
+    std::cout << "login welcome received: " << t << std::endl;
 
     // 发送用户名和密码
-    sprintf(comm, "USER %s\r\n", user.c_str());
-    sock.send(comm, strlen(comm));
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << buffer;
+    if (cli.send_and_receive("USER", user, c, t)) {
+        std::cout << "Error sending USER command to server." << std::endl;
+        return 1;
+    }
 
-    sprintf(comm, "PASS %s\r\n", pass.c_str());
-    sock.send(comm, strlen(comm));
-    sleep(1);
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << buffer;
+    std::cout << "login user received: " << t << std::endl;
+
+    if (cli.send_and_receive("PASS", pass, c, t)) {
+        std::cout << "Error sending PASS command to server." << std::endl;
+        return 1;
+    }
+
+    std::cout << "login pass received: " << t << std::endl;
 
     return 0;
 }
@@ -82,22 +83,22 @@ int login_to_ftp(SOCK sock, string user, string pass)
  * @param dsock 数据连接的套接字。
  * @return 如果成功建立数据连接，则返回0；如果出现错误，则返回1。
  */
-int enter_passive_and_get_data_connection(SOCK sock, SOCK& dsock)
+int enter_passive_and_get_data_connection(Ftp_Control_Client cli, SOCK& dsock)
 {
-    char buffer[1024];
-    ssize_t recv_count;
+    string c, t;
     std::cout << "to pasv\n";
     // 发送PASV命令，进入被动模式
-    sock.send("PASV\r\n", 6);
-    std::cout << "sent\n";
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << "recved\n";
-    std::cout << buffer;
+    cli.send_command("PASV", "");
+    cli.receive_reply(c, t);
+    std::cout << "got pasv" << t << "\n";
+
+    if (c != "227") {
+        return 1;
+    }
 
     // 解析被动模式响应，获取数据连接IP和端口号
     unsigned int ip1, ip2, ip3, ip4, port1, port2;
-    sscanf(buffer, "227 Entering Passive Mode (%u,%u,%u,%u,%u,%u)", &ip1, &ip2,
+    sscanf(t.c_str(), "Entering Passive Mode (%u,%u,%u,%u,%u,%u)", &ip1, &ip2,
            &ip3, &ip4, &port1, &port2);
     std::string data_ip = std::to_string(ip1) + "." + std::to_string(ip2) +
                           "." + std::to_string(ip3) + "." +
@@ -163,7 +164,7 @@ void enter_passive_and_download_one_segment_and_close(
  * @note 此函数假设控制套接字和数据套接字已经连接到FTP服务器。
  */
 void download_one_segment(
-        SOCK sock,
+        Ftp_Control_Client cli,
         SOCK data_socket,
         string path,
         off_t start_offset,
@@ -173,66 +174,51 @@ void download_one_segment(
 {
     char buffer[1024];
     ssize_t recv_count;
+    string c, t;
 
     // 发送TYPE I命令，进入BINARY模式
-    // off_t start_offset = 0; // 设置起始偏移量，单位为字节
-    ACE_OS::sprintf(buffer, "TYPE I\r\n");
-    sock.send(buffer, ACE_OS::strlen(buffer));
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << buffer;
-    std::cout << "sent part i\n";
+    cli.send_command("TYPE", "I");
+    cli.receive_reply(c, t);
+    std::cout << "Sent TYPE I\n";
 
     // 发送REST命令，设置下载的起始偏移量
-    // off_t start_offset = 0; // 设置起始偏移量，单位为字节
-    ACE_OS::sprintf(buffer, "REST %lu\r\n", start_offset);
-    sock.send(buffer, ACE_OS::strlen(buffer));
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << buffer;
-    std::cout << "sent rest\n";
+    cli.send_command("REST", std::to_string(start_offset));
+    cli.receive_reply(c, t);
 
     // 发送RETR命令
-    const char* file_name = path.c_str();
-    ACE_OS::sprintf(buffer, "RETR %s\r\n", file_name);
-    sock.send(buffer, ACE_OS::strlen(buffer));
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    // if(getStatusCode(buffer) != 550){
-    //   std::cout << "open error\n";
-    //   exit(0);
-    // }
-    std::cout << buffer;
+    cli.send_command("RETR", path);
+    cli.receive_reply(c, t);
+    if (c != "550") {
+        std::cout << "open error\n";
+        return;
+    }
     std::cout << "sent retr\n";
 
     // 下载文件
-    std::cout << "I'm " << part_id << " , I will get " << size << "\n";
+    std::cout << "The " << part_id << " ready to get " << size << "\n";
     ssize_t total_received = 0;
     while ((recv_count = data_socket.recv(buffer, sizeof(buffer))) > 0) {
-        std::cout << "I'm " << part_id << " , I received " << recv_count
-                  << "\n";
+        std::cout << "The " << part_id << " received " << recv_count << "\n";
         ssize_t remaining = recv_count;
         if (total_received + remaining > size) {
             remaining = size - total_received;
         }
         ACE_OS::fwrite(buffer, 1, remaining, file);
-        std::cout << "I'm " << part_id << " , I wrote " << remaining << "\n";
+        std::cout << "The " << part_id << " wrote " << remaining << "\n";
         total_received += remaining;
         if (total_received >= size) {
             break;
         }
     }
 
-    std::cout << "I'm " << part_id << " , I have got " << total_received
+    std::cout << "The " << part_id << " totally have got " << total_received
               << "\n";
 
     // 关闭数据连接
     data_socket.close();
 
     // 接收RETR命令响应
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << buffer;
+    cli.receive_reply(c, t);
 }
 
 /**
@@ -243,16 +229,11 @@ void download_one_segment(
  * @param sock 控制连接的套接字。
  * @return 返回值为0表示成功关闭控制连接和退出FTP服务器，否则表示出现错误。
  */
-int quit_and_close(ACE_SOCK_Stream& sock)
+int quit_and_close(SOCK& sock)
 {
-    char buffer[1024];
-    ssize_t recv_count;
+    Ftp_Control_Client cli(sock);
+    cli.send_command("QUIT", "");
 
-    // 发送QUIT命令，关闭控制连接
-    sock.send("QUIT\r\n", 6);
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << buffer;
     sock.close();
     return 0;
 }
@@ -266,32 +247,26 @@ int quit_and_close(ACE_SOCK_Stream& sock)
  * @param path 文件的路径。
  * @return 返回文件的大小（以字节为单位），如果获取失败则返回-1。
  */
-int get_ftp_file_size(SOCK sock, const std::string& path)
+int get_ftp_file_size(Ftp_Control_Client cli, const std::string& path)
 {
     std::cout << "Getting Ftp Size\n";
 
-    ssize_t recv_count;
+    string c, t;
 
-    char comm[1000];
-    std::fill(comm, comm + sizeof(comm), '\0');
-    sprintf(comm, "SIZE %s\r\n", path.c_str()); // 发送SIZE
-    sock.send(comm, strlen(comm));
+    cli.send_command("SIZE", path);
 
-    sleep(1);
+    cli.receive_reply(c, t);
 
-    char buffer[1000];
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
+    std::cout << "recieved size. size is " << t << "\n";
 
-    std::cout << "recieved size. buffer is " << buffer << "\n";
+    if (c != "213") {
+        return -1;
+    }
 
-    int size;
-    sscanf(buffer, "213 %d", &size); // 接收响应
-
-    return size;
+    return std::stoi(t);
 }
 
-int Ftp_Control_Client::sendCommand(
+int Ftp_Control_Client::send_command(
         const std::string& command,
         const std::string& argument)
 {
@@ -302,11 +277,12 @@ int Ftp_Control_Client::sendCommand(
     return 0;
 }
 
-int Ftp_Control_Client::receiveReply(
+int Ftp_Control_Client::receive_reply(
         std::string& status_code,
         std::string& result_lines)
 {
     std::string line;
+    result_lines.clear();
     while (true) {
         if (sock.receiveLine(line)) {
             // 接收失败或连接关闭
@@ -319,14 +295,14 @@ int Ftp_Control_Client::receiveReply(
         if (line.size() >= 4 && isdigit(line[0]) && isdigit(line[1]) &&
             isdigit(line[2]) && line[3] == '-') {
             status_code = line.substr(0, 3);
-            result_lines += line.substr(4);
+            result_lines += (line.substr(4) + "\n");
             continue;
         }
         // 2. 是Completion Reply且不是中间状态行
         else if (
                 line.size() >= 4 && isdigit(line[0]) && isdigit(line[1]) &&
                 isdigit(line[2]) && line[3] == ' ') {
-            result_lines += line.substr(5);
+            result_lines += (line.substr(4) + "\n");
             return 0;
         }
         // 3. 是中间状态行
@@ -334,4 +310,19 @@ int Ftp_Control_Client::receiveReply(
             continue;
         }
     }
+}
+
+int Ftp_Control_Client::send_and_receive(
+        const std::string& command,
+        const std::string& argument,
+        std::string& status_code,
+        std::string& result_lines)
+{
+    if (send_command(command, argument)) {
+        return 1;
+    }
+    if (receive_reply(status_code, result_lines)) {
+        return 1;
+    }
+    return 0;
 }

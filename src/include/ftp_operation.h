@@ -19,22 +19,69 @@
 
 #include "ftp_util.h"
 
+/**
+ * @class Ftp_Control_Client
+ * @brief 用于发送和接收FTP命令的FTP控制客户端类。
+ */
+class Ftp_Control_Client
+{
+private:
+    Lined_SOCK sock; ///< Lined_SOCK对象
+
+public:
+    /**
+     * @brief 构造函数，使用给定的SOCK对象初始化Ftp_Control_Client。
+     * @param sock_ Lined_SOCK对象
+     */
+    Ftp_Control_Client(const SOCK& sock_): sock(sock_) {}
+
+    /**
+     * @brief 发送FTP命令。
+     * @param command 命令名
+     * @param argument 命令内容
+     * @return 发送成功返回0，发送失败返回1
+     */
+    int send_command(const std::string& command, const std::string& argument);
+
+    /**
+     * @brief 接收FTP服务器的回复。
+     * @param status_code 存储接收到的状态码
+     * @param line 存储接收到的行内容
+     * @return 接收成功返回0，接收失败或连接关闭返回1
+     */
+    int receive_reply(std::string& status_code, std::string& result_lines);
+
+    /**
+     * @brief 发送FTP命令并接收FTP服务器的回复。
+     * @param command 命令名
+     * @param argument 命令内容
+     * @param status_code 存储接收到的状态码
+     * @param line 存储接收到的行内容
+     * @return 发送与接收都成功返回0，发送或接收失败或连接关闭返回1
+     */
+    int send_and_receive(
+            const std::string& command,
+            const std::string& argument,
+            std::string& status_code,
+            std::string& result_lines);
+};
+
 SOCK connect_to_ftp(string ip, int port = 21);
 int login_to_ftp(
-        SOCK sock,
+        Ftp_Control_Client sock,
         string user = "anonymous",
         string pass = "");
-int enter_passive_and_get_data_connection(SOCK sock, SOCK& dsock);
+int enter_passive_and_get_data_connection(Ftp_Control_Client sock, SOCK& dsock);
 void download_one_segment(
-        SOCK sock,
+        Ftp_Control_Client cli,
         SOCK data_socket,
         string path,
         off_t start_offset,
         size_t size,
         int part_id,
         FILE* file);
-int quit_and_close(ACE_SOCK_Stream& sock);
-int get_ftp_file_size(SOCK sock, const std::string& path);
+int quit_and_close(SOCK& sock);
+int get_ftp_file_size(Ftp_Control_Client sock, const std::string& path);
 void enter_passive_and_download_one_segment_and_close(
         string path,
         off_t off,
@@ -64,35 +111,3 @@ Sock_Creator make_logined_sock_creator(
         const ACE_INET_Addr& address,
         const std::string& username,
         const std::string& password);
-
-/**
- * @class Ftp_Control_Client
- * @brief 用于发送和接收FTP命令的FTP控制客户端类。
- */
-class Ftp_Control_Client
-{
-private:
-    Lined_SOCK sock; ///< Lined_SOCK对象
-
-public:
-    /**
-     * @brief 构造函数，使用给定的SOCK对象初始化Ftp_Control_Client。
-     * @param sock_ Lined_SOCK对象
-     */
-    Ftp_Control_Client(const SOCK& sock_): sock(sock_) {}
-
-    /**
-     * @brief 发送FTP命令。
-     * @param command 命令名
-     * @param argument 命令内容
-     * @return 发送成功返回0，发送失败返回1
-     */
-    int sendCommand(const std::string& command, const std::string& argument);
-    /**
-     * @brief 接收FTP服务器的回复。
-     * @param status_code 存储接收到的状态码
-     * @param line 存储接收到的行内容
-     * @return 接收成功返回0，接收失败或连接关闭返回1
-     */
-    int receiveReply(std::string& status_code, std::string& result_lines);
-};
