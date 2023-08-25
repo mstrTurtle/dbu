@@ -124,7 +124,16 @@ int enter_passive_and_get_data_connection(SOCK control_socket, SOCK& dsock)
     return 0;
 }
 
-
+/**
+ * @brief 进入被动模式，下载指定片段的文件，并关闭连接。
+ *
+ * @param path 文件路径。
+ * @param off 文件偏移量。
+ * @param size 文件大小。
+ * @param part_id 片段 ID。
+ * @param file 文件指针。
+ * @param sock 连接的 SOCK 对象。
+ */
 void enter_passive_and_download_one_segment_and_close(
         Str path,
         off_t off,

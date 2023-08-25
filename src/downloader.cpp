@@ -1,4 +1,5 @@
 #include "downloader.h"
+#include "downloader_errors.h"
 #include "ftp_operation.h"
 #include "ftp_util.h"
 #include "option.h"
@@ -11,6 +12,8 @@
 #include <set>
 #include <string>
 #include <thread>
+
+using namespace Downloader_Errors;
 
 /**
  * @brief 将多个文件聚合到一个文件中。
@@ -56,11 +59,11 @@ int open_n_file(int n, vector<FILE*>& result)
         FILE* file = ACE_OS::fopen(fname, "w+b");
         if (!file) {
             std::cout << "Open File Error\n";
-            return 1;
+            return BAD_FILE_HANDLE;
         }
         result.emplace_back(file);
     }
-    return 0;
+    return OK;
 }
 
 /**
@@ -86,7 +89,7 @@ int spawn_multi_downloads_and_join(
     int fsize = get_ftp_file_size(sock, path);
     if (fsize == -1) {
         std::cout << "get file size failed\n";
-        return 1;
+        return BAD_PATH;
     }
     int fhandle = open(path.c_str(), O_RDWR);
     int segsize =
@@ -96,7 +99,7 @@ int spawn_multi_downloads_and_join(
 
     if (open_n_file(threads, fs)) {
         std::cout << "open failed\n";
-        return 1;
+        return BAD_FILE_HANDLE;
     }
 
     for (int i = 0; i < threads - 1; i++) {
@@ -134,7 +137,7 @@ int spawn_multi_downloads_and_join(
 
     ACE_OS::fclose(file);
 
-    return 0;
+    return OK;
 }
 
 /**
@@ -157,5 +160,5 @@ int Downloader::run()
     // 关闭ACE
     ACE::fini();
 
-    return 0;
+    return OK;
 }
