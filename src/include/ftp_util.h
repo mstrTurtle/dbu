@@ -27,7 +27,7 @@ using VS = vector<string>;
 using SOCK = ACE_SOCK_Stream;
 
 int fetch_nlst(
-        ACE_SOCK_Stream& control_socket,
+        ACE_SOCK_Stream& sock,
         const std::string& cwd,
         std::string& result);
 
@@ -49,7 +49,7 @@ int fetch_find(SOCK sock, string path, string e, bool& result);
 
 bool fetch_exist(SOCK sock, string path);
 
-void setup_control(ACE_SOCK_Stream& control_socket);
+void setup_control(ACE_SOCK_Stream& sock);
 
 int get_status_code(const char* line);
 

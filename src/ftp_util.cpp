@@ -207,24 +207,24 @@ ssize_t recv_count;
 /**
  * FTP登录与转入被动
  */
-void setup_control(ACE_SOCK_Stream& control_socket)
+void setup_control(ACE_SOCK_Stream& sock)
 {
     // current working directory
     std::string cwd = "/ftp_product_installer/dbackup3/rpm";
 
     // 接收服务器的欢迎信息
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
 
     // 发送用户名和密码
-    control_socket.send("USER scutech\r\n", 16);
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    sock.send("USER scutech\r\n", 16);
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
 
-    control_socket.send("PASS dingjia\r\n", 6);
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    sock.send("PASS dingjia\r\n", 6);
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
 }
@@ -232,25 +232,25 @@ void setup_control(ACE_SOCK_Stream& control_socket)
 /**
  * @brief 抓取目录列表
  *
- * @param control_socket
+ * @param sock
  * @param cwd
  * @param data_ip
  * @param data_port
  * @param result
  */
 int fetch_nlst(
-        ACE_SOCK_Stream& control_socket,
+        ACE_SOCK_Stream& sock,
         const std::string& cwd,
         std::string& result)
 {
     std::fill(buffer, buffer + sizeof(buffer), '\0');
     SOCK data_socket;
-    enter_passive_and_get_data_connection(control_socket, data_socket);
+    enter_passive_and_get_data_connection(sock, data_socket);
 
     // 发送NLST命令
     ACE_OS::sprintf(buffer, "NLST %s\r\n", cwd.c_str());
-    control_socket.send(buffer, ACE_OS::strlen(buffer));
-    // recv_count = control_socket.recv(buffer, sizeof(buffer));
+    sock.send(buffer, ACE_OS::strlen(buffer));
+    // recv_count = sock.recv(buffer, sizeof(buffer));
     // buffer[recv_count] = '\0';
     // std::cout << buffer;
 
@@ -266,7 +266,7 @@ int fetch_nlst(
     data_socket.close();
 
     // 接收NLST命令响应
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
 

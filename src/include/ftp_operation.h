@@ -1,3 +1,13 @@
+/**
+ * @file ftp_operation.h
+ * @author JiayuXiao (xiaojiayu@scutech.com)
+ * @brief 与FTP协议直接相关的操作，对FTP协议的高级抽象
+ * @version 0.1
+ * @date 2023-07-28
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 #pragma once
 #include <ace/SOCK_Stream.h>
 #include <ace/SOCK_Connector.h>
@@ -10,17 +20,20 @@
 #include "ftp_util.h"
 
 SOCK connect_to_ftp(string ip, int port = 21);
-int login_to_ftp(SOCK control_socket, string user = "anonymous", string pass = "");
-int enter_passive_and_get_data_connection(SOCK control_socket, SOCK& dsock);
+int login_to_ftp(
+        SOCK sock,
+        string user = "anonymous",
+        string pass = "");
+int enter_passive_and_get_data_connection(SOCK sock, SOCK& dsock);
 void download_one_segment(
-        SOCK control_socket,
+        SOCK sock,
         SOCK data_socket,
         string path,
         off_t start_offset,
         size_t size,
         int part_id,
         FILE* file);
-int quit_and_close(ACE_SOCK_Stream& control_socket);
+int quit_and_close(ACE_SOCK_Stream& sock);
 int get_ftp_file_size(SOCK sock, const std::string& path);
 void enter_passive_and_download_one_segment_and_close(
         string path,
@@ -29,6 +42,7 @@ void enter_passive_and_download_one_segment_and_close(
         int part_id,
         FILE* file,
         SOCK sock);
+
 /**
  * @brief FTP控制连接socket的工厂方法类型
  *

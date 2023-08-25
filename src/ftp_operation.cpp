@@ -24,14 +24,14 @@
 SOCK connect_to_ftp(string ip, int port)
 {
     // 建立控制连接
-    ACE_SOCK_Stream control_socket;
+    ACE_SOCK_Stream sock;
     ACE_INET_Addr control_addr(port, ip.c_str());
     ACE_SOCK_Connector connector;
-    if (connector.connect(control_socket, control_addr) == -1) {
+    if (connector.connect(sock, control_addr) == -1) {
         ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
         return 1;
     }
-    return control_socket;
+    return sock;
 }
 
 /**
@@ -39,33 +39,33 @@ SOCK connect_to_ftp(string ip, int port)
  *
  * 此函数向FTP服务器发送用户名和密码以进行登录。
  *
- * @param control_socket 控制连接的套接字。
+ * @param sock 控制连接的套接字。
  * @param user FTP服务器的用户名。
  * @param pass FTP服务器的密码。
  * @return 如果成功登录，则返回0；如果出现错误，则返回1。
  */
-int login_to_ftp(SOCK control_socket, string user, string pass)
+int login_to_ftp(SOCK sock, string user, string pass)
 {
     char buffer[1024];
     char comm[1024];
     ssize_t recv_count;
 
     // 接收服务器的欢迎信息
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
 
     // 发送用户名和密码
     sprintf(comm, "USER %s\r\n", user.c_str());
-    control_socket.send(comm, strlen(comm));
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    sock.send(comm, strlen(comm));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
 
     sprintf(comm, "PASS %s\r\n", pass.c_str());
-    control_socket.send(comm, strlen(comm));
+    sock.send(comm, strlen(comm));
     sleep(1);
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
 
@@ -78,19 +78,19 @@ int login_to_ftp(SOCK control_socket, string user, string pass)
  * 此函数向FTP服务器发送PASV命令以进入被动模式，并解析响应以获取数据连接的IP地址和端口号。
  * 然后，它使用获取的IP地址和端口号建立数据连接。
  *
- * @param control_socket 控制连接的套接字。
+ * @param sock 控制连接的套接字。
  * @param dsock 数据连接的套接字。
  * @return 如果成功建立数据连接，则返回0；如果出现错误，则返回1。
  */
-int enter_passive_and_get_data_connection(SOCK control_socket, SOCK& dsock)
+int enter_passive_and_get_data_connection(SOCK sock, SOCK& dsock)
 {
     char buffer[1024];
     ssize_t recv_count;
     std::cout << "to pasv\n";
     // 发送PASV命令，进入被动模式
-    control_socket.send("PASV\r\n", 6);
+    sock.send("PASV\r\n", 6);
     std::cout << "sent\n";
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << "recved\n";
     std::cout << buffer;
@@ -153,7 +153,7 @@ void enter_passive_and_download_one_segment_and_close(
  *
  * 此函数使用提供的控制套接字和数据套接字从FTP服务器下载文件的一部分。
  *
- * @param control_socket 用于向FTP服务器发送命令的控制套接字。
+ * @param sock 用于向FTP服务器发送命令的控制套接字。
  * @param data_socket 用于接收文件数据的数据套接字。
  * @param path FTP服务器上文件的路径。
  * @param start_offset 要下载的部分的起始偏移量。
@@ -163,7 +163,7 @@ void enter_passive_and_download_one_segment_and_close(
  * @note 此函数假设控制套接字和数据套接字已经连接到FTP服务器。
  */
 void download_one_segment(
-        SOCK control_socket,
+        SOCK sock,
         SOCK data_socket,
         string path,
         off_t start_offset,
@@ -177,8 +177,8 @@ void download_one_segment(
     // 发送TYPE I命令，进入BINARY模式
     // off_t start_offset = 0; // 设置起始偏移量，单位为字节
     ACE_OS::sprintf(buffer, "TYPE I\r\n");
-    control_socket.send(buffer, ACE_OS::strlen(buffer));
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    sock.send(buffer, ACE_OS::strlen(buffer));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
     std::cout << "sent part i\n";
@@ -186,8 +186,8 @@ void download_one_segment(
     // 发送REST命令，设置下载的起始偏移量
     // off_t start_offset = 0; // 设置起始偏移量，单位为字节
     ACE_OS::sprintf(buffer, "REST %lu\r\n", start_offset);
-    control_socket.send(buffer, ACE_OS::strlen(buffer));
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    sock.send(buffer, ACE_OS::strlen(buffer));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
     std::cout << "sent rest\n";
@@ -195,8 +195,8 @@ void download_one_segment(
     // 发送RETR命令
     const char* file_name = path.c_str();
     ACE_OS::sprintf(buffer, "RETR %s\r\n", file_name);
-    control_socket.send(buffer, ACE_OS::strlen(buffer));
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    sock.send(buffer, ACE_OS::strlen(buffer));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     // if(getStatusCode(buffer) != 550){
     //   std::cout << "open error\n";
@@ -230,7 +230,7 @@ void download_one_segment(
     data_socket.close();
 
     // 接收RETR命令响应
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
 }
@@ -240,20 +240,20 @@ void download_one_segment(
  *
  * 此函数发送QUIT命令关闭控制连接，并从FTP服务器退出。
  *
- * @param control_socket 控制连接的套接字。
+ * @param sock 控制连接的套接字。
  * @return 返回值为0表示成功关闭控制连接和退出FTP服务器，否则表示出现错误。
  */
-int quit_and_close(ACE_SOCK_Stream& control_socket)
+int quit_and_close(ACE_SOCK_Stream& sock)
 {
     char buffer[1024];
     ssize_t recv_count;
 
     // 发送QUIT命令，关闭控制连接
-    control_socket.send("QUIT\r\n", 6);
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
+    sock.send("QUIT\r\n", 6);
+    recv_count = sock.recv(buffer, sizeof(buffer));
     buffer[recv_count] = '\0';
     std::cout << buffer;
-    control_socket.close();
+    sock.close();
     return 0;
 }
 
