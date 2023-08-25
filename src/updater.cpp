@@ -45,7 +45,9 @@ int Updater::run()
     Downloader downloader(
             path, OPTION->threads_, "download.rpm", sock, sock_creator);
 
-    downloader.run();
+    if(!downloader.run()){
+        return 1;
+    }
 
     // run installer，安装
     Installer installer;

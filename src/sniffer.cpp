@@ -84,7 +84,9 @@ int Sniffer::process_version()
 {
     ACE_TRACE(ACE_TEXT(__func__));
     string result;
-    fetch_find_max(conn.sock, cwd, result);
+    if(fetch_find_max(conn.sock, cwd, result)){
+        return BAD_LOOKUP;
+    }
     join_path(cwd, result);
     std::cout << __func__ << " completed, cwd is" << cwd << std::endl;
     return OK;
@@ -101,7 +103,9 @@ int Sniffer::process_functionality()
         return BAD_FETCH;
     }
     string target;
-    get_regular_name(v[0], target);
+    if (get_regular_name(v[0], target)) {
+        return BAD_FETCH;
+    }
     join_path(cwd, target);
     std::cout << __func__ << " completed, cwd is" << cwd << std::endl;
     return OK;

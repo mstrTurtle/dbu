@@ -87,7 +87,9 @@ int find_max(const VS& ss, std::string& result)
 
     for (auto line : ss) {
         std::string r_name;
-        get_regular_name(line, r_name);
+        if(get_regular_name(line, r_name)){
+            return 1;
+        }
         ACE_DEBUG((LM_DEBUG, "Processing r_name: %s\n", r_name.c_str()));
         // 将数字解析为tuple
         int a, b, c;

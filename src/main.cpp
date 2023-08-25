@@ -10,6 +10,8 @@ int ACE_TMAIN(int argc, ACE_TCHAR* argv[])
 {
     OPTION->parse_args(argc, argv);
     Updater updater(*OPTION);
-    updater.run();
+    if(int ret = updater.run()){
+        std::cout << "Error occured in updater. error code: " << ret;
+    }
     return 0;
 }
