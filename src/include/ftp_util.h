@@ -104,12 +104,12 @@ public:
      * @param line 要发送的文本行
      * @return 发送成功返回0，发送失败返回1
      */
-    [[nodiscard]] int sendLine(const std::string& line);
+    [[nodiscard]] int send_line(const std::string& line);
 
     /**
      * @brief 接收一行文本。
      * @param line 存储接收到的文本行
      * @return 接收成功返回0，接收失败返回1
      */
-    [[nodiscard]] int receiveLine(std::string& line);
+    [[nodiscard]] int receive_line(std::string& line);
 };

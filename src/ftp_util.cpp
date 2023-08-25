@@ -126,42 +126,42 @@ Sock_Creator make_logined_sock_creator(
     };
 }
 
-int Lined_SOCK::sendLine(const std::string& line)
+int Lined_SOCK::send_line(const std::string& line)
 {
     std::string message = line + "\r\n";
-    ssize_t bytesSent = sock.send_n(message.c_str(), message.length());
-    if (bytesSent != static_cast<ssize_t>(message.length())) {
+    ssize_t bytes_sent = sock.send_n(message.c_str(), message.length());
+    if (bytes_sent != static_cast<ssize_t>(message.length())) {
         return 1;
     } else
         return 0;
 }
 
-int Lined_SOCK::receiveLine(std::string& line)
+int Lined_SOCK::receive_line(std::string& line)
 {
     line.clear();
 
     while (true) {
         // 检查缓冲区中是否有剩余数据
-        size_t newlinePos = buffer.find("\r\n");
-        if (newlinePos != std::string::npos) {
+        size_t newline_pos = buffer.find("\r\n");
+        if (newline_pos != std::string::npos) {
             // 从缓冲区中提取行
-            line = buffer.substr(0, newlinePos);
+            line = buffer.substr(0, newline_pos);
 
             // 从缓冲区中删除行（包括分隔符）
-            buffer.erase(0, newlinePos + 2);
+            buffer.erase(0, newline_pos + 2);
 
             return 0;
         }
 
         // 从套接字中读取更多数据到缓冲区
-        char recvBuffer[1024];
-        ssize_t bytesRead = sock.recv(recvBuffer, sizeof(recvBuffer));
-        if (bytesRead <= 0) {
+        char recv_buffer[1024];
+        ssize_t bytes_read = sock.recv(recv_buffer, sizeof(recv_buffer));
+        if (bytes_read <= 0) {
             // 错误或连接关闭
             return 1;
         }
 
         // 将接收到的数据追加到缓冲区
-        buffer.append(recvBuffer, bytesRead);
+        buffer.append(recv_buffer, bytes_read);
     }
 }

@@ -308,7 +308,7 @@ int Ftp_Control_Client::send_command(
         const std::string& argument)
 {
     std::string cmd = command + " " + argument;
-    if (sock.sendLine(cmd)) {
+    if (sock.send_line(cmd)) {
         return 1;
     }
     return 0;
@@ -321,7 +321,7 @@ int Ftp_Control_Client::receive_reply(
     std::string line;
     result_lines.clear();
     while (true) {
-        if (sock.receiveLine(line)) {
+        if (sock.receive_line(line)) {
             // 接收失败或连接关闭
             return 1;
         }

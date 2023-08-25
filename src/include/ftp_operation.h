@@ -79,13 +79,13 @@ public:
  *
  * 此函数向FTP服务器发送用户名和密码以进行登录。
  *
- * @param sock 控制连接的套接字。
+ * @param cli 控制连接的套接字。
  * @param user FTP服务器的用户名。
  * @param pass FTP服务器的密码。
  * @return 如果成功登录，则返回0；如果出现错误，则返回1。
  */
 [[nodiscard]] int login_to_ftp(
-        Ftp_Control_Client sock,
+        Ftp_Control_Client cli,
         string user = "anonymous",
         string pass = "");
 
@@ -95,12 +95,12 @@ public:
  * 此函数向FTP服务器发送PASV命令以进入被动模式，并解析响应以获取数据连接的IP地址和端口号。
  * 然后，它使用获取的IP地址和端口号建立数据连接。
  *
- * @param sock 控制连接的套接字。
+ * @param cli Ftp_Control_Client 对象，用于发送控制命令和接收响应。
  * @param dsock 数据连接的套接字。
  * @return 如果成功建立数据连接，则返回0；如果出现错误，则返回1。
  */
 [[nodiscard]] int enter_passive_and_get_data_connection(
-        Ftp_Control_Client sock,
+        Ftp_Control_Client cli,
         SOCK& dsock);
 
 /**
@@ -108,7 +108,7 @@ public:
  *
  * 此函数使用提供的控制套接字和数据套接字从FTP服务器下载文件的一部分。
  *
- * @param sock 用于向FTP服务器发送命令的控制套接字。
+ * @param cli Ftp_Control_Client 对象，用于发送控制命令和接收响应
  * @param data_socket 用于接收文件数据的数据套接字。
  * @param path FTP服务器上文件的路径。
  * @param start_offset 要下载的部分的起始偏移量。
@@ -143,13 +143,13 @@ public:
  *
  * 此函数向FTP服务器发送SIZE命令以获取指定文件的大小。
  *
- * @param sock 控制连接的套接字。
+ * @param cli Ftp_Control_Client 对象，用于发送控制命令和接收响应。
  * @param path 文件的路径。
  * @param result [out] 查找结果，文件的大小
  * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
 [[nodiscard]] int get_ftp_file_size(
-        Ftp_Control_Client sock,
+        Ftp_Control_Client cli,
         const std::string& path,
         int& result);
 
@@ -185,13 +185,13 @@ typedef std::function<int(SOCK&)> Sock_Creator;
  * 通过与服务器建立数据连接，发送NLST命令来获取指定目录下的文件列表，
  * 并将结果存储在result参数中。
  *
- * @param sock ACE_SOCK_Stream对象，用于与服务器建立数据连接和发送命令
+ * @param cli Ftp_Control_Client 对象，用于发送控制命令和接收响应
  * @param cwd 目标目录路径
  * @param result 存储目录列表的字符串引用，将被填充为获取到的文件列表
  * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
 [[nodiscard]] int fetch_nlst(
-        Ftp_Control_Client sock,
+        Ftp_Control_Client cli,
         const std::string& cwd,
         std::string& result);
 
