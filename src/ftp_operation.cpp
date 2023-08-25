@@ -9,19 +9,6 @@
 #include <thread>
 #include <sstream>
 
-SOCK connect_to_ftp(string ip, int port)
-{
-    // 建立控制连接
-    ACE_SOCK_Stream sock;
-    ACE_INET_Addr control_addr(port, ip.c_str());
-    ACE_SOCK_Connector connector;
-    if (connector.connect(sock, control_addr) == -1) {
-        std::cout << "Error connecting to control socket." << std::endl;
-        return 1;
-    }
-    return sock;
-}
-
 int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
 {
     string c, t;
