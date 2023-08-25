@@ -9,16 +9,6 @@
 #include <thread>
 #include <sstream>
 
-/**
- * @brief 建立与FTP服务器的控制连接。
- *
- * 此函数使用给定的IP地址和端口号建立与FTP服务器的控制连接。
- *
- * @param ip FTP服务器的IP地址。
- * @param port FTP服务器的端口号。
- * @return
- * 如果成功建立控制连接，则返回控制连接的套接字；如果出现错误，则返回1。
- */
 SOCK connect_to_ftp(string ip, int port)
 {
     // 建立控制连接
@@ -32,16 +22,6 @@ SOCK connect_to_ftp(string ip, int port)
     return sock;
 }
 
-/**
- * @brief 登录到FTP服务器。
- *
- * 此函数向FTP服务器发送用户名和密码以进行登录。
- *
- * @param sock 控制连接的套接字。
- * @param user FTP服务器的用户名。
- * @param pass FTP服务器的密码。
- * @return 如果成功登录，则返回0；如果出现错误，则返回1。
- */
 int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
 {
     string c, t;
@@ -73,16 +53,6 @@ int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
     return 0;
 }
 
-/**
- * @brief 进入被动模式并建立数据连接。
- *
- * 此函数向FTP服务器发送PASV命令以进入被动模式，并解析响应以获取数据连接的IP地址和端口号。
- * 然后，它使用获取的IP地址和端口号建立数据连接。
- *
- * @param sock 控制连接的套接字。
- * @param dsock 数据连接的套接字。
- * @return 如果成功建立数据连接，则返回0；如果出现错误，则返回1。
- */
 int enter_passive_and_get_data_connection(Ftp_Control_Client cli, SOCK& dsock)
 {
     string c, t;
@@ -124,16 +94,6 @@ int enter_passive_and_get_data_connection(Ftp_Control_Client cli, SOCK& dsock)
     return 0;
 }
 
-/**
- * @brief 进入被动模式，下载指定片段的文件，并关闭连接。
- *
- * @param path 文件路径。
- * @param off 文件偏移量。
- * @param size 文件大小。
- * @param part_id 片段 ID。
- * @param file 文件指针。
- * @param sock 连接的 SOCK 对象。
- */
 void enter_passive_and_download_one_segment_and_close(
         string path,
         off_t off,
@@ -149,20 +109,6 @@ void enter_passive_and_download_one_segment_and_close(
     quit_and_close(sock);
 }
 
-/**
- * @brief 从FTP服务器下载文件的一部分。
- *
- * 此函数使用提供的控制套接字和数据套接字从FTP服务器下载文件的一部分。
- *
- * @param sock 用于向FTP服务器发送命令的控制套接字。
- * @param data_socket 用于接收文件数据的数据套接字。
- * @param path FTP服务器上文件的路径。
- * @param start_offset 要下载的部分的起始偏移量。
- * @param size 要下载的部分的大小。
- * @param part_id 正在下载的部分的ID。
- *
- * @note 此函数假设控制套接字和数据套接字已经连接到FTP服务器。
- */
 void download_one_segment(
         Ftp_Control_Client cli,
         SOCK data_socket,
@@ -221,14 +167,6 @@ void download_one_segment(
     cli.receive_reply(c, t);
 }
 
-/**
- * @brief 关闭控制连接并退出FTP服务器。
- *
- * 此函数发送QUIT命令关闭控制连接，并从FTP服务器退出。
- *
- * @param sock 控制连接的套接字。
- * @return 返回值为0表示成功关闭控制连接和退出FTP服务器，否则表示出现错误。
- */
 int quit_and_close(SOCK& sock)
 {
     Ftp_Control_Client cli(sock);
@@ -238,15 +176,6 @@ int quit_and_close(SOCK& sock)
     return 0;
 }
 
-/**
- * @brief 获取FTP服务器上文件的大小。
- *
- * 此函数向FTP服务器发送SIZE命令以获取指定文件的大小。
- *
- * @param sock 控制连接的套接字。
- * @param path 文件的路径。
- * @return 返回文件的大小（以字节为单位），如果获取失败则返回-1。
- */
 int get_ftp_file_size(Ftp_Control_Client cli, const std::string& path)
 {
     std::cout << "Getting Ftp Size\n";
