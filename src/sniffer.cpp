@@ -23,7 +23,7 @@ using std::vector;
 using VS = vector<string>;
 
 // 函数用于判断主分支并处理分支
-int Sniffer::processBranch()
+int Sniffer::process_branch()
 {
     std::cout << "In Process Branch\n";
     if (hint.branch == "develop" || hint.branch == "master") {
@@ -47,7 +47,7 @@ int Sniffer::processBranch()
  *
  * @return int
  */
-int Sniffer::processOption()
+int Sniffer::process_option()
 {
     std::cout << "In Process Option\n";
     fetch_find(conn.sock, cwd, hint.option);
@@ -60,7 +60,7 @@ int Sniffer::processOption()
  *
  * @return int
  */
-int Sniffer::processTarget()
+int Sniffer::process_target()
 {
     std::cout << "In Process Target\n";
     if (!fetch_find(conn.sock, cwd, hint.arch)) {
@@ -76,7 +76,7 @@ int Sniffer::processTarget()
  *
  * @return int
  */
-int Sniffer::processVersion()
+int Sniffer::process_version()
 {
     std::cout << "In Process Version\n";
     Str result;
@@ -90,7 +90,7 @@ int Sniffer::processVersion()
  *
  * @return int
  */
-int Sniffer::processFunctionality()
+int Sniffer::process_functionality()
 {
     std::cout << "In Process Functionality\n";
     VS v;
@@ -107,8 +107,8 @@ int Sniffer::run(Str& result)
 {
     cwd = "/ftp_product_installer/dbackup3/rpm";
 
-    if (int err = processBranch() || processOption() || processTarget() ||
-                  processVersion() || processFunctionality()) {
+    if (int err = process_branch() || process_option() || process_target() ||
+                  process_version() || process_functionality()) {
         std::cout << "处理过程出错了，退出程序" << std::endl;
         exit(err);
     }
@@ -148,7 +148,7 @@ int test_main()
     return 0;
 }
 
-Sniff_Hint convertOptionToSniffHint(const Option& option)
+Sniff_Hint convert_option_to_sniff_hint(const Option& option)
 {
     Sniff_Hint sniffHint = {
             .branch = option.branch_,

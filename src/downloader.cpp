@@ -98,21 +98,21 @@ int spawn_multi_downloads_and_join(
     for (int i = 0; i < threads - 1; i++) {
         int off = i * segsize;
         int len = segsize;
-        SOCK newSock;
-        create_sock(newSock);
+        SOCK new_sock;
+        create_sock(new_sock);
         ts.emplace_back(std::thread(
-                enter_passive_and_download_one_segment_and_close, path, off, len, i,
-                fs[i], newSock));
+                enter_passive_and_download_one_segment_and_close, path, off,
+                len, i, fs[i], new_sock));
 
         std::cout << "Thread " << i << " Start" << std::endl;
     }
 
     int finaloff = (threads - 1) * segsize;
-    SOCK newSock;
-    create_sock(newSock);
+    SOCK new_sock;
+    create_sock(new_sock);
     ts.emplace_back(std::thread(
             enter_passive_and_download_one_segment_and_close, path, finaloff,
-            fsize - finaloff, threads - 1, fs.back(), newSock));
+            fsize - finaloff, threads - 1, fs.back(), new_sock));
     std::cout << "Thread " << (threads - 1) << " Start" << std::endl;
 
     std::cout << "Download Complete" << std::endl;

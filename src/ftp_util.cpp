@@ -293,13 +293,20 @@ std::string receiveLine(
 
 using MB = ACE_Message_Block;
 
+/**
+ * @brief 为FTP控制连接通信而设计的Socket封装
+ *
+ * 为FTP控制连接通信设计的Socket封装，能够按行接收响应
+ * 以便更好判断返回状态
+ *
+ */
 class LinedSock
 {
     SOCK sock;
     MB block{1024};
 
     LinedSock(SOCK sock_): sock(sock_) {}
-    int getLine(Str& result)
+    int get_line(Str& result)
     {
         result = receiveLine(sock, block);
         return 0;
@@ -315,21 +322,21 @@ int get_status_code(const char* line)
     return atoi(buf);
 }
 
-int getStatusCode(Str line)
+int get_status_code(Str line)
 {
     int i = std::atoi(line.substr(0, 3).c_str());
     return i;
 }
 
 Sock_Creator make_logined_sock_creator(
-        const ACE_INET_Addr& ftpAddress,
+        const ACE_INET_Addr& ftp_address,
         const std::string& username,
         const std::string& password)
 {
     return [=](SOCK& sock) {
         // 连接到对端地址
         ACE_SOCK_Connector connector;
-        if (connector.connect(sock, ftpAddress) == -1) {
+        if (connector.connect(sock, ftp_address) == -1) {
             std::cerr << "Failed to connect to FTP server." << std::endl;
             return 1;
         }

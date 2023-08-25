@@ -59,12 +59,12 @@ public:
     Sniffer(ACE_INET_Addr addr_, SOCK sock_, Sniff_Hint hint_)
         : conn({.addr = addr_, .sock = sock_}),
           hint(hint_){};
-    int processBranch();
-    int processOption();
-    int processTarget();
-    int processVersion();
-    int processFunctionality();
+    int process_branch();
+    int process_option();
+    int process_target();
+    int process_version();
+    int process_functionality();
     int run(Str& result);
 };
 
-Sniff_Hint convertOptionToSniffHint(const Option& option);
+Sniff_Hint convert_option_to_sniff_hint(const Option& option);

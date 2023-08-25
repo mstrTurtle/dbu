@@ -14,7 +14,7 @@ int Updater::run()
     Sock_Creator sock_creator =
             make_logined_sock_creator(addr, "scutech", "dingjia");
 
-    Sniff_Hint hint = convertOptionToSniffHint(option);
+    Sniff_Hint hint = convert_option_to_sniff_hint(option);
 
     std::cout << (option);
 
