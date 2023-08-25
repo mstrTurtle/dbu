@@ -4,18 +4,18 @@
 
 使用Adaptive Communication Environment编写
 
-## 要求
+## 详情
 
-5.使用 ACE 实现迪备客户端更新命令行工具（HF 项目）开发环境
+使用 ACE 实现迪备客户端更新命令行工具（HF 项目）开发环境
 
-● OS：CentOS 7
-● 编辑器：VIM
-● 编译器：GCC (Linux)
-● 构建：CMake
-● VCS：Git
-● 开发语言： C++ 、CMake 构建、Git 版本管理、 gtest 单元测试、Doxygen 对代码注释
+- OS：CentOS 7
+- 编辑器：VIM
+- 编译器：GCC (Linux)
+- 构建：CMake
+- VCS：Git
+- 开发语言： C++ 、CMake 构建、Git 版本管理、 gtest 单元测试、Doxygen 对代码注释
 
-基本要求
+## 规格
 
 1. 使用 C++ 实现一个控制台执行程序
 2. 基于开源网络库 ACE(ADAPTIVE Communication Environment)搭建程序框架
@@ -29,5 +29,5 @@ ftp://scutech@ftp.scutech.com/ftp_product_installer/dbackup3/rpm 下载最新版
 
 参考 GB8567-2006 撰写开发文档，包括：
 
-● 概要设计
-● 详细设计
+- 概要设计
+- 详细设计
