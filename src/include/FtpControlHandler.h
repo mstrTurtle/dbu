@@ -10,10 +10,10 @@
  */
 #pragma once
 #include "ace/Event_Handler.h"
-class FtpControlHandler : ACE_Event_Handler
+class FtpControlHandler: ACE_Event_Handler
 {
-  int section_no_;
+    int section_no_;
 
-  int handle_input(ACE_HANDLE fd) override;
-  int handle_output(ACE_HANDLE fd) override;
+    int handle_input(ACE_HANDLE fd) override;
+    int handle_output(ACE_HANDLE fd) override;
 };

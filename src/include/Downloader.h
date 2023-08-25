@@ -21,21 +21,27 @@ using std::string;
 using Str = std::string;
 using SOCK = ACE_SOCK_Stream;
 
-class Downloader {
-  string filepath_;
-  int threads_;
-  string savepath_;
-  SOCK sock_;
-  SockCreator sock_creator_;
+class Downloader
+{
+    string filepath_;
+    int threads_;
+    string savepath_;
+    SOCK sock_;
+    SockCreator sock_creator_;
 
 public:
-  Downloader(string path, int threads, string savepath, SOCK sock, SockCreator sock_creator)
-    : filepath_(path)
-    , threads_(threads)
-    , savepath_(savepath)
-    , sock_(sock)
-    , sock_creator_(sock_creator)
-  {
-  }
-  int run();
+    Downloader(
+            string path,
+            int threads,
+            string savepath,
+            SOCK sock,
+            SockCreator sock_creator)
+        : filepath_(path),
+          threads_(threads),
+          savepath_(savepath),
+          sock_(sock),
+          sock_creator_(sock_creator)
+    {
+    }
+    int run();
 };

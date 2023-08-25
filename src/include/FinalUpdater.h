@@ -1,12 +1,8 @@
 #include "Sniffer.h"
 #include "Option.h"
 
-
-
-
-class
-FinalUpdater{
+class FinalUpdater
+{
     Option option;
     int run();
-
 };

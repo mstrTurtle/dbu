@@ -5,19 +5,16 @@
 #include "Sniffer.h"
 #include "ace/Log_Msg.h"
 
-int
-ACE_TMAIN(int argc, ACE_TCHAR* argv[])
-{
+int ACE_TMAIN(int argc, ACE_TCHAR* argv[]) {
   // ftp控制连接的sock工厂
-  ACE_INET_Addr addr(21, "ftp.vim.org");
-  SockCreator sockCreator = makeLoginedSockCreator(addr, "anonymous", "");
+  ACE_INET_Addr addr(21, "ftp.scutech.com");
+  SockCreator sockCreator = makeLoginedSockCreator(addr, "scutech", "dingjia");
 
   // parse args
   OPTION->parse_args(argc, argv);
   SniffHint hint = convertOptionToSniffHint(*OPTION);
 
   std::cout << (*OPTION);
-
 
   // 连接到端点
   SOCK sock;

@@ -14,7 +14,8 @@
 using std::string;
 class Installer
 {
-  string path;
+    string path;
+
 public:
-  int run();
+    int run();
 };

@@ -29,44 +29,33 @@ using SOCK = ACE_SOCK_Stream;
 
 using Str = string;
 
-void
-fetchNLST(ACE_SOCK_Stream& control_socket,
-          const std::string& cwd,
-          std::string& result);
+void fetchNLST(
+        ACE_SOCK_Stream& control_socket,
+        const std::string& cwd,
+        std::string& result);
 
-int
-sniff(char* buffer, int size);
+int sniff(char* buffer, int size);
 
-void
-join_path(std::string& origin_, const std::string& appendix);
+void join_path(std::string& origin_, const std::string& appendix);
 
-std::vector<std::string>
-strToLines(string text);
+std::vector<std::string> strToLines(string text);
 
-VS
-fzf(VS ss, string e);
+VS fzf(VS ss, string e);
 
-int
-findMax(const VS& ss, std::string& result);
+int findMax(const VS& ss, std::string& result);
 
-int
-fetchFindMax(SOCK sock, Str path, Str& result);
+int fetchFindMax(SOCK sock, Str path, Str& result);
 
-int
-fetchFzf(SOCK sock, Str path, Str e, VS& result);
+int fetchFzf(SOCK sock, Str path, Str e, VS& result);
 
-bool
-fetchFind(SOCK sock, Str path, Str e);
+bool fetchFind(SOCK sock, Str path, Str e);
 
-bool
-fetchExist(SOCK sock, Str path);
+bool fetchExist(SOCK sock, Str path);
 
-void
-setupControl(ACE_SOCK_Stream& control_socket);
+void setupControl(ACE_SOCK_Stream& control_socket);
 
 int getStatusCode(const char* line);
 
 int getStatusCode(Str line);
 
-int
-getRegularName(string path, string& result);
+int getRegularName(string path, string& result);
