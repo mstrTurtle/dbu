@@ -1,10 +1,15 @@
-// tests.cpp
+/**
+ * @file option_test.cpp
+ * @brief Option 类的单元测试文件
+ */
+
 #include "option.h"
 #include <gtest/gtest.h>
 
 /**
  * @brief 检验合法选项
  *
+ * 测试合法选项是否被正确解析和设置。
  */
 TEST(DbuOptionTest, ValidOption)
 {
@@ -15,22 +20,13 @@ TEST(DbuOptionTest, ValidOption)
 
   auto option = Option::instance();
   option->parse_args(sizeof(argv) / sizeof(const char*), (char**)argv);
-  auto path = option->get_actual_path();
-  ASSERT_EQ("/ftp_product_installer/dbackup3/rpm/hotfix/56006-hana/debug/"
-            "x86_64/informix",
-            path);
-}
 
-/**
- * @brief 检验非法选项
- *
- */
-TEST(DbuOptionTest, InvalidOption)
-{
-  ASSERT_EQ(1, 1);
-  ASSERT_EQ(1, 1);
-  ASSERT_EQ(1, 1);
-  ASSERT_EQ(1, 1);
+  ASSERT_EQ(option->branch_, "hotfix");
+  ASSERT_EQ(option->sub_branch_, "x86_64");
+  ASSERT_EQ(option->build_, "debug");
+  ASSERT_EQ(option->arch_, "x86_64");
+  ASSERT_EQ(option->product_, "informix");
+  ASSERT_EQ(option->threads_, 4);
 }
 
 int
