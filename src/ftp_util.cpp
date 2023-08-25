@@ -300,12 +300,12 @@ using MB = ACE_Message_Block;
  * 以便更好判断返回状态
  *
  */
-class LinedSock
+class Lined_Sock
 {
     SOCK sock;
     MB block{1024};
 
-    LinedSock(SOCK sock_): sock(sock_) {}
+    Lined_Sock(SOCK sock_): sock(sock_) {}
     int get_line(Str& result)
     {
         result = receiveLine(sock, block);
