@@ -42,12 +42,6 @@ public:
     int threads_;
     bool debug_;
 
-    /**
-     * @brief 获取实际路径字符串
-     * @return 实际路径字符串
-     */
-    string get_actual_path();
-
     friend std::ostream& operator<<(std::ostream& os, const Option& option);
 
 protected:

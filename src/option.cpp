@@ -20,8 +20,9 @@ Option* Option::instance_ = nullptr;
 
 Option* Option::instance() // 单例模式实现
 {
-    if (Option::instance_ == 0)
+    if (Option::instance_ == 0){
         Option::instance_ = new Option;
+    }
 
     return Option::instance_;
 }
@@ -92,12 +93,6 @@ Option::Option() // 构造器给结构体赋初值。
       threads_(1),
       debug_(0)
 {
-}
-
-[[deprecated]] std::string Option::get_actual_path()
-{
-    string path = string("/ftp_product_installer/dbackup3/rpm");
-    return path;
 }
 
 std::ostream& operator<<(std::ostream& os, const Option& option)
