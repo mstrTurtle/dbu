@@ -39,7 +39,7 @@ void join_path(std::string& origin_, const std::string& appendix);
  * @param text 输入的文本字符串
  * @return std::vector<std::string> 拆分后的字符串向量
  */
-std::vector<std::string> str_to_lines(string text);
+[[nodiscard]] std::vector<std::string> str_to_lines(string text);
 
 /**
  * @brief 在字符串向量中查找指定字符串
@@ -48,7 +48,7 @@ std::vector<std::string> str_to_lines(string text);
  * @param e 指定字符串
  * @return bool 如果找到指定字符串，则返回true；否则返回false
  */
-bool find(vector<string> v, std::string e);
+[[nodiscard]] bool find(vector<string> v, std::string e);
 
 /**
  * @brief 模糊查找字符串向量中包含指定字符串的字符串
@@ -57,7 +57,7 @@ bool find(vector<string> v, std::string e);
  * @param e 指定字符串
  * @return VS 包含指定字符串的字符串向量
  */
-VS fzf(VS ss, string e);
+[[nodiscard]] VS fzf(VS ss, string e);
 
 /**
  * @brief 在字符串向量中查找具有最大版本号的字符串
@@ -66,7 +66,7 @@ VS fzf(VS ss, string e);
  * @param result 存储具有最大版本号的字符串
  * @return int 错误码，0表示成功，其他表示错误
  */
-int find_max(const VS& ss, std::string& result);
+[[nodiscard]] int find_max(const VS& ss, std::string& result);
 
 /**
  * @brief 从给定路径中提取文件名
@@ -75,7 +75,7 @@ int find_max(const VS& ss, std::string& result);
  * @param result 存储提取的文件名
  * @return int 错误码，0表示成功，其他表示错误
  */
-int get_regular_name(string path, string& result);
+[[nodiscard]] int get_regular_name(string path, string& result);
 
 /**
  * @brief 模糊查找字符串向量中包含指定字符串的字符串
@@ -84,7 +84,7 @@ int get_regular_name(string path, string& result);
  * @param e 指定字符串
  * @return VS 包含指定字符串的字符串向量
  */
-VS fzf(VS ss, string e);
+[[nodiscard]] VS fzf(VS ss, string e);
 
 /**
  * @class Lined_SOCK
@@ -108,12 +108,12 @@ public:
      * @param line 要发送的文本行
      * @return 发送成功返回0，发送失败返回1
      */
-    int sendLine(const std::string& line);
+    [[nodiscard]] int sendLine(const std::string& line);
 
     /**
      * @brief 接收一行文本。
      * @param line 存储接收到的文本行
      * @return 接收成功返回0，接收失败返回1
      */
-    int receiveLine(std::string& line);
+    [[nodiscard]] int receiveLine(std::string& line);
 };

@@ -5,7 +5,7 @@ class Updater
 {
 public:
     Updater(Option& option_): option(option_) {}
-    int run();
+    [[nodiscard]] int run();
 
 private:
     Option option;

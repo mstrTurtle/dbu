@@ -45,7 +45,9 @@ public:
      * @param argument 命令内容
      * @return 发送成功返回0，发送失败返回1
      */
-    int send_command(const std::string& command, const std::string& argument);
+    [[nodiscard]] int send_command(
+            const std::string& command,
+            const std::string& argument);
 
     /**
      * @brief 接收FTP服务器的回复。
@@ -56,7 +58,9 @@ public:
      * @param line 存储接收到的行内容
      * @return 接收成功返回0，接收失败或连接关闭返回1
      */
-    int receive_reply(std::string& status_code, std::string& result_lines);
+    [[nodiscard]] int receive_reply(
+            std::string& status_code,
+            std::string& result_lines);
 
     /**
      * @brief 发送FTP命令并接收FTP服务器的回复。
@@ -66,24 +70,12 @@ public:
      * @param line [out] 存储接收到的行内容
      * @return 发送与接收都成功返回0，发送或接收失败或连接关闭返回1
      */
-    int send_and_receive(
+    [[nodiscard]] int send_and_receive(
             const std::string& command,
             const std::string& argument,
             std::string& status_code,
             std::string& result_lines);
 };
-
-/**
- * @brief 建立与FTP服务器的控制连接。
- *
- * 此函数使用给定的IP地址和端口号建立与FTP服务器的控制连接。
- *
- * @param ip FTP服务器的IP地址。
- * @param port FTP服务器的端口号。
- * @return
- * 如果成功建立控制连接，则返回控制连接的套接字；如果出现错误，则返回1。
- */
-SOCK connect_to_ftp(string ip, int port = 21);
 
 /**
  * @brief 登录到FTP服务器。
@@ -95,7 +87,7 @@ SOCK connect_to_ftp(string ip, int port = 21);
  * @param pass FTP服务器的密码。
  * @return 如果成功登录，则返回0；如果出现错误，则返回1。
  */
-int login_to_ftp(
+[[nodiscard]] int login_to_ftp(
         Ftp_Control_Client sock,
         string user = "anonymous",
         string pass = "");
@@ -110,7 +102,7 @@ int login_to_ftp(
  * @param dsock 数据连接的套接字。
  * @return 如果成功建立数据连接，则返回0；如果出现错误，则返回1。
  */
-int enter_passive_and_get_data_connection(
+[[nodiscard]] int enter_passive_and_get_data_connection(
         Ftp_Control_Client sock,
         SOCK& dsock);
 
@@ -129,7 +121,7 @@ int enter_passive_and_get_data_connection(
  *
  * @note 此函数假设控制套接字和数据套接字已经连接到FTP服务器。
  */
-int download_one_segment(
+[[nodiscard]] int download_one_segment(
         Ftp_Control_Client cli,
         SOCK data_socket,
         string path,
@@ -147,7 +139,7 @@ int download_one_segment(
  * @param sock 控制连接的套接字。
  * @return 返回值为0表示成功关闭控制连接和退出FTP服务器，否则表示出现错误。
  */
-int quit_and_close(SOCK& sock);
+[[nodiscard]] int quit_and_close(SOCK& sock);
 
 /**
  * @brief 获取FTP服务器上文件的大小。
@@ -159,7 +151,7 @@ int quit_and_close(SOCK& sock);
  * @param result [out] 查找结果，文件的大小
  * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
-int get_ftp_file_size(
+[[nodiscard]] int get_ftp_file_size(
         Ftp_Control_Client sock,
         const std::string& path,
         int& result);
@@ -185,7 +177,7 @@ typedef std::function<int(SOCK&)> Sock_Creator;
  * @param password 密码
  * @return Sock_Creator
  */
-Sock_Creator make_logined_sock_creator(
+[[nodiscard]] Sock_Creator make_logined_sock_creator(
         const ACE_INET_Addr& address,
         const std::string& username,
         const std::string& password);
@@ -201,7 +193,7 @@ Sock_Creator make_logined_sock_creator(
  * @param result 存储目录列表的字符串引用，将被填充为获取到的文件列表
  * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
-int fetch_nlst(
+[[nodiscard]] int fetch_nlst(
         Ftp_Control_Client sock,
         const std::string& cwd,
         std::string& result);
@@ -217,7 +209,7 @@ int fetch_nlst(
  * @param result 存储最大值的字符串。
  * @return 如果成功获取并查找最大值，则返回0；否则返回非零值。
  */
-int fetch_find_max(SOCK sock, string path, string& result);
+[[nodiscard]] int fetch_find_max(SOCK sock, string path, string& result);
 
 /**
  * @brief 获取文件列表并使用FZF过滤
@@ -231,7 +223,7 @@ int fetch_find_max(SOCK sock, string path, string& result);
  * @param result 存储过滤后的文件列表的向量。
  * @return 如果成功获取并过滤文件列表，则返回0；否则返回非零值。
  */
-int fetch_fzf(SOCK sock, string path, string e, VS& result);
+[[nodiscard]] int fetch_fzf(SOCK sock, string path, string e, VS& result);
 
 /**
  * @brief 从指定的 SOCK 连接中获取文件列表，并查找指定的文件路径。
@@ -242,7 +234,7 @@ int fetch_fzf(SOCK sock, string path, string e, VS& result);
  * @param result [out] 查找结果，true 表示找到，false 表示未找到。
  * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
-int fetch_find(SOCK sock, string path, string e, bool& result);
+[[nodiscard]] int fetch_find(SOCK sock, string path, string e, bool& result);
 
 /**
  * @brief 下载线程入口：进入被动模式、下载一个分段并关闭连接
@@ -282,7 +274,7 @@ void enter_passive_and_download_one_segment_and_close(
  * @param canceled 原子标志，用于取消下载
  * @return 如果下载成功，则返回0；如果下载过程中或出错时取消了下载，则返回1
  */
-int download_one_segment(
+[[nodiscard]] int download_one_segment(
         Ftp_Control_Client cli,
         SOCK data_socket,
         string path,

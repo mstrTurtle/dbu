@@ -79,35 +79,35 @@ private:
      *
      * @return int 错误码，0 表示成功，其他值表示失败
      */
-    int process_branch();
+    [[nodiscard]] int process_branch();
 
     /**
      * @brief 处理选项信息
      *
      * @return int 错误码，0 表示成功，其他值表示失败
      */
-    int process_option();
+    [[nodiscard]] int process_option();
 
     /**
      * @brief 处理目标信息
      *
      * @return int 错误码，0 表示成功，其他值表示失败
      */
-    int process_target();
+    [[nodiscard]] int process_target();
 
     /**
      * @brief 处理版本号信息
      *
      * @return int 错误码，0 表示成功，其他值表示失败
      */
-    int process_version();
+    [[nodiscard]] int process_version();
 
     /**
      * @brief 处理功能信息
      *
      * @return int 错误码，0 表示成功，其他值表示失败
      */
-    int process_functionality();
+    [[nodiscard]] int process_functionality();
 
 public:
     Sniffer() = delete;
@@ -121,7 +121,7 @@ public:
      * @param result 探测结果的字符串引用，将被填充为目标路径。
      * @return 返回操作的结果，0 表示成功，非零值表示失败。
      */
-    int run(string& result);
+    [[nodiscard]] int run(string& result);
 };
 
 /**

@@ -62,5 +62,5 @@ public:
      *
      * @return 如果运行成功，则返回0；否则返回非零值。
      */
-    int run();
+    [[nodiscard]] int run();
 };
