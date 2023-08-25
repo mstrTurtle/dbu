@@ -174,18 +174,25 @@ int fetch_fzf(SOCK sock, Str path, Str e, VS& result)
 }
 
 /**
- * @brief 组合fetchnlst和find函数, 获取NLST文件列表并且判断文件夹/文件是否出现在其中
+ * @brief 从指定的 SOCK 连接中获取文件列表，并查找指定的文件路径。
  *
- * @return bool
+ * @param sock 连接的 SOCK 对象。
+ * @param path 文件路径。
+ * @param e 文件名。
+ * @param result [out] 查找结果，true 表示找到，false 表示未找到。
+ * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
-bool fetch_find(SOCK sock, Str path, Str e)
+int fetch_find(SOCK sock, Str path, Str e, bool& result)
 {
     Str s;
     Str e_with_prefix = path;
     join_path(e_with_prefix, e);
-    fetch_nlst(sock, path, s);
+    if(fetch_nlst(sock, path, s)){
+        return 1;
+    }
     std::cout << "NLST fetched to s\n";
-    return find(str_to_lines(s), e_with_prefix);
+    result = find(str_to_lines(s), e_with_prefix);
+    return 0;
 }
 
 bool fetch_exist(SOCK sock, Str path)

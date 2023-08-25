@@ -2,6 +2,7 @@
 #include "ftp_operation.h"
 #include "ftp_util.h"
 #include "option.h"
+#include "sniffer_errors.h"
 #include "cstring"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
@@ -22,6 +23,8 @@ using std::vector;
 
 using VS = vector<string>;
 
+using namespace Sniffer_Errors;
+
 // 函数用于判断主分支并处理分支
 int Sniffer::process_branch()
 {
@@ -29,20 +32,22 @@ int Sniffer::process_branch()
     if (hint.branch == "develop" || hint.branch == "master") {
         join_path(cwd, hint.branch);
         join_path(cwd, hint.subbranch);
-        return 0;
+        return OK;
     } else if (
             hint.branch == "feature" || hint.branch == "hotfix" ||
             hint.branch == "support") {
-
         join_path(cwd, hint.branch);
-        bool b = fetch_find(conn.sock, cwd, hint.subbranch);
-        if (!b) {
-            return 2;
+        bool found;
+        if (fetch_find(conn.sock, cwd, hint.subbranch, found)) {
+            return BAD_FETCH;
+        }
+        if (!found) {
+            return BAD_LOOKUP;
         }
         join_path(cwd, hint.subbranch);
-        return 0;
+        return OK;
     }
-    return 0;
+    return OK;
 }
 
 /**
@@ -53,11 +58,15 @@ int Sniffer::process_branch()
 int Sniffer::process_option()
 {
     std::cout << "In " << __func__ << "\n";
-    if(!fetch_find(conn.sock, cwd, hint.option)){
-        return 1;
+    bool found;
+    if (fetch_find(conn.sock, cwd, hint.option, found)) {
+        return BAD_FETCH;
+    }
+    if (!found) {
+        return BAD_LOOKUP;
     }
     join_path(cwd, hint.option);
-    return 0;
+    return OK;
 }
 
 /**
@@ -68,13 +77,17 @@ int Sniffer::process_option()
 int Sniffer::process_target()
 {
     std::cout << "In " << __func__ << "\n";
-    if (!fetch_find(conn.sock, cwd, hint.arch)) {
+    bool found;
+    if (fetch_find(conn.sock, cwd, hint.arch, found)) {
+        ACE_DEBUG((LM_ERROR, "网络有问题.\n"));
+        return BAD_FETCH;
+    }
+    if (!found) {
         ACE_DEBUG((LM_ERROR, "你提供的arch信息是错的.\n"));
-        return 1;
     }
     join_path(cwd, hint.arch);
     std::cout << __func__ << " completed, cwd is" << cwd << std::endl;
-    return 0;
+    return OK;
 }
 
 /**
@@ -89,7 +102,7 @@ int Sniffer::process_version()
     fetch_find_max(conn.sock, cwd, result);
     join_path(cwd, result);
     std::cout << __func__ << " completed, cwd is" << cwd << std::endl;
-    return 0;
+    return OK;
 }
 
 /**
@@ -102,16 +115,16 @@ int Sniffer::process_functionality()
     std::cout << "In " << __func__ << "\n";
     VS v;
     if (fetch_fzf(conn.sock, cwd, hint.product, v)) {
-        return 1;
+        return BAD_FETCH;
     }
     if (v.size() < 1) {
-        return 2;
+        return BAD_FETCH;
     }
     Str target;
     get_regular_name(v[0], target);
     join_path(cwd, target);
     std::cout << __func__ << " completed, cwd is" << cwd << std::endl;
-    return 0;
+    return OK;
 }
 
 /**
@@ -128,55 +141,24 @@ int Sniffer::run(Str& result)
         std::cout << "process_branch 函数出错，状态码：" << err << std::endl;
     } else if ((err = process_option()) != 0) {
         std::cout << "process_option 函数出错，状态码：" << err << std::endl;
-        exit(1);
     } else if ((err = process_target()) != 0) {
         std::cout << "process_target 函数出错，状态码：" << err << std::endl;
-        exit(1);
     } else if ((err = process_version()) != 0) {
         std::cout << "process_version 函数出错，状态码：" << err << std::endl;
-        exit(1);
     } else if ((err = process_functionality()) != 0) {
         std::cout << "process_functionality 函数出错，状态码：" << err << std::endl;
-        exit(1);
     }
 
     if(err){
-        std::cout << "退出程序\n";
-        exit(1);
+        std::cout << "探测失败\n";
+        return BAD_LOOKUP;
     }
 
     std::cout << "探测成功，目标是：" << cwd << std::endl;
 
 
     result = cwd;
-    return 0;
-}
-
-int test_main()
-{
-    // 初始化ACE
-    ACE::init();
-
-    // 建立控制连接
-    ACE_SOCK_Stream control_socket;
-    ACE_INET_Addr control_addr("ftp.vim.org", "21");
-    ACE_SOCK_Connector connector;
-    if (connector.connect(control_socket, control_addr) == -1) {
-        ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
-        return 1;
-    }
-
-    // 登录
-    setup_control(control_socket);
-
-    Sniffer sniffer(control_addr, control_socket, {});
-    Str result;
-    sniffer.run(result);
-
-    // 关闭ACE
-    ACE::fini();
-
-    return 0;
+    return OK;
 }
 
 Sniff_Hint convert_option_to_sniff_hint(const Option& option)

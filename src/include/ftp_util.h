@@ -48,7 +48,7 @@ int fetch_find_max(SOCK sock, Str path, Str& result);
 
 int fetch_fzf(SOCK sock, Str path, Str e, VS& result);
 
-bool fetch_find(SOCK sock, Str path, Str e);
+int fetch_find(SOCK sock, Str path, Str e, bool& result);
 
 bool fetch_exist(SOCK sock, Str path);
 
