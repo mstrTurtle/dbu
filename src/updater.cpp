@@ -1,14 +1,21 @@
 #include "updater.h"
 #include "sniffer.h"
+#include "sniffer_errors.h"
 #include "downloader.h"
 #include "ftp_operation.h"
 #include "installer.h"
 #include "option.h"
 #include "sniffer.h"
+#include "ace/Init_ACE.h"
 #include "ace/Log_Msg.h"
 
 int Updater::run()
 {
+    int err;
+
+    // 初始化ACE
+    ACE::init();
+
     // ftp控制连接的sock工厂
     ACE_INET_Addr addr(21, "ftp.scutech.com");
     Sock_Creator sock_creator =
@@ -27,7 +34,9 @@ int Updater::run()
     Sniffer sniffer(addr, sock, hint);
 
     string path;
-    sniffer.run(path);
+    if((err = sniffer.run(path))){
+        std::cout << "sniffer error: "  << err << std::endl;
+    }
 
     std::cout << "Sniffer done, got path: " << path << std::endl;
 
@@ -42,6 +51,9 @@ int Updater::run()
     Installer installer;
     if (installer.run() == -1)
         ACE_ERROR_RETURN((LM_ERROR, "%p\n", "updater.run() error"), 1);
+
+    // 关闭ACE
+    ACE::fini();
 
     return 0;
 }

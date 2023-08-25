@@ -7,7 +7,6 @@
 
 #include "option.h"
 #include <ace/INET_Addr.h>
-#include <ace/Init_ACE.h>
 #include <iostream>
 #include <set>
 #include <string>
@@ -150,15 +149,12 @@ int spawn_multi_downloads_and_join(
  */
 int Downloader::run()
 {
-    // 初始化ACE
-    ACE::init();
-
     // 处理控制连接void
     int ret = spawn_multi_downloads_and_join(
             sock_, filepath_, threads_, savepath_.c_str(), sock_creator_);
-
+    if(ret){
         return ret;
-    ACE::fini();
+    }
 
     return OK;
 }
