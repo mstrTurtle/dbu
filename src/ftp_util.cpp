@@ -106,7 +106,7 @@ VS fzf(VS ss, string e)
 int find_max(const VS& ss, std::string& result)
 {
     std::string line;
-    std::tuple<int, int, int> maxNumber{0, 0, 0};
+    std::tuple<int, int, int> max_number{0, 0, 0};
     if (ss.size() < 1)
         return 1;
 
@@ -115,9 +115,9 @@ int find_max(const VS& ss, std::string& result)
         int a, b, c;
         char dot;
         sscanf(line.c_str(), "%d.%d.%d", &a, &b, &c);
-        std::tuple<int, int, int> currentNumber{a, b, c};
-        if (maxNumber < currentNumber) {
-            maxNumber = currentNumber;
+        std::tuple<int, int, int> current_number{a, b, c};
+        if (max_number < current_number) {
+            max_number = current_number;
             result = line;
         }
     }
@@ -164,7 +164,7 @@ int fetch_fzf(SOCK sock, Str path, Str e, VS& result)
 }
 
 /**
- * @brief 组合出find函数
+ * @brief 组合fetchnlst和find函数, 获取NLST文件列表并且判断文件夹/文件是否出现在其中
  *
  * @return bool
  */
@@ -254,13 +254,13 @@ void fetch_nlst(
 }
 std::string receiveLine(
         ACE_SOCK_Stream& socket,
-        ACE_Message_Block& messageBlock)
+        ACE_Message_Block& message_block)
 {
     std::string line;
 
     while (true) {
         ssize_t bytesRead =
-                socket.recv(messageBlock.wr_ptr(), messageBlock.space());
+                socket.recv(message_block.wr_ptr(), message_block.space());
 
         if (bytesRead <= 0) {
             // 出现错误或连接关闭
@@ -268,18 +268,18 @@ std::string receiveLine(
             break;
         }
 
-        messageBlock.wr_ptr(bytesRead);
+        message_block.wr_ptr(bytesRead);
 
         char* newlinePos =
-                std::find(messageBlock.rd_ptr(), messageBlock.wr_ptr(), '\n');
+                std::find(message_block.rd_ptr(), message_block.wr_ptr(), '\n');
 
-        if (newlinePos != messageBlock.wr_ptr()) {
+        if (newlinePos != message_block.wr_ptr()) {
             // 找到换行符，提取一行数据
-            ssize_t lineLength = newlinePos - messageBlock.rd_ptr() + 1;
-            line.append(messageBlock.rd_ptr(), lineLength);
+            ssize_t lineLength = newlinePos - message_block.rd_ptr() + 1;
+            line.append(message_block.rd_ptr(), lineLength);
 
             // 移动消息块的读指针
-            messageBlock.rd_ptr(lineLength);
+            message_block.rd_ptr(lineLength);
 
             break;
         }
