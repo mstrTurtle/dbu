@@ -154,10 +154,10 @@ int Downloader::run()
     ACE::init();
 
     // 处理控制连接void
-    spawn_multi_downloads_and_join(
+    int ret = spawn_multi_downloads_and_join(
             sock_, filepath_, threads_, savepath_.c_str(), sock_creator_);
 
-    // 关闭ACE
+        return ret;
     ACE::fini();
 
     return OK;
