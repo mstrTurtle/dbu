@@ -273,9 +273,8 @@ int get_ftp_file_size(SOCK sock, const std::string& path)
 
     ssize_t recv_count;
 
-
     char comm[1000];
-    std::fill(comm,comm+sizeof(comm),'\0');
+    std::fill(comm, comm + sizeof(comm), '\0');
     sprintf(comm, "SIZE %s\r\n", path.c_str()); // 发送SIZE
     sock.send(comm, strlen(comm));
 

@@ -7,5 +7,4 @@ namespace Downloader_Errors
         BAD_SOCKET = 2,
         BAD_FILE_HANDLE = 3,
     };
-
 }

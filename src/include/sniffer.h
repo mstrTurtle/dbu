@@ -1,5 +1,14 @@
+/**
+ * @file sniffer.h
+ * @author JiayuXiao (xiaojiayu@scutech.com)
+ * @brief 根据提示探测资源路径的类。
+ * @version 0.1
+ * @date 2023-07-28
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 #pragma once
-
 #include "ftp_operation.h"
 #include "ftp_util.h"
 #include "option.h"

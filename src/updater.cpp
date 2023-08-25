@@ -34,16 +34,15 @@ int Updater::run()
     Sniffer sniffer(addr, sock, hint);
 
     string path;
-    if((err = sniffer.run(path))){
-        std::cout << "sniffer error: "  << err << std::endl;
+    if ((err = sniffer.run(path))) {
+        std::cout << "sniffer error: " << err << std::endl;
     }
 
     std::cout << "Sniffer done, got path: " << path << std::endl;
 
     // run downloader, 多线程下载
     Downloader downloader(
-            path, OPTION->threads_, "download.rpm", sock,
-            sock_creator);
+            path, OPTION->threads_, "download.rpm", sock, sock_creator);
 
     downloader.run();
 

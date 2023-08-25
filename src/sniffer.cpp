@@ -146,16 +146,16 @@ int Sniffer::run(Str& result)
     } else if ((err = process_version()) != 0) {
         std::cout << "process_version 函数出错，状态码：" << err << std::endl;
     } else if ((err = process_functionality()) != 0) {
-        std::cout << "process_functionality 函数出错，状态码：" << err << std::endl;
+        std::cout << "process_functionality 函数出错，状态码：" << err
+                  << std::endl;
     }
 
-    if(err){
+    if (err) {
         std::cout << "探测失败\n";
         return BAD_LOOKUP;
     }
 
     std::cout << "探测成功，目标是：" << cwd << std::endl;
-
 
     result = cwd;
     return OK;

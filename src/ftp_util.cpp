@@ -52,10 +52,10 @@ int get_regular_name(string path, string& result)
         path.pop_back();
     }
     size_t pos = path.rfind("/");
-    if(pos == string::npos){
+    if (pos == string::npos) {
         result = path;
     }
-    result = path.substr(pos+1);
+    result = path.substr(pos + 1);
     return 0;
 }
 
@@ -165,7 +165,7 @@ int fetch_find_max(SOCK sock, Str path, Str& result)
 int fetch_fzf(SOCK sock, Str path, Str e, VS& result)
 {
     Str s;
-    if(fetch_nlst(sock, path, s)){
+    if (fetch_nlst(sock, path, s)) {
         std::cout << "fetch_nlst failed with code " << s << std::endl;
         return 1;
     }
@@ -187,7 +187,7 @@ int fetch_find(SOCK sock, Str path, Str e, bool& result)
     Str s;
     Str e_with_prefix = path;
     join_path(e_with_prefix, e);
-    if(fetch_nlst(sock, path, s)){
+    if (fetch_nlst(sock, path, s)) {
         return 1;
     }
     std::cout << "NLST fetched to s\n";
@@ -244,7 +244,7 @@ int fetch_nlst(
         const std::string& cwd,
         std::string& result)
 {
-    std::fill(buffer,buffer+sizeof(buffer),'\0');
+    std::fill(buffer, buffer + sizeof(buffer), '\0');
     SOCK data_socket;
     enter_passive_and_get_data_connection(control_socket, data_socket);
 
@@ -293,8 +293,8 @@ std::string receiveLine(
 
         message_block.wr_ptr(bytesRead);
 
-        char* newlinePos =
-                std::find(message_block.rd_ptr(), message_block.wr_ptr(), '\n');
+        char* newlinePos = std::find(
+                message_block.rd_ptr(), message_block.wr_ptr(), '\n');
 
         if (newlinePos != message_block.wr_ptr()) {
             // 找到换行符，提取一行数据

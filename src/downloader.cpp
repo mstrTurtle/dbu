@@ -152,7 +152,7 @@ int Downloader::run()
     // 处理控制连接void
     int ret = spawn_multi_downloads_and_join(
             sock_, filepath_, threads_, savepath_.c_str(), sock_creator_);
-    if(ret){
+    if (ret) {
         return ret;
     }
 

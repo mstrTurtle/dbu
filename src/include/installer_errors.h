@@ -6,5 +6,4 @@ namespace Installer_Errors
         BAD_SPAWN = 1,
         BAD_EXIT = 2,
     };
-
 }

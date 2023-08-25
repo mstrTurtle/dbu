@@ -6,5 +6,4 @@ namespace Sniffer_Errors
         BAD_LOOKUP = 1,
         BAD_FETCH = 2,
     };
-
 }
