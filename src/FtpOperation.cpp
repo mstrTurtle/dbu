@@ -22,7 +22,7 @@ using SOCK = ACE_SOCK_Stream;
  * @return
  * 如果成功建立控制连接，则返回控制连接的套接字；如果出现错误，则返回1。
  */
-SOCK connectToFtp(Str ip, int port)
+SOCK connect_to_ftp(Str ip, int port)
 {
     // 建立控制连接
     ACE_SOCK_Stream control_socket;
@@ -124,7 +124,6 @@ int enter_passive_and_get_data_connection(SOCK control_socket, SOCK& dsock)
     return 0;
 }
 
-int getFtpFileSize(SOCK sock, const std::string& path);
 
 void enter_passive_and_get_data_connection(
         Str path,
@@ -259,7 +258,7 @@ int quit_and_close(ACE_SOCK_Stream& control_socket)
  * @param path 文件的路径。
  * @return 返回文件的大小（以字节为单位），如果获取失败则返回-1。
  */
-int getFtpFileSize(SOCK sock, const std::string& path)
+int get_ftp_file_size(SOCK sock, const std::string& path)
 {
     std::cout << "Getting Ftp Size\n";
 
