@@ -45,7 +45,7 @@ int Updater::run()
     Downloader downloader(
             path, OPTION->threads_, "download.rpm", sock, sock_creator);
 
-    if (!downloader.run()) {
+    if (downloader.run()) {
         return 1;
     }
 
