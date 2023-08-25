@@ -49,10 +49,13 @@ void join_path(std::string& origin_, const std::string& appendix)
 int get_regular_name(string path, string& result)
 {
     if (path.back() == '/') {
-        return 1;
+        path.pop_back();
     }
     size_t pos = path.rfind("/");
-    result = path.substr(pos);
+    if(pos == string::npos){
+        result = path;
+    }
+    result = path.substr(pos+1);
     return 0;
 }
 
@@ -111,14 +114,17 @@ int find_max(const VS& ss, std::string& result)
         return 1;
 
     for (auto line : ss) {
+        std::string r_name;
+        get_regular_name(line, r_name);
+        std::cout << "Processing r_name: " << r_name << "\n";
         // 将数字解析为tuple
         int a, b, c;
         char dot;
-        sscanf(line.c_str(), "%d.%d.%d", &a, &b, &c);
+        sscanf(r_name.c_str(), "%d.%d.%d", &a, &b, &c);
         std::tuple<int, int, int> current_number{a, b, c};
         if (max_number < current_number) {
             max_number = current_number;
-            result = line;
+            result = r_name;
         }
     }
     return 0;
@@ -139,6 +145,7 @@ int fetch_find_max(SOCK sock, Str path, Str& result)
 {
     Str s;
     fetch_nlst(sock, path, s);
+    std::cout << __func__ << " got nlst: " << s << std::endl;
     find_max(str_to_lines(s), result);
     return 0;
 }
@@ -158,7 +165,10 @@ int fetch_find_max(SOCK sock, Str path, Str& result)
 int fetch_fzf(SOCK sock, Str path, Str e, VS& result)
 {
     Str s;
-    fetch_nlst(sock, path, s);
+    if(fetch_nlst(sock, path, s)){
+        std::cout << "fetch_nlst failed with code " << s << std::endl;
+        return 1;
+    }
     result = fzf(str_to_lines(s), e);
     return 0;
 }
@@ -171,8 +181,11 @@ int fetch_fzf(SOCK sock, Str path, Str e, VS& result)
 bool fetch_find(SOCK sock, Str path, Str e)
 {
     Str s;
+    Str e_with_prefix = path;
+    join_path(e_with_prefix, e);
     fetch_nlst(sock, path, s);
-    return find(str_to_lines(s), e);
+    std::cout << "NLST fetched to s\n";
+    return find(str_to_lines(s), e_with_prefix);
 }
 
 bool fetch_exist(SOCK sock, Str path)
@@ -219,20 +232,23 @@ void setup_control(ACE_SOCK_Stream& control_socket)
  * @param data_port
  * @param result
  */
-void fetch_nlst(
+int fetch_nlst(
         ACE_SOCK_Stream& control_socket,
         const std::string& cwd,
         std::string& result)
 {
+    std::fill(buffer,buffer+sizeof(buffer),'\0');
     SOCK data_socket;
     enter_passive_and_get_data_connection(control_socket, data_socket);
 
     // 发送NLST命令
     ACE_OS::sprintf(buffer, "NLST %s\r\n", cwd.c_str());
     control_socket.send(buffer, ACE_OS::strlen(buffer));
-    recv_count = control_socket.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << buffer;
+    // recv_count = control_socket.recv(buffer, sizeof(buffer));
+    // buffer[recv_count] = '\0';
+    // std::cout << buffer;
+
+    sleep(1);
 
     // 接收数据
     std::string received_lines;
@@ -250,7 +266,7 @@ void fetch_nlst(
 
     // 结束流程并返回值
     result = received_lines;
-    return;
+    return 0;
 }
 std::string receiveLine(
         ACE_SOCK_Stream& socket,

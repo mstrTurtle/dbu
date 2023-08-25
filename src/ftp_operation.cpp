@@ -111,9 +111,9 @@ int enter_passive_and_get_data_connection(SOCK control_socket, SOCK& dsock)
     ACE_SOCK_Stream data_socket;
     ACE_INET_Addr data_addr(data_port, data_ip.c_str());
     ACE_SOCK_Connector connector;
-    std::cout << "sleeping\n";
-    sleep(2);
-    std::cout << "awake\n";
+    // std::cout << "sleeping\n";
+    // sleep(2);
+    // std::cout << "awake\n";
     if (connector.connect(data_socket, data_addr) == -1) {
         ACE_DEBUG((LM_ERROR, "Error connecting to data socket.\n"));
         exit(0);
@@ -264,9 +264,13 @@ int get_ftp_file_size(SOCK sock, const std::string& path)
 
     ssize_t recv_count;
 
+
     char comm[1000];
+    std::fill(comm,comm+sizeof(comm),'\0');
     sprintf(comm, "SIZE %s\r\n", path.c_str()); // 发送SIZE
     sock.send(comm, strlen(comm));
+
+    sleep(1);
 
     char buffer[1000];
     recv_count = sock.recv(buffer, sizeof(buffer));

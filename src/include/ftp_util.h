@@ -29,7 +29,7 @@ using SOCK = ACE_SOCK_Stream;
 
 using Str = string;
 
-void fetch_nlst(
+int fetch_nlst(
         ACE_SOCK_Stream& control_socket,
         const std::string& cwd,
         std::string& result);

@@ -84,6 +84,10 @@ int spawn_multi_downloads_and_join(
     std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
     std::vector<FILE*> fs;
     int fsize = get_ftp_file_size(sock, path);
+    if (fsize == -1) {
+        std::cout << "get file size failed\n";
+        return 1;
+    }
     int fhandle = open(path.c_str(), O_RDWR);
     int segsize =
             static_cast<int>(static_cast<float>(fsize) / threads); // 向下取整
