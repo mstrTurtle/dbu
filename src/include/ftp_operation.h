@@ -37,6 +37,9 @@ public:
 
     /**
      * @brief 发送FTP命令。
+     *
+     * 发送一行FTP命令到服务器
+     *
      * @param command 命令名
      * @param argument 命令内容
      * @return 发送成功返回0，发送失败返回1
@@ -45,6 +48,9 @@ public:
 
     /**
      * @brief 接收FTP服务器的回复。
+     *
+     * 接收FTP服务器的回复，直到遇到代表结束的状态码
+     *
      * @param status_code 存储接收到的状态码
      * @param line 存储接收到的行内容
      * @return 接收成功返回0，接收失败或连接关闭返回1
@@ -55,8 +61,8 @@ public:
      * @brief 发送FTP命令并接收FTP服务器的回复。
      * @param command 命令名
      * @param argument 命令内容
-     * @param status_code 存储接收到的状态码
-     * @param line 存储接收到的行内容
+     * @param status_code [out] 存储接收到的状态码
+     * @param line [out] 存储接收到的行内容
      * @return 发送与接收都成功返回0，发送或接收失败或连接关闭返回1
      */
     int send_and_receive(
@@ -147,9 +153,13 @@ int quit_and_close(SOCK& sock);
  *
  * @param sock 控制连接的套接字。
  * @param path 文件的路径。
- * @return 返回文件的大小（以字节为单位），如果获取失败则返回-1。
+ * @param result [out] 查找结果，文件的大小
+ * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
-int get_ftp_file_size(Ftp_Control_Client sock, const std::string& path);
+int get_ftp_file_size(
+        Ftp_Control_Client sock,
+        const std::string& path,
+        int& result);
 
 /**
  * @brief 进入被动模式，下载指定片段的文件，并关闭连接。
@@ -211,7 +221,6 @@ int fetch_nlst(
         const std::string& cwd,
         std::string& result);
 
-
 /**
  * @brief 获取文件列表并查找最大值
  *
@@ -238,7 +247,6 @@ int fetch_find_max(SOCK sock, string path, string& result);
  * @return 如果成功获取并过滤文件列表，则返回0；否则返回非零值。
  */
 int fetch_fzf(SOCK sock, string path, string e, VS& result);
-
 
 /**
  * @brief 从指定的 SOCK 连接中获取文件列表，并查找指定的文件路径。

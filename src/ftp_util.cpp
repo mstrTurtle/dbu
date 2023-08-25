@@ -88,7 +88,7 @@ int find_max(const VS& ss, std::string& result)
     for (auto line : ss) {
         std::string r_name;
         get_regular_name(line, r_name);
-        std::cout << "Processing r_name: " << r_name << "\n";
+        ACE_DEBUG((LM_DEBUG, "Processing r_name: %s\n", r_name.c_str()));
         // 将数字解析为tuple
         int a, b, c;
         char dot;
@@ -111,12 +111,12 @@ Sock_Creator make_logined_sock_creator(
         // 连接到对端地址
         ACE_SOCK_Connector connector;
         if (connector.connect(sock, ftp_address) == -1) {
-            std::cerr << "Failed to connect to FTP server." << std::endl;
+            std::cout << "Failed to connect to FTP server." << std::endl;
             return 1;
         }
         // 登录到FTP服务器
         if (login_to_ftp(sock, username, password)) {
-            std::cerr << "Failed to login to FTP server." << std::endl;
+            std::cout << "Failed to login to FTP server." << std::endl;
             sock.close();
             return 1;
         }

@@ -82,22 +82,22 @@ int spawn_multi_downloads_and_join(
         const char* savepath,
         Sock_Creator create_sock)
 {
-    std::cout << "spawning\n";
+    ACE_TRACE (ACE_TEXT (__func__));
     std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
     std::vector<FILE*> fs;
-    int fsize = get_ftp_file_size(sock, path);
-    if (fsize == -1) {
-        std::cout << "get file size failed\n";
+    int fsize;
+    if (get_ftp_file_size(sock, path, fsize)) {
+        std::cout << "Get file size failed\n";
         return BAD_PATH;
     }
     int fhandle = open(path.c_str(), O_RDWR);
     int segsize =
             static_cast<int>(static_cast<float>(fsize) / threads); // 向下取整
 
-    std::cout << "got size " << fsize << "\n";
+    std::cout << "Got size: " << fsize << std::endl;
 
     if (open_n_file(threads, fs)) {
-        std::cout << "open failed\n";
+        std::cout << "Open n file handles failed\n";
         return BAD_FILE_HANDLE;
     }
 
@@ -110,7 +110,7 @@ int spawn_multi_downloads_and_join(
                 enter_passive_and_download_one_segment_and_close, path, off,
                 len, i, fs[i], new_sock));
 
-        std::cout << "Thread " << i << " Start" << std::endl;
+        std::cout << "Download thread " << i << " start" << std::endl;
     }
 
     int finaloff = (threads - 1) * segsize;

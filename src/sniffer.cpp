@@ -27,7 +27,7 @@ using namespace Sniffer_Errors;
 
 int Sniffer::process_branch()
 {
-    std::cout << "In " << __func__ << "\n";
+    ACE_TRACE(ACE_TEXT(__func__));
     if (hint.branch == "develop" || hint.branch == "master") {
         join_path(cwd, hint.branch);
         join_path(cwd, hint.subbranch);
@@ -51,7 +51,7 @@ int Sniffer::process_branch()
 
 int Sniffer::process_option()
 {
-    std::cout << "In " << __func__ << "\n";
+    ACE_TRACE(ACE_TEXT(__func__));
     bool found;
     if (fetch_find(conn.sock, cwd, hint.option, found)) {
         return BAD_FETCH;
@@ -60,12 +60,13 @@ int Sniffer::process_option()
         return BAD_LOOKUP;
     }
     join_path(cwd, hint.option);
+    std::cout << __func__ << " completed, cwd is" << cwd << std::endl;
     return OK;
 }
 
 int Sniffer::process_target()
 {
-    std::cout << "In " << __func__ << "\n";
+    ACE_TRACE(ACE_TEXT(__func__));
     bool found;
     if (fetch_find(conn.sock, cwd, hint.arch, found)) {
         ACE_DEBUG((LM_ERROR, "网络有问题.\n"));
@@ -81,7 +82,7 @@ int Sniffer::process_target()
 
 int Sniffer::process_version()
 {
-    std::cout << "In " << __func__ << "\n";
+    ACE_TRACE(ACE_TEXT(__func__));
     string result;
     fetch_find_max(conn.sock, cwd, result);
     join_path(cwd, result);
@@ -91,7 +92,7 @@ int Sniffer::process_version()
 
 int Sniffer::process_functionality()
 {
-    std::cout << "In " << __func__ << "\n";
+    ACE_TRACE(ACE_TEXT(__func__));
     VS v;
     if (fetch_fzf(conn.sock, cwd, hint.product, v)) {
         return BAD_FETCH;
@@ -113,24 +114,25 @@ int Sniffer::run(string& result)
     int err = 0;
 
     if ((err = process_branch()) != 0) {
-        std::cout << "process_branch 函数出错，状态码：" << err << std::endl;
+        std::cout << "Error at process_branch，error code：" << err << std::endl;
     } else if ((err = process_option()) != 0) {
-        std::cout << "process_option 函数出错，状态码：" << err << std::endl;
+        std::cout << "Error at process_option，error code：" << err << std::endl;
     } else if ((err = process_target()) != 0) {
-        std::cout << "process_target 函数出错，状态码：" << err << std::endl;
+        std::cout << "Error at process_target，error code：" << err << std::endl;
     } else if ((err = process_version()) != 0) {
-        std::cout << "process_version 函数出错，状态码：" << err << std::endl;
+        std::cout << "Error at process_version，error code：" << err << std::endl;
     } else if ((err = process_functionality()) != 0) {
-        std::cout << "process_functionality 函数出错，状态码：" << err
+        std::cout << "Error at process_functionality，error code：" << err
                   << std::endl;
     }
 
     if (err) {
-        std::cout << "探测失败\n";
+        std::cout << "Sniff error.\n";
         return BAD_LOOKUP;
     }
 
-    std::cout << "探测成功，目标是：" << cwd << std::endl;
+    std::cout << "Sniff success, the final target path is：" << cwd
+              << std::endl;
 
     result = cwd;
     return OK;

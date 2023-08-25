@@ -23,7 +23,7 @@ int Updater::run()
 
     Sniff_Hint hint = convert_option_to_sniff_hint(option);
 
-    std::cout << (option);
+    std::cout << "Option parse succeed. Listed below:\n" << (option);
 
     // 连接到端点
     SOCK sock;
@@ -35,7 +35,8 @@ int Updater::run()
 
     string path;
     if ((err = sniffer.run(path))) {
-        std::cout << "sniffer error: " << err << std::endl;
+        std::cout << "Sniffer encounter error, error code:" << err
+                  << std::endl;
     }
 
     std::cout << "Sniffer done, got path: " << path << std::endl;
@@ -48,9 +49,11 @@ int Updater::run()
 
     // run installer，安装
     Installer installer;
-    if (installer.run())
-        ACE_ERROR_RETURN((LM_ERROR, "%p\n", "updater.run() error"), 1);
-
+    if (installer.run()) {
+        std::cout << "Install error.\n";
+        ACE_DEBUG((LM_ERROR, "%p\n", "updater.run() error"));
+        return 1;
+    }
     // 关闭ACE
     ACE::fini();
 

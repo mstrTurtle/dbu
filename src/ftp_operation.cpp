@@ -16,7 +16,7 @@ SOCK connect_to_ftp(string ip, int port)
     ACE_INET_Addr control_addr(port, ip.c_str());
     ACE_SOCK_Connector connector;
     if (connector.connect(sock, control_addr) == -1) {
-        ACE_DEBUG((LM_ERROR, "Error connecting to control socket.\n"));
+        std::cout << "Error connecting to control socket." << std::endl;
         return 1;
     }
     return sock;
@@ -33,7 +33,7 @@ int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
         return 1;
     }
 
-    std::cout << "login welcome received: " << t << std::endl;
+    ACE_DEBUG((LM_DEBUG, "login welcome received: %s\n", t.c_str()));
 
     // 发送用户名和密码
     if (cli.send_and_receive("USER", user, c, t)) {
@@ -41,26 +41,25 @@ int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
         return 1;
     }
 
-    std::cout << "login user received: " << t << std::endl;
+    ACE_DEBUG((LM_DEBUG, "login user received: %s\n", t.c_str()));
 
     if (cli.send_and_receive("PASS", pass, c, t)) {
         std::cout << "Error sending PASS command to server." << std::endl;
         return 1;
     }
 
-    std::cout << "login pass received: " << t << std::endl;
+    ACE_DEBUG((LM_DEBUG, "login pass received: %s\n", t.c_str()));
 
     return 0;
 }
 
 int enter_passive_and_get_data_connection(Ftp_Control_Client cli, SOCK& dsock)
 {
-    std::cout << "In" << __func__ << "\n";
+    ACE_TRACE (ACE_TEXT (__func__));
     string c, t;
     // 发送PASV命令，进入被动模式
-    cli.send_command("PASV", "");
-    cli.receive_reply(c, t);
-    std::cout << "got pasv reply: " << t << "\n";
+    cli.send_and_receive("PASV", "", c, t);
+    ACE_DEBUG((LM_DEBUG, "pasv receive (%s, %s)", c.c_str(), t.c_str()));
 
     if (c != "227") {
         return 1;
@@ -98,10 +97,14 @@ void enter_passive_and_download_one_segment_and_close(
         FILE* file,
         SOCK sock)
 {
-    std::cout << "calling downOneSeg " << off << ", " << size << "\n";
+    ACE_TRACE (ACE_TEXT (__func__));
+    ACE_DEBUG((LM_DEBUG, "%I%t enter passive and download: (off = %d, size = %u)\n", off, size));
     SOCK dsock;
+    // 发送PASV，获取data socket
     enter_passive_and_get_data_connection(sock, dsock);
+    // 下载对应分段
     download_one_segment(sock, dsock, path, off, size, part_id, file);
+    // 关闭数据连接
     quit_and_close(sock);
 }
 
@@ -114,54 +117,55 @@ void download_one_segment(
         int part_id,
         FILE* file)
 {
+    ACE_TRACE (ACE_TEXT (__func__));
     char buffer[1024];
     ssize_t recv_count;
     string c, t;
 
     // 发送TYPE I命令，进入BINARY模式
     cli.send_and_receive("TYPE", "I", c, t);
-    std::cout << "Sent TYPE I\n";
+    ACE_DEBUG((LM_DEBUG, "%I%t sent TYPE I\n"));
 
     // 发送REST命令，设置下载的起始偏移量
     cli.send_and_receive("REST", std::to_string(start_offset), c, t);
+    ACE_DEBUG((LM_DEBUG, "%I%t sent REST\n"));
 
     // 发送RETR命令
     cli.send_and_receive("RETR", path, c, t);
     if (c != "550") {
-        std::cout << "open error\n";
+        std::cout << "Retrieve error, server sending bad return code.\n";
         return;
     }
     std::cout << "RETR is sent, start download from data socket.\n";
 
     // 下载文件
-    std::cout << "The " << part_id << " ready to get " << size << "\n";
+    ACE_DEBUG((LM_DEBUG, "%I%t part %d ready to get %u\n", part_id, size));
     ssize_t total_received = 0;
     while ((recv_count = data_socket.recv(buffer, sizeof(buffer))) > 0) {
-        std::cout << "The " << part_id << " received " << recv_count << "\n";
+        ACE_DEBUG(
+                (LM_DEBUG, "%I%t part %d received %u\n", part_id, recv_count));
         ssize_t remaining = recv_count;
         if (total_received + remaining > size) {
             remaining = size - total_received;
         }
         ACE_OS::fwrite(buffer, 1, remaining, file);
-        std::cout << "The " << part_id << " wrote " << remaining << "\n";
+        ACE_DEBUG((LM_DEBUG, "%I%t part %d wrote %u\n", part_id, remaining));
         total_received += remaining;
         if (total_received >= size) {
             break;
         }
     }
 
-    std::cout << "The " << part_id << " totally have got " << total_received
-              << "\n";
+    std::cout << "Finish the " << part_id << " part. Totally have got "
+              << total_received << "\n";
 
     // 关闭数据连接
     data_socket.close();
-
-    // 接收RETR命令响应
-    cli.receive_reply(c, t);
 }
 
 int quit_and_close(SOCK& sock)
 {
+    ACE_TRACE (ACE_TEXT (__func__));
     Ftp_Control_Client cli(sock);
     cli.send_command("QUIT", "");
 
@@ -169,21 +173,23 @@ int quit_and_close(SOCK& sock)
     return 0;
 }
 
-int get_ftp_file_size(Ftp_Control_Client cli, const std::string& path)
+int get_ftp_file_size(
+        Ftp_Control_Client cli,
+        const std::string& path,
+        int& result)
 {
-    std::cout << "Getting Ftp Size\n";
-
+    ACE_TRACE(ACE_TEXT(__func__));
     string c, t;
-
+    // 发送SIZE命令，获取文件大小
     cli.send_and_receive("SIZE", path, c, t);
-
-    std::cout << "recieved size. size is " << t << "\n";
-
+    ACE_DEBUG(
+            (LM_DEBUG, "%I%t size query return (%s, %s)\n", c.c_str(),
+             t.c_str()));
     if (c != "213") {
         return -1;
     }
-
-    return std::stoi(t);
+    result = std::stoi(t);
+    return 0;
 }
 
 int fetch_nlst(
@@ -232,7 +238,7 @@ int fetch_fzf(SOCK sock, string path, string e, VS& result)
 {
     string s;
     if (fetch_nlst(sock, path, s)) {
-        std::cout << "fetch_nlst failed with code " << s << std::endl;
+        std::cout << "Fetching NLST failed with error code " << s << std::endl;
         return 1;
     }
     result = fzf(str_to_lines(s), e);
