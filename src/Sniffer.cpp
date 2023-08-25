@@ -32,7 +32,7 @@ int Sniffer::processBranch()
     } else if (
             hint.branch == "feature" || hint.branch == "hotfix" ||
             hint.branch == "support") {
-        bool b = fetchFind(conn.sock, cwd, hint.subbranch);
+        bool b = fetch_find(conn.sock, cwd, hint.subbranch);
         if (!b) {
             return 2;
         }
@@ -50,7 +50,7 @@ int Sniffer::processBranch()
 int Sniffer::processOption()
 {
     std::cout << "In Process Option\n";
-    fetchFind(conn.sock, cwd, hint.option);
+    fetch_find(conn.sock, cwd, hint.option);
     join_path(cwd, hint.option);
     return 0;
 }
@@ -63,7 +63,7 @@ int Sniffer::processOption()
 int Sniffer::processTarget()
 {
     std::cout << "In Process Target\n";
-    if (!fetchFind(conn.sock, cwd, hint.arch)) {
+    if (!fetch_find(conn.sock, cwd, hint.arch)) {
         ACE_DEBUG((LM_ERROR, "你提供的arch信息是错的.\n"));
         return 1;
     }
@@ -94,7 +94,7 @@ int Sniffer::processFunctionality()
 {
     std::cout << "In Process Functionality\n";
     VS v;
-    int err = fetchFzf(conn.sock, cwd, hint.product, v);
+    int err = fetch_fzf(conn.sock, cwd, hint.product, v);
     join_path(cwd, hint.option);
     return 0;
 }
@@ -113,7 +113,7 @@ int Sniffer::run(Str& result)
         exit(err);
     }
 
-    if (quitAndClose(conn.sock)) {
+    if (quit_and_close(conn.sock)) {
         return 1;
     }
 
@@ -136,7 +136,7 @@ int test_main()
     }
 
     // 登录
-    setupControl(control_socket);
+    setup_control(control_socket);
 
     Sniffer sniffer(control_addr, control_socket, {});
     Str result;

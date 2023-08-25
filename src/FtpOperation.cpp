@@ -45,7 +45,7 @@ SOCK connectToFtp(Str ip, int port)
  * @param pass FTP服务器的密码。
  * @return 如果成功登录，则返回0；如果出现错误，则返回1。
  */
-int loginToFtp(SOCK control_socket, Str user, Str pass)
+int login_to_ftp(SOCK control_socket, Str user, Str pass)
 {
     char buffer[1024];
     char comm[1024];
@@ -83,7 +83,7 @@ int loginToFtp(SOCK control_socket, Str user, Str pass)
  * @param dsock 数据连接的套接字。
  * @return 如果成功建立数据连接，则返回0；如果出现错误，则返回1。
  */
-int enterPassiveAndGetDataConnection(SOCK control_socket, SOCK& dsock)
+int enter_passive_and_get_data_connection(SOCK control_socket, SOCK& dsock)
 {
     char buffer[1024];
     ssize_t recv_count;
@@ -126,7 +126,7 @@ int enterPassiveAndGetDataConnection(SOCK control_socket, SOCK& dsock)
 
 int getFtpFileSize(SOCK sock, const std::string& path);
 
-void enterPassiveAndDownloadOneSegmentAndClose(
+void enter_passive_and_get_data_connection(
         Str path,
         off_t off,
         size_t size,
@@ -136,9 +136,9 @@ void enterPassiveAndDownloadOneSegmentAndClose(
 {
     std::cout << "calling downOneSeg " << off << ", " << size << "\n";
     SOCK dsock;
-    enterPassiveAndGetDataConnection(sock, dsock);
-    downloadOneSegment(sock, dsock, path, off, size, part_id, file);
-    quitAndClose(sock);
+    enter_passive_and_get_data_connection(sock, dsock);
+    download_one_segment(sock, dsock, path, off, size, part_id, file);
+    quit_and_close(sock);
 }
 
 /**
@@ -155,7 +155,7 @@ void enterPassiveAndDownloadOneSegmentAndClose(
  *
  * @note 此函数假设控制套接字和数据套接字已经连接到FTP服务器。
  */
-void downloadOneSegment(
+void download_one_segment(
         SOCK control_socket,
         SOCK data_socket,
         Str path,
@@ -236,7 +236,7 @@ void downloadOneSegment(
  * @param control_socket 控制连接的套接字。
  * @return 返回值为0表示成功关闭控制连接和退出FTP服务器，否则表示出现错误。
  */
-int quitAndClose(ACE_SOCK_Stream& control_socket)
+int quit_and_close(ACE_SOCK_Stream& control_socket)
 {
     char buffer[1024];
     ssize_t recv_count;

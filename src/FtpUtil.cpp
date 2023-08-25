@@ -46,7 +46,7 @@ void join_path(std::string& origin_, const std::string& appendix)
     return;
 }
 
-int getRegularName(string path, string& result)
+int get_regular_name(string path, string& result)
 {
     if (path.back() == '/') {
         return 1;
@@ -138,7 +138,7 @@ int find_max(const VS& ss, std::string& result)
 int fetch_find_max(SOCK sock, Str path, Str& result)
 {
     Str s;
-    fetchNLST(sock, path, s);
+    fetch_nlst(sock, path, s);
     find_max(str_to_lines(s), result);
     return 0;
 }
@@ -155,10 +155,10 @@ int fetch_find_max(SOCK sock, Str path, Str& result)
  * @param result 存储过滤后的文件列表的向量。
  * @return 如果成功获取并过滤文件列表，则返回0；否则返回非零值。
  */
-int fetchFzf(SOCK sock, Str path, Str e, VS& result)
+int fetch_fzf(SOCK sock, Str path, Str e, VS& result)
 {
     Str s;
-    fetchNLST(sock, path, s);
+    fetch_nlst(sock, path, s);
     result = fzf(str_to_lines(s), e);
     return 0;
 }
@@ -168,17 +168,17 @@ int fetchFzf(SOCK sock, Str path, Str e, VS& result)
  *
  * @return bool
  */
-bool fetchFind(SOCK sock, Str path, Str e)
+bool fetch_find(SOCK sock, Str path, Str e)
 {
     Str s;
-    fetchNLST(sock, path, s);
+    fetch_nlst(sock, path, s);
     return find(str_to_lines(s), e);
 }
 
-bool fetchExist(SOCK sock, Str path)
+bool fetch_exist(SOCK sock, Str path)
 {
     Str s;
-    fetchNLST(sock, path, s);
+    fetch_nlst(sock, path, s);
     return str_to_lines(s).size() == 1;
 }
 
@@ -188,7 +188,7 @@ ssize_t recv_count;
 /**
  * FTP登录与转入被动
  */
-void setupControl(ACE_SOCK_Stream& control_socket)
+void setup_control(ACE_SOCK_Stream& control_socket)
 {
     // current working directory
     std::string cwd = "/ftp_product_installer/dbackup3/rpm";
@@ -219,13 +219,13 @@ void setupControl(ACE_SOCK_Stream& control_socket)
  * @param data_port
  * @param result
  */
-void fetchNLST(
+void fetch_nlst(
         ACE_SOCK_Stream& control_socket,
         const std::string& cwd,
         std::string& result)
 {
     SOCK data_socket;
-    enterPassiveAndGetDataConnection(control_socket, data_socket);
+    enter_passive_and_get_data_connection(control_socket, data_socket);
 
     // 发送NLST命令
     ACE_OS::sprintf(buffer, "NLST %s\r\n", cwd.c_str());
@@ -306,7 +306,7 @@ class LinedSock
     }
 };
 
-int getStatusCode(const char* line)
+int get_status_code(const char* line)
 {
     if (strlen(line) < 3)
         return -1;
@@ -321,7 +321,7 @@ int getStatusCode(Str line)
     return i;
 }
 
-SockCreator makeLoginedSockCreator(
+SockCreator make_logined_sock_creator(
         const ACE_INET_Addr& ftpAddress,
         const std::string& username,
         const std::string& password)
@@ -334,7 +334,7 @@ SockCreator makeLoginedSockCreator(
             return 1;
         }
         // 登录到FTP服务器
-        if (loginToFtp(sock, username, password)) {
+        if (login_to_ftp(sock, username, password)) {
             std::cerr << "Failed to login to FTP server." << std::endl;
             sock.close();
             return 1;

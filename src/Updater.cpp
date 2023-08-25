@@ -12,7 +12,7 @@ int Updater::run()
     // ftp控制连接的sock工厂
     ACE_INET_Addr addr(21, "ftp.scutech.com");
     SockCreator sockCreator =
-            makeLoginedSockCreator(addr, "scutech", "dingjia");
+            make_logined_sock_creator(addr, "scutech", "dingjia");
 
     SniffHint hint = convertOptionToSniffHint(option);
 

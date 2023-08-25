@@ -83,7 +83,7 @@ int spawnMultiDownloadsAndJoin(
     std::cout << "spawning\n";
     std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
     std::vector<FILE*> fs;
-    int fsize = getFtpFileSize(sock, path);
+    int fsize = get_ftp_file_size(sock, path);
     int fhandle = open(path.c_str(), O_RDWR);
     int segsize =
             static_cast<int>(static_cast<float>(fsize) / threads); // 向下取整
@@ -101,7 +101,7 @@ int spawnMultiDownloadsAndJoin(
         SOCK newSock;
         createSock(newSock);
         ts.emplace_back(std::thread(
-                enterPassiveAndDownloadOneSegmentAndClose, path, off, len, i,
+                enter_passive_and_download_one_segment_and_close, path, off, len, i,
                 fs[i], newSock));
 
         std::cout << "Thread " << i << " Start" << std::endl;
@@ -111,7 +111,7 @@ int spawnMultiDownloadsAndJoin(
     SOCK newSock;
     createSock(newSock);
     ts.emplace_back(std::thread(
-            enterPassiveAndDownloadOneSegmentAndClose, path, finaloff,
+            enter_passive_and_download_one_segment_and_close, path, finaloff,
             fsize - finaloff, threads - 1, fs.back(), newSock));
     std::cout << "Thread " << (threads - 1) << " Start" << std::endl;
 
