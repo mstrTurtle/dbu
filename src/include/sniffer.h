@@ -74,12 +74,6 @@ private:
     Sniff_Hint hint; /**< 探测提示信息 */
     string cwd;      /**< 当前工作路径 */
 
-public:
-    Sniffer() = delete;
-    Sniffer(ACE_INET_Addr addr_, SOCK sock_, Sniff_Hint hint_)
-        : conn({.addr = addr_, .sock = sock_}),
-          hint(hint_){};
-
     /**
      * @brief 处理分支信息
      *
@@ -114,6 +108,12 @@ public:
      * @return int 错误码，0 表示成功，其他值表示失败
      */
     int process_functionality();
+
+public:
+    Sniffer() = delete;
+    Sniffer(ACE_INET_Addr addr_, SOCK sock_, Sniff_Hint hint_)
+        : conn({.addr = addr_, .sock = sock_}),
+          hint(hint_){};
 
     /**
      * @brief 探测的入口。传入Option，逐步探测。返回错误码。
