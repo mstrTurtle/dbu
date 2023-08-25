@@ -1,4 +1,4 @@
-// #include "Installer.h"
+// #include "installer.h"
 #include <gtest/gtest.h>
 
 

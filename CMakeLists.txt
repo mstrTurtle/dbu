@@ -11,9 +11,9 @@ set(EXECUTABLE_OUTPUT_PATH  ${PROJECT_SOURCE_DIR}/bin/)
 ADD_LIBRARY(Dbu STATIC
     src/downloader.cpp
     src/ftp_operation.cpp
-    src/FtpUtil.cpp
+    src/ftp_util.cpp
     src/Sniffer.cpp
-    src/Installer.cpp
+    src/installer.cpp
     src/Option.cpp
     src/Updater.cpp
 )
@@ -50,7 +50,7 @@ find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
 # Link runTests with what we want to test and the GTest and pthread library
-add_executable(runTests test/test_installer.cpp src/Installer.cpp)
+add_executable(runTests test/test_installer.cpp src/installer.cpp)
 target_link_libraries(runTests Dbu gtest pthread)
 
 target_include_directories(runTests

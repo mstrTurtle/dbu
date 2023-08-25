@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ftp_operation.h"
-#include "FtpUtil.h"
+#include "ftp_util.h"
 #include "Option.h"
 #include "Sniffer.h"
 #include "cstring"

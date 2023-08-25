@@ -1,4 +1,4 @@
-#include "Installer.h"
+#include "installer.h"
 #include "downloader.h"
 #include "Option.h"
 #include "ace/Log_Msg.h"

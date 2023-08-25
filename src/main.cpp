@@ -1,6 +1,6 @@
 #include "downloader.h"
 #include "ftp_operation.h"
-#include "Installer.h"
+#include "installer.h"
 #include "Option.h"
 #include "Sniffer.h"
 #include "Updater.h"

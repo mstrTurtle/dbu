@@ -2,7 +2,7 @@
 #include "Sniffer.h"
 #include "downloader.h"
 #include "ftp_operation.h"
-#include "Installer.h"
+#include "installer.h"
 #include "Option.h"
 #include "Sniffer.h"
 #include "ace/Log_Msg.h"

@@ -1,6 +1,6 @@
 #include "Sniffer.h"
 #include "ftp_operation.h"
-#include "FtpUtil.h"
+#include "ftp_util.h"
 #include "Option.h"
 #include "cstring"
 #include <ace/INET_Addr.h>
