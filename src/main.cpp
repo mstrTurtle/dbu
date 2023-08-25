@@ -1,5 +1,5 @@
-#include "Downloader.h"
-#include "FtpOperation.h"
+#include "downloader.h"
+#include "ftp_operation.h"
 #include "Installer.h"
 #include "Option.h"
 #include "Sniffer.h"

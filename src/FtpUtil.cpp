@@ -1,5 +1,5 @@
 #include "FtpUtil.h"
-#include "FtpOperation.h"
+#include "ftp_operation.h"
 
 #include <ace/INET_Addr.h>
 #include <ace/Log_Msg.h>

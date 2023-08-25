@@ -1,5 +1,5 @@
 /**
- * @file Downloader.h
+ * @file downloader.h
  * @author JiayuXiao (xiaojiayu@scutech.com)
  * @brief 输入路径，提供多线程下载功能、进度跟踪功能。
  * @version 0.1
@@ -10,7 +10,7 @@
  */
 #pragma once
 #include "Option.h"
-#include "FtpOperation.h"
+#include "ftp_operation.h"
 #include <string>
 
 #include <ace/SOCK_Connector.h>

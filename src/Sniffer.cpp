@@ -1,5 +1,5 @@
 #include "Sniffer.h"
-#include "FtpOperation.h"
+#include "ftp_operation.h"
 #include "FtpUtil.h"
 #include "Option.h"
 #include "cstring"

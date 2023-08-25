@@ -11,8 +11,8 @@
 },
 {
   "directory": "/home/turtle/dbackup-updater/build",
-  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/Dbu.dir/src/Downloader.cpp.o -c /home/turtle/dbackup-updater/src/Downloader.cpp",
-  "file": "/home/turtle/dbackup-updater/src/Downloader.cpp"
+  "command": "/usr/bin/c++   -I/home/turtle/dbackup-updater/src/include  -g   -std=gnu++14 -o CMakeFiles/Dbu.dir/src/downloader.cpp.o -c /home/turtle/dbackup-updater/src/downloader.cpp",
+  "file": "/home/turtle/dbackup-updater/src/downloader.cpp"
 },
 {
   "directory": "/home/turtle/dbackup-updater/build",

@@ -1,5 +1,5 @@
-#include "Downloader.h"
-#include "FtpOperation.h"
+#include "downloader.h"
+#include "ftp_operation.h"
 #include "FtpUtil.h"
 #include "Option.h"
 #include <cstdio>
@@ -64,16 +64,16 @@ int openNFile(int n, vector<FILE*>& result)
 }
 
 /**
- * @brief 多线程下载并合并函数
+ * @brief 启动多个下载线程并等待它们完成，并将下载的文件片段合并到一个文件中。
  *
- * 该函数通过创建多个线程来下载指定文件的不同片段，并将下载的片段合并成一个完整的文件。
- *
- * @param sock 表示与服务器建立的套接字连接。
- * @param path 表示要下载的文件的路径。
- * @param threads 表示要使用的下载线程数量。
- * @return 如果下载和合并过程成功，则返回0；否则返回非零值。
+ * @param sock 下载的套接字。
+ * @param path 下载的文件路径。
+ * @param threads 启动的下载线程数。
+ * @param savepath 合并后的文件保存路径。
+ * @param createSock 创建套接字的函数指针。
+ * @return 返回0表示下载成功，返回1表示下载失败。
  */
-int spawnMultiDownloadsAndJoin(
+int spawn_multi_downloads_and_join(
         SOCK sock,
         Str path,
         int threads,
@@ -137,7 +137,7 @@ int spawnMultiDownloadsAndJoin(
  * @brief 下载器运行函数
  *
  * 该函数是下载器的主要运行函数。它通过初始化ACE库，建立与服务器的连接并登录，然后调用
- * spawnMultiDownloadsAndJoin 函数进行多线程下载和合并操作，最后关闭ACE库。
+ * spawn_multi_downloads_and_join 函数进行多线程下载和合并操作，最后关闭ACE库。
  *
  * @return 如果运行成功，则返回0；否则返回非零值。
  */
@@ -147,7 +147,7 @@ int Downloader::run()
     ACE::init();
 
     // 处理控制连接void
-    spawnMultiDownloadsAndJoin(
+    spawn_multi_downloads_and_join(
             sock_, filepath_, threads_, savepath_.c_str(), sock_creator_);
 
     // 关闭ACE

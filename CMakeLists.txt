@@ -9,8 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(EXECUTABLE_OUTPUT_PATH  ${PROJECT_SOURCE_DIR}/bin/)
 
 ADD_LIBRARY(Dbu STATIC
-    src/Downloader.cpp
-    src/FtpOperation.cpp
+    src/downloader.cpp
+    src/ftp_operation.cpp
     src/FtpUtil.cpp
     src/Sniffer.cpp
     src/Installer.cpp
