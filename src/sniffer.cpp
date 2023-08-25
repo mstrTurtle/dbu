@@ -1,9 +1,10 @@
 #include "sniffer.h"
+
+#include "cstring"
 #include "ftp_operation.h"
 #include "ftp_util.h"
 #include "option.h"
 #include "sniffer_errors.h"
-#include "cstring"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
 #include <ace/Log_Msg.h>
@@ -84,7 +85,7 @@ int Sniffer::process_version()
 {
     ACE_TRACE(ACE_TEXT(__func__));
     string result;
-    if(fetch_find_max(conn.sock, cwd, result)){
+    if (fetch_find_max(conn.sock, cwd, result)) {
         return BAD_LOOKUP;
     }
     join_path(cwd, result);

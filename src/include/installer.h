@@ -17,5 +17,5 @@ class Installer
     string path;
 
 public:
-    int run();
+    [[nodiscard]] int run();
 };

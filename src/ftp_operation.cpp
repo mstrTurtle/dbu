@@ -1,13 +1,14 @@
-#include "option.h"
 #include "ftp_operation.h"
+
+#include "option.h"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
 #include <ace/SOCK_Connector.h>
 #include <ace/SOCK_Stream.h>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <thread>
-#include <sstream>
 
 int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
 {
@@ -54,7 +55,7 @@ int enter_passive_and_get_data_connection(Ftp_Control_Client cli, SOCK& dsock)
     ACE_TRACE(ACE_TEXT(__func__));
     string c, t;
     // 发送PASV命令，进入被动模式
-    if(cli.send_and_receive("PASV", "", c, t)){
+    if (cli.send_and_receive("PASV", "", c, t)) {
         return 1;
     }
     ACE_DEBUG((LM_DEBUG, "pasv receive (%s, %s)", c.c_str(), t.c_str()));
@@ -132,19 +133,19 @@ int download_one_segment(
     ssize_t total_received = 0;
 
     // 发送TYPE I命令，进入BINARY模式
-    if(cli.send_and_receive("TYPE", "I", c, t)){
+    if (cli.send_and_receive("TYPE", "I", c, t)) {
         goto error;
     }
     ACE_DEBUG((LM_DEBUG, "%I%t sent TYPE I\n"));
 
     // 发送REST命令，设置下载的起始偏移量
-    if(cli.send_and_receive("REST", std::to_string(start_offset), c, t)){
+    if (cli.send_and_receive("REST", std::to_string(start_offset), c, t)) {
         goto error;
     }
     ACE_DEBUG((LM_DEBUG, "%I%t sent REST\n"));
 
     // 发送RETR命令
-    if(cli.send_and_receive("RETR", path, c, t)){
+    if (cli.send_and_receive("RETR", path, c, t)) {
         goto error;
     }
     if (c != "550") {
@@ -200,7 +201,7 @@ int quit_and_close(SOCK& sock)
 {
     ACE_TRACE(ACE_TEXT(__func__));
     Ftp_Control_Client cli(sock);
-    if(cli.send_command("QUIT", "")){
+    if (cli.send_command("QUIT", "")) {
         return 1;
     }
 
@@ -216,7 +217,7 @@ int get_ftp_file_size(
     ACE_TRACE(ACE_TEXT(__func__));
     string c, t;
     // 发送SIZE命令，获取文件大小
-    if(cli.send_and_receive("SIZE", path, c, t)){
+    if (cli.send_and_receive("SIZE", path, c, t)) {
         return 1;
     }
     ACE_DEBUG(
@@ -241,12 +242,12 @@ int fetch_nlst(
 
     // 进入被动模式，获取data socket
     SOCK data_socket;
-    if(enter_passive_and_get_data_connection(cli, data_socket)){
+    if (enter_passive_and_get_data_connection(cli, data_socket)) {
         return 1;
     }
 
     // 发送NLST命令
-    if(cli.send_and_receive("NLST", cwd, c, t)){
+    if (cli.send_and_receive("NLST", cwd, c, t)) {
         return 1;
     }
 
@@ -268,11 +269,11 @@ int fetch_nlst(
 int fetch_find_max(SOCK sock, string path, string& result)
 {
     string s;
-    if(fetch_nlst(sock, path, s)){
+    if (fetch_nlst(sock, path, s)) {
         return 1;
     }
     std::cout << __func__ << " got nlst: " << s << std::endl;
-    if(find_max(str_to_lines(s), result)){
+    if (find_max(str_to_lines(s), result)) {
         return 1;
     }
     return 0;

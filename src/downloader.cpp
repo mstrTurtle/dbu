@@ -91,7 +91,6 @@ int spawn_multi_downloads_and_join(
         std::cout << "Get file size failed\n";
         return BAD_PATH;
     }
-    int fhandle = open(path.c_str(), O_RDWR);
     // 分段大小向下取整
     int segsize = static_cast<int>(static_cast<float>(fsize) / threads);
 

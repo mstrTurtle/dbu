@@ -1,9 +1,10 @@
-#include "installer_errors.h"
 #include "installer.h"
-#include "downloader.h"
-#include "option.h"
+
 #include "ace/Log_Msg.h"
 #include "ace/Process.h"
+#include "downloader.h"
+#include "installer_errors.h"
+#include "option.h"
 #include <iostream>
 
 /**
@@ -13,9 +14,9 @@
  */
 int Installer::run()
 {
-    using Installer_Errors::OK;
-    using Installer_Errors::BAD_SPAWN;
     using Installer_Errors::BAD_EXIT;
+    using Installer_Errors::BAD_SPAWN;
+    using Installer_Errors::OK;
 
     // 构造命令
     ACE_Process_Options options;

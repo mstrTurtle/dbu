@@ -1,13 +1,13 @@
 #include "updater.h"
-#include "sniffer.h"
-#include "sniffer_errors.h"
+
+#include "ace/Init_ACE.h"
+#include "ace/Log_Msg.h"
 #include "downloader.h"
 #include "ftp_operation.h"
 #include "installer.h"
 #include "option.h"
 #include "sniffer.h"
-#include "ace/Init_ACE.h"
-#include "ace/Log_Msg.h"
+#include "sniffer_errors.h"
 
 int Updater::run()
 {
@@ -45,7 +45,7 @@ int Updater::run()
     Downloader downloader(
             path, OPTION->threads_, "download.rpm", sock, sock_creator);
 
-    if(!downloader.run()){
+    if (!downloader.run()) {
         return 1;
     }
 

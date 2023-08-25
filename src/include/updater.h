@@ -1,5 +1,5 @@
-#include "sniffer.h"
 #include "option.h"
+#include "sniffer.h"
 
 class Updater
 {

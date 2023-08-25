@@ -9,12 +9,11 @@
  *
  */
 #pragma once
-#include "option.h"
 #include "ftp_operation.h"
-#include <string>
-
+#include "option.h"
 #include <ace/SOCK_Connector.h>
 #include <ace/SOCK_Stream.h>
+#include <string>
 
 using std::string;
 

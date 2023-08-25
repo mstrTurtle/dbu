@@ -9,6 +9,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # set(EXECUTABLE_OUTPUT_PATH  ${PROJECT_SOURCE_DIR}/bin/)
 set(CMAKE_BUILD_TYPE Debug)
 
+# add sanitizer support
+add_compile_options(-fsanitize=address)
+add_link_options(-fsanitize=address)
+
 ADD_LIBRARY(Dbu STATIC
     src/downloader.cpp
     src/ftp_operation.cpp

@@ -1,23 +1,19 @@
 #pragma once
 
-#include <cstring>
+#include <ace/INET_Addr.h>
+#include <ace/Init_ACE.h>
+#include <ace/Log_Msg.h>
+#include <ace/Log_Priority.h>
+#include <ace/Message_Block.h>
+#include <ace/SOCK_Connector.h>
+#include <ace/SOCK_Stream.h>
 #include <algorithm>
-#include <string>
-#include <vector>
-#include <tuple>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <tuple>
 #include <vector>
-#include <cstring>
-
-#include <ace/INET_Addr.h>
-#include <ace/Init_ACE.h>
-#include <ace/SOCK_Connector.h>
-#include <ace/SOCK_Stream.h>
-#include <ace/Message_Block.h>
-#include <ace/Log_Msg.h>
-#include <ace/Log_Priority.h>
 
 using std::string;
 using std::vector;

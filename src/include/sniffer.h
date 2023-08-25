@@ -9,11 +9,11 @@
  *
  */
 #pragma once
+#include "cstring"
 #include "ftp_operation.h"
 #include "ftp_util.h"
 #include "option.h"
 #include "sniffer.h"
-#include "cstring"
 #include <ace/INET_Addr.h>
 #include <ace/Init_ACE.h>
 #include <ace/Log_Msg.h>
@@ -28,8 +28,8 @@
 #include <tuple>
 #include <vector>
 
-using std::vector;
 using std::string;
+using std::vector;
 
 using VS = vector<string>;
 /**

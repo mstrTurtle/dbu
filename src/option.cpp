@@ -2,7 +2,6 @@
 
 #include "ace/Get_Opt.h"
 #include "ace/OS_NS_string.h"
-
 #include <string>
 
 using std::string;

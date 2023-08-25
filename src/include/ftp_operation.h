@@ -9,16 +9,13 @@
  *
  */
 #pragma once
-#include <ace/SOCK_Stream.h>
+#include "ftp_util.h"
 #include <ace/SOCK_Connector.h>
 #include <ace/SOCK_Stream.h>
-#include <string>
+#include <atomic>
+#include <functional>
 #include <iostream>
 #include <string>
-#include <functional>
-#include <atomic>
-
-#include "ftp_util.h"
 
 /**
  * @class Ftp_Control_Client

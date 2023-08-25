@@ -1,6 +1,6 @@
 #include "ftp_util.h"
-#include "ftp_operation.h"
 
+#include "ftp_operation.h"
 #include <ace/INET_Addr.h>
 #include <ace/Log_Msg.h>
 #include <ace/OS.h>
@@ -87,7 +87,7 @@ int find_max(const VS& ss, std::string& result)
 
     for (auto line : ss) {
         std::string r_name;
-        if(get_regular_name(line, r_name)){
+        if (get_regular_name(line, r_name)) {
             return 1;
         }
         ACE_DEBUG((LM_DEBUG, "Processing r_name: %s\n", r_name.c_str()));
