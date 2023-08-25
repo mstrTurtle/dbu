@@ -55,7 +55,7 @@ int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
 
 int enter_passive_and_get_data_connection(Ftp_Control_Client cli, SOCK& dsock)
 {
-    ACE_TRACE (ACE_TEXT (__func__));
+    ACE_TRACE(ACE_TEXT(__func__));
     string c, t;
     // 发送PASV命令，进入被动模式
     cli.send_and_receive("PASV", "", c, t);
@@ -97,8 +97,11 @@ void enter_passive_and_download_one_segment_and_close(
         FILE* file,
         SOCK sock)
 {
-    ACE_TRACE (ACE_TEXT (__func__));
-    ACE_DEBUG((LM_DEBUG, "%I%t enter passive and download: (off = %d, size = %u)\n", off, size));
+    ACE_TRACE(ACE_TEXT(__func__));
+    ACE_DEBUG(
+            (LM_DEBUG,
+             "%I%t enter passive and download: (off = %d, size = %u)\n", off,
+             size));
     SOCK dsock;
     // 发送PASV，获取data socket
     enter_passive_and_get_data_connection(sock, dsock);
@@ -117,7 +120,7 @@ void download_one_segment(
         int part_id,
         FILE* file)
 {
-    ACE_TRACE (ACE_TEXT (__func__));
+    ACE_TRACE(ACE_TEXT(__func__));
     char buffer[1024];
     ssize_t recv_count;
     string c, t;
@@ -165,7 +168,7 @@ void download_one_segment(
 
 int quit_and_close(SOCK& sock)
 {
-    ACE_TRACE (ACE_TEXT (__func__));
+    ACE_TRACE(ACE_TEXT(__func__));
     Ftp_Control_Client cli(sock);
     cli.send_command("QUIT", "");
 
@@ -223,7 +226,6 @@ int fetch_nlst(
     // 结束流程并返回值
     return 0;
 }
-
 
 int fetch_find_max(SOCK sock, string path, string& result)
 {

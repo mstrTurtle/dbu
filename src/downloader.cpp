@@ -82,7 +82,7 @@ int spawn_multi_downloads_and_join(
         const char* savepath,
         Sock_Creator create_sock)
 {
-    ACE_TRACE (ACE_TEXT (__func__));
+    ACE_TRACE(ACE_TEXT(__func__));
     std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
     std::vector<FILE*> fs;
     int fsize;

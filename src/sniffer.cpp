@@ -114,13 +114,17 @@ int Sniffer::run(string& result)
     int err = 0;
 
     if ((err = process_branch()) != 0) {
-        std::cout << "Error at process_branch，error code：" << err << std::endl;
+        std::cout << "Error at process_branch，error code：" << err
+                  << std::endl;
     } else if ((err = process_option()) != 0) {
-        std::cout << "Error at process_option，error code：" << err << std::endl;
+        std::cout << "Error at process_option，error code：" << err
+                  << std::endl;
     } else if ((err = process_target()) != 0) {
-        std::cout << "Error at process_target，error code：" << err << std::endl;
+        std::cout << "Error at process_target，error code：" << err
+                  << std::endl;
     } else if ((err = process_version()) != 0) {
-        std::cout << "Error at process_version，error code：" << err << std::endl;
+        std::cout << "Error at process_version，error code：" << err
+                  << std::endl;
     } else if ((err = process_functionality()) != 0) {
         std::cout << "Error at process_functionality，error code：" << err
                   << std::endl;
