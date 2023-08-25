@@ -1,4 +1,4 @@
-#include "Option.h"
+#include "option.h"
 
 #include "ace/Get_Opt.h"
 #include "ace/OS_NS_string.h"

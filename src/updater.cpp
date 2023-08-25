@@ -1,10 +1,10 @@
-#include "Updater.h"
-#include "Sniffer.h"
+#include "updater.h"
+#include "sniffer.h"
 #include "downloader.h"
 #include "ftp_operation.h"
 #include "installer.h"
-#include "Option.h"
-#include "Sniffer.h"
+#include "option.h"
+#include "sniffer.h"
 #include "ace/Log_Msg.h"
 
 int Updater::run()

@@ -1,5 +1,5 @@
 /**
- * @file Option.h
+ * @file option.h
  * @author JiayuXiao (xiaojiayu@scutech.com)
  * @brief 解析命令行选项的类
  * @version 0.1

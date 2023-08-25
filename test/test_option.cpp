@@ -1,5 +1,5 @@
 // tests.cpp
-#include "Option.h"
+#include "option.h"
 #include <gtest/gtest.h>
 
 /**

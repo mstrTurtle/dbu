@@ -12,10 +12,10 @@ ADD_LIBRARY(Dbu STATIC
     src/downloader.cpp
     src/ftp_operation.cpp
     src/ftp_util.cpp
-    src/Sniffer.cpp
+    src/sniffer.cpp
     src/installer.cpp
-    src/Option.cpp
-    src/Updater.cpp
+    src/option.cpp
+    src/updater.cpp
 )
 
 target_include_directories(Dbu

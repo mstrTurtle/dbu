@@ -1,5 +1,5 @@
 /**
- * @file Updater.h
+ * @file updater.h
  * @author JiayuXiao (xiaojiayu@scutech.com)
  * @brief Updater程序入口
  * @version 0.1

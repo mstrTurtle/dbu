@@ -1,6 +1,6 @@
 #include "installer.h"
 #include "downloader.h"
-#include "Option.h"
+#include "option.h"
 #include "ace/Log_Msg.h"
 
 #include "ace/Process.h"
