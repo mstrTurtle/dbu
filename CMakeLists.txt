@@ -13,6 +13,7 @@ ADD_LIBRARY(Dbu STATIC
     src/Sniffer.cpp
     src/Installer.cpp
     src/Option.cpp
+    src/Updater.cpp
 )
 
 target_include_directories(Dbu
