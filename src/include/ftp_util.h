@@ -69,45 +69,6 @@ VS fzf(VS ss, string e);
 int find_max(const VS& ss, std::string& result);
 
 /**
- * @brief 获取文件列表并查找最大值
- *
- * 该函数通过与服务器建立的套接字sock，获取指定路径path下的文件列表，
- * 并在文件列表中查找最大值，并将结果存储在给定的result字符串中。
- *
- * @param sock 与服务器建立的套接字。
- * @param path 指定的路径。
- * @param result 存储最大值的字符串。
- * @return 如果成功获取并查找最大值，则返回0；否则返回非零值。
- */
-int fetch_find_max(SOCK sock, string path, string& result);
-
-/**
- * @brief 获取文件列表并使用FZF过滤
- *
- * 该函数通过与服务器建立的套接字sock，获取指定路径path下的文件列表，
- * 并使用模糊匹配过滤出匹配给定模式e的文件列表。
- *
- * @param sock 与服务器建立的套接字。
- * @param path 指定的路径。
- * @param e 过滤模式。
- * @param result 存储过滤后的文件列表的向量。
- * @return 如果成功获取并过滤文件列表，则返回0；否则返回非零值。
- */
-int fetch_fzf(SOCK sock, string path, string e, VS& result);
-
-
-/**
- * @brief 从指定的 SOCK 连接中获取文件列表，并查找指定的文件路径。
- *
- * @param sock 连接的 SOCK 对象。
- * @param path 文件路径。
- * @param e 文件名。
- * @param result [out] 查找结果，true 表示找到，false 表示未找到。
- * @return 返回操作的结果，0 表示成功，非零值表示失败。
- */
-int fetch_find(SOCK sock, string path, string e, bool& result);
-
-/**
  * @brief 从给定路径中提取文件名
  *
  * @param path 路径字符串

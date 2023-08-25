@@ -102,40 +102,6 @@ int find_max(const VS& ss, std::string& result)
     return 0;
 }
 
-
-int fetch_find_max(SOCK sock, string path, string& result)
-{
-    string s;
-    fetch_nlst(sock, path, s);
-    std::cout << __func__ << " got nlst: " << s << std::endl;
-    find_max(str_to_lines(s), result);
-    return 0;
-}
-
-int fetch_fzf(SOCK sock, string path, string e, VS& result)
-{
-    string s;
-    if (fetch_nlst(sock, path, s)) {
-        std::cout << "fetch_nlst failed with code " << s << std::endl;
-        return 1;
-    }
-    result = fzf(str_to_lines(s), e);
-    return 0;
-}
-
-int fetch_find(SOCK sock, string path, string e, bool& result)
-{
-    string s;
-    string e_with_prefix = path;
-    join_path(e_with_prefix, e);
-    if (fetch_nlst(sock, path, s)) {
-        return 1;
-    }
-    std::cout << "NLST fetched to s\n";
-    result = find(str_to_lines(s), e_with_prefix);
-    return 0;
-}
-
 Sock_Creator make_logined_sock_creator(
         const ACE_INET_Addr& ftp_address,
         const std::string& username,
