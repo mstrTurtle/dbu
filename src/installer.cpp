@@ -1,8 +1,8 @@
+#include "installer_errors.h"
 #include "installer.h"
 #include "downloader.h"
 #include "option.h"
 #include "ace/Log_Msg.h"
-
 #include "ace/Process.h"
 #include <iostream>
 
@@ -13,6 +13,10 @@
  */
 int Installer::run()
 {
+    using Installer_Errors::OK;
+    using Installer_Errors::BAD_SPAWN;
+    using Installer_Errors::BAD_EXIT;
+
     // 构造命令
     ACE_Process_Options options;
     options.command_line(
@@ -26,11 +30,15 @@ int Installer::run()
         ACE_ERROR(
                 (LM_ERROR, ACE_TEXT("%p errno = %d.\n"), ACE_TEXT("install"),
                  error_number));
+        return BAD_SPAWN;
     }
 
     // 检查是否正确执行
     ACE_exitcode status;
     new_process.wait(&status);
     ACE_DEBUG((LM_DEBUG, ACE_TEXT("Process exit with status %d\n"), status));
-    return 0;
+    if (status) {
+        return BAD_EXIT;
+    }
+    return OK;
 }
