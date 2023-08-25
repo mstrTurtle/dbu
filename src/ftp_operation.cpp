@@ -125,7 +125,7 @@ int enter_passive_and_get_data_connection(SOCK control_socket, SOCK& dsock)
 }
 
 
-void enter_passive_and_get_data_connection(
+void enter_passive_and_download_one_segment_and_close(
         Str path,
         off_t off,
         size_t size,
