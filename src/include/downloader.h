@@ -27,7 +27,7 @@ class Downloader
     int threads_;
     string savepath_;
     SOCK sock_;
-    SockCreator sock_creator_;
+    Sock_Creator sock_creator_;
 
 public:
     Downloader(
@@ -35,7 +35,7 @@ public:
             int threads,
             string savepath,
             SOCK sock,
-            SockCreator sock_creator)
+            Sock_Creator sock_creator)
         : filepath_(path),
           threads_(threads),
           savepath_(savepath),

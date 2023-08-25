@@ -1,8 +1,12 @@
-#ifndef OPTION_H
-#define OPTION_H
+#pragma once
 
 #include <ace/SOCK_Stream.h>
+#include <ace/SOCK_Connector.h>
+#include <ace/SOCK_Stream.h>
 #include <string>
+#include <iostream>
+#include <string>
+#include <functional>
 
 using Str = std::string;
 using SOCK = ACE_SOCK_Stream;
@@ -27,18 +31,24 @@ void enter_passive_and_download_one_segment_and_close(
         int part_id,
         FILE* file,
         SOCK sock);
+/**
+ * @brief FTP控制连接socket的工厂方法类型
+ *
+ */
+typedef std::function<int(SOCK&)> Sock_Creator;
 
-#include <iostream>
-#include <string>
-#include <ace/SOCK_Connector.h>
-#include <ace/SOCK_Stream.h>
-#include <functional>
-
-typedef std::function<int(SOCK&)> SockCreator;
-
-SockCreator make_logined_sock_creator(
+/**
+ * @brief 新建闭包，产生FTP控制连接工厂方法
+ *
+ * 本函数返回一个创建一个连接到FTP服务器的新socket的闭包，
+ * 生成的socket将用指定的用户名和密码登录。
+ *
+ * @param address 远端地址
+ * @param username 用户名
+ * @param password 密码
+ * @return Sock_Creator
+ */
+Sock_Creator make_logined_sock_creator(
         const ACE_INET_Addr& address,
         const std::string& username,
         const std::string& password);
-
-#endif // OPTION_H

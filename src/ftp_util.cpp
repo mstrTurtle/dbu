@@ -321,7 +321,7 @@ int getStatusCode(Str line)
     return i;
 }
 
-SockCreator make_logined_sock_creator(
+Sock_Creator make_logined_sock_creator(
         const ACE_INET_Addr& ftpAddress,
         const std::string& username,
         const std::string& password)

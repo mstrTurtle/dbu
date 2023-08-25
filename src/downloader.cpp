@@ -48,7 +48,7 @@ void aggregateFiles(const std::vector<FILE*>& inputFiles, FILE* outputFile)
  * @param result 存储打开的文件指针的vector。
  * @return 如果成功打开所有文件，则返回0；否则返回非零值。
  */
-int openNFile(int n, vector<FILE*>& result)
+int open_n_file(int n, vector<FILE*>& result)
 {
     char fname[100];
     for (int i = 0; i < n; i++) {
@@ -70,7 +70,7 @@ int openNFile(int n, vector<FILE*>& result)
  * @param path 下载的文件路径。
  * @param threads 启动的下载线程数。
  * @param savepath 合并后的文件保存路径。
- * @param createSock 创建套接字的函数指针。
+ * @param create_sock 创建套接字的函数指针。
  * @return 返回0表示下载成功，返回1表示下载失败。
  */
 int spawn_multi_downloads_and_join(
@@ -78,7 +78,7 @@ int spawn_multi_downloads_and_join(
         Str path,
         int threads,
         const char* savepath,
-        SockCreator createSock)
+        Sock_Creator create_sock)
 {
     std::cout << "spawning\n";
     std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
@@ -90,7 +90,7 @@ int spawn_multi_downloads_and_join(
 
     std::cout << "got size " << fsize << "\n";
 
-    if (openNFile(threads, fs)) {
+    if (open_n_file(threads, fs)) {
         std::cout << "open failed\n";
         return 1;
     }
@@ -99,7 +99,7 @@ int spawn_multi_downloads_and_join(
         int off = i * segsize;
         int len = segsize;
         SOCK newSock;
-        createSock(newSock);
+        create_sock(newSock);
         ts.emplace_back(std::thread(
                 enter_passive_and_download_one_segment_and_close, path, off, len, i,
                 fs[i], newSock));
@@ -109,7 +109,7 @@ int spawn_multi_downloads_and_join(
 
     int finaloff = (threads - 1) * segsize;
     SOCK newSock;
-    createSock(newSock);
+    create_sock(newSock);
     ts.emplace_back(std::thread(
             enter_passive_and_download_one_segment_and_close, path, finaloff,
             fsize - finaloff, threads - 1, fs.back(), newSock));

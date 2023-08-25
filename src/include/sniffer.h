@@ -24,7 +24,7 @@ using std::string;
 
 using VS = vector<string>;
 
-struct SniffHint
+struct Sniff_Hint
 {
     const string branch;
     const string subbranch;
@@ -32,7 +32,7 @@ struct SniffHint
     const string arch;
     const string product;
 
-    friend std::ostream& operator<<(std::ostream& os, const SniffHint& hint)
+    friend std::ostream& operator<<(std::ostream& os, const Sniff_Hint& hint)
     {
         os << "Branch: " << hint.branch << std::endl;
         os << "Subbranch: " << hint.subbranch << std::endl;
@@ -51,12 +51,12 @@ private:
         ACE_INET_Addr addr;
         SOCK sock;
     } conn;
-    SniffHint hint;
+    Sniff_Hint hint;
     string cwd;
 
 public:
     Sniffer() = delete;
-    Sniffer(ACE_INET_Addr addr_, SOCK sock_, SniffHint hint_)
+    Sniffer(ACE_INET_Addr addr_, SOCK sock_, Sniff_Hint hint_)
         : conn({.addr = addr_, .sock = sock_}),
           hint(hint_){};
     int processBranch();
@@ -67,4 +67,4 @@ public:
     int run(Str& result);
 };
 
-SniffHint convertOptionToSniffHint(const Option& option);
+Sniff_Hint convertOptionToSniffHint(const Option& option);

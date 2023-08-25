@@ -11,16 +11,16 @@ int Updater::run()
 {
     // ftp控制连接的sock工厂
     ACE_INET_Addr addr(21, "ftp.scutech.com");
-    SockCreator sockCreator =
+    Sock_Creator sock_creator =
             make_logined_sock_creator(addr, "scutech", "dingjia");
 
-    SniffHint hint = convertOptionToSniffHint(option);
+    Sniff_Hint hint = convertOptionToSniffHint(option);
 
     std::cout << (option);
 
     // 连接到端点
     SOCK sock;
-    sockCreator(sock);
+    sock_creator(sock);
 
     // run sniffer，查找最新版本的product
 
@@ -35,7 +35,7 @@ int Updater::run()
     // run downloader, 多线程下载
     Downloader downloader(
             "/pub/robots.txt", OPTION->threads_, "download.rpm", sock,
-            sockCreator);
+            sock_creator);
 
     downloader.run();
 

@@ -148,9 +148,9 @@ int test_main()
     return 0;
 }
 
-SniffHint convertOptionToSniffHint(const Option& option)
+Sniff_Hint convertOptionToSniffHint(const Option& option)
 {
-    SniffHint sniffHint = {
+    Sniff_Hint sniffHint = {
             .branch = option.branch_,
             .subbranch = option.sub_branch_,
             .option = option.build_,
