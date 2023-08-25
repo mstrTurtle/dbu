@@ -194,3 +194,19 @@ Sock_Creator make_logined_sock_creator(
         const ACE_INET_Addr& address,
         const std::string& username,
         const std::string& password);
+
+/**
+ * @brief 抓取目录列表
+ *
+ * 通过与服务器建立数据连接，发送NLST命令来获取指定目录下的文件列表，
+ * 并将结果存储在result参数中。
+ *
+ * @param sock ACE_SOCK_Stream对象，用于与服务器建立数据连接和发送命令
+ * @param cwd 目标目录路径
+ * @param result 存储目录列表的字符串引用，将被填充为获取到的文件列表
+ * @return 返回操作的结果，0 表示成功，非零值表示失败。
+ */
+int fetch_nlst(
+        ACE_SOCK_Stream& sock,
+        const std::string& cwd,
+        std::string& result);

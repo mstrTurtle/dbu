@@ -23,22 +23,7 @@ using std::string;
 using std::vector;
 
 using VS = vector<string>;
-
 using SOCK = ACE_SOCK_Stream;
-
-/**
- * @brief 抓取目录列表
- *
- * @param sock
- * @param cwd
- * @param data_ip
- * @param data_port
- * @param result
- */
-int fetch_nlst(
-        ACE_SOCK_Stream& sock,
-        const std::string& cwd,
-        std::string& result);
 
 /**
  * @brief 将字符串追加到原始字符串的末尾，形成新的路径

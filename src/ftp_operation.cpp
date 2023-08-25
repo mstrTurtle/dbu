@@ -55,12 +55,12 @@ int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
 
 int enter_passive_and_get_data_connection(Ftp_Control_Client cli, SOCK& dsock)
 {
+    std::cout << "In" << __func__ << "\n";
     string c, t;
-    std::cout << "to pasv\n";
     // 发送PASV命令，进入被动模式
     cli.send_command("PASV", "");
     cli.receive_reply(c, t);
-    std::cout << "got pasv" << t << "\n";
+    std::cout << "got pasv reply: " << t << "\n";
 
     if (c != "227") {
         return 1;
@@ -81,12 +81,8 @@ int enter_passive_and_get_data_connection(Ftp_Control_Client cli, SOCK& dsock)
     ACE_SOCK_Stream data_socket;
     ACE_INET_Addr data_addr(data_port, data_ip.c_str());
     ACE_SOCK_Connector connector;
-    // std::cout << "sleeping\n";
-    // sleep(2);
-    // std::cout << "awake\n";
     if (connector.connect(data_socket, data_addr) == -1) {
         ACE_DEBUG((LM_ERROR, "Error connecting to data socket.\n"));
-        exit(0);
         return 1;
     }
 
@@ -123,22 +119,19 @@ void download_one_segment(
     string c, t;
 
     // 发送TYPE I命令，进入BINARY模式
-    cli.send_command("TYPE", "I");
-    cli.receive_reply(c, t);
+    cli.send_and_receive("TYPE", "I", c, t);
     std::cout << "Sent TYPE I\n";
 
     // 发送REST命令，设置下载的起始偏移量
-    cli.send_command("REST", std::to_string(start_offset));
-    cli.receive_reply(c, t);
+    cli.send_and_receive("REST", std::to_string(start_offset), c, t);
 
     // 发送RETR命令
-    cli.send_command("RETR", path);
-    cli.receive_reply(c, t);
+    cli.send_and_receive("RETR", path, c, t);
     if (c != "550") {
         std::cout << "open error\n";
         return;
     }
-    std::cout << "sent retr\n";
+    std::cout << "RETR is sent, start download from data socket.\n";
 
     // 下载文件
     std::cout << "The " << part_id << " ready to get " << size << "\n";
@@ -182,9 +175,7 @@ int get_ftp_file_size(Ftp_Control_Client cli, const std::string& path)
 
     string c, t;
 
-    cli.send_command("SIZE", path);
-
-    cli.receive_reply(c, t);
+    cli.send_and_receive("SIZE", path, c, t);
 
     std::cout << "recieved size. size is " << t << "\n";
 
@@ -193,6 +184,38 @@ int get_ftp_file_size(Ftp_Control_Client cli, const std::string& path)
     }
 
     return std::stoi(t);
+}
+
+int fetch_nlst(
+        Ftp_Control_Client cli,
+        const std::string& cwd,
+        std::string& result)
+{
+    static char buffer[1024];
+    string c, t;
+
+    result.clear();
+
+    // 进入被动模式，获取data socket
+    SOCK data_socket;
+    enter_passive_and_get_data_connection(cli, data_socket);
+
+    // 发送NLST命令
+    cli.send_and_receive("NLST", cwd, c, t);
+
+    // 接收数据
+    std::string received_lines;
+    int recv_count;
+    while ((recv_count = data_socket.recv(buffer, sizeof(buffer))) > 0) {
+        buffer[recv_count] = '\0';
+        result += buffer;
+    }
+
+    // 关闭数据连接
+    data_socket.close();
+
+    // 结束流程并返回值
+    return 0;
 }
 
 int Ftp_Control_Client::send_command(

@@ -136,46 +136,6 @@ int fetch_find(SOCK sock, string path, string e, bool& result)
     return 0;
 }
 
-char buffer[1024];
-ssize_t recv_count;
-
-int fetch_nlst(
-        ACE_SOCK_Stream& sock,
-        const std::string& cwd,
-        std::string& result)
-{
-    std::fill(buffer, buffer + sizeof(buffer), '\0');
-    SOCK data_socket;
-    enter_passive_and_get_data_connection(sock, data_socket);
-
-    // 发送NLST命令
-    ACE_OS::sprintf(buffer, "NLST %s\r\n", cwd.c_str());
-    sock.send(buffer, ACE_OS::strlen(buffer));
-    // recv_count = sock.recv(buffer, sizeof(buffer));
-    // buffer[recv_count] = '\0';
-    // std::cout << buffer;
-
-    sleep(1);
-
-    // 接收数据
-    std::string received_lines;
-    while ((data_socket.recv(buffer, sizeof(buffer))) > 0) {
-        received_lines += buffer;
-    }
-
-    // 关闭数据连接
-    data_socket.close();
-
-    // 接收NLST命令响应
-    recv_count = sock.recv(buffer, sizeof(buffer));
-    buffer[recv_count] = '\0';
-    std::cout << buffer;
-
-    // 结束流程并返回值
-    result = received_lines;
-    return 0;
-}
-
 Sock_Creator make_logined_sock_creator(
         const ACE_INET_Addr& ftp_address,
         const std::string& username,
