@@ -35,16 +35,25 @@ int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
 
     ACE_DEBUG((LM_DEBUG, "login welcome received: %s\n", t.c_str()));
 
-    // 发送用户名和密码
+    // 发送用户名
     if (cli.send_and_receive("USER", user, c, t)) {
         std::cout << "Error sending USER command to server." << std::endl;
+        return 1;
+    }
+    // 判断返回的状态码是否正确
+    if (c != "331") {
         return 1;
     }
 
     ACE_DEBUG((LM_DEBUG, "login user received: %s\n", t.c_str()));
 
+    // 发送密码
     if (cli.send_and_receive("PASS", pass, c, t)) {
         std::cout << "Error sending PASS command to server." << std::endl;
+        return 1;
+    }
+    // 判断返回的状态码是否正确
+    if (c != "230") {
         return 1;
     }
 
@@ -95,7 +104,8 @@ void enter_passive_and_download_one_segment_and_close(
         size_t size,
         int part_id,
         FILE* file,
-        SOCK sock)
+        SOCK sock,
+        std::atomic<bool>& canceled)
 {
     ACE_TRACE(ACE_TEXT(__func__));
     ACE_DEBUG(
@@ -103,27 +113,34 @@ void enter_passive_and_download_one_segment_and_close(
              "%I%t enter passive and download: (off = %d, size = %u)\n", off,
              size));
     SOCK dsock;
-    // 发送PASV，获取data socket
-    enter_passive_and_get_data_connection(sock, dsock);
-    // 下载对应分段
-    download_one_segment(sock, dsock, path, off, size, part_id, file);
-    // 关闭数据连接
-    quit_and_close(sock);
+    // 发送PASV，获取data socket。若发生错误，设置原子变量，通知各线程返回。
+    if (enter_passive_and_get_data_connection(sock, dsock)) {
+        canceled.store(true);
+    }
+    // 下载对应分段，出错则立即返回。错误信息已存储在原子变量中。
+    if (download_one_segment(
+                sock, dsock, path, off, size, part_id, file, canceled)) {
+        return;
+    }
+    // 关闭数据连接。在关闭数据连接时出错，无需处理
+    if (quit_and_close(sock)) {}
 }
 
-void download_one_segment(
+int download_one_segment(
         Ftp_Control_Client cli,
         SOCK data_socket,
         string path,
         off_t start_offset,
         size_t size,
         int part_id,
-        FILE* file)
+        FILE* file,
+        std::atomic<bool>& canceled)
 {
     ACE_TRACE(ACE_TEXT(__func__));
     char buffer[1024];
     ssize_t recv_count;
     string c, t;
+    ssize_t total_received = 0;
 
     // 发送TYPE I命令，进入BINARY模式
     cli.send_and_receive("TYPE", "I", c, t);
@@ -137,16 +154,25 @@ void download_one_segment(
     cli.send_and_receive("RETR", path, c, t);
     if (c != "550") {
         std::cout << "Retrieve error, server sending bad return code.\n";
-        return;
+        // 错误处理，当错误发生时，所有线程立即取消
+        canceled.store(true);
+        goto error;
     }
     std::cout << "RETR is sent, start download from data socket.\n";
 
     // 下载文件
     ACE_DEBUG((LM_DEBUG, "%I%t part %d ready to get %u\n", part_id, size));
-    ssize_t total_received = 0;
     while ((recv_count = data_socket.recv(buffer, sizeof(buffer))) > 0) {
         ACE_DEBUG(
                 (LM_DEBUG, "%I%t part %d received %u\n", part_id, recv_count));
+        // 错误处理，当错误发生时，所有线程立即取消
+        if (canceled.load()) {
+            goto error;
+        }
+        // 当socket错误发生时，用cancel_download原子变量通知别的线程返回
+        if (recv_count == -1) {
+            goto error;
+        }
         ssize_t remaining = recv_count;
         if (total_received + remaining > size) {
             remaining = size - total_received;
@@ -164,6 +190,15 @@ void download_one_segment(
 
     // 关闭数据连接
     data_socket.close();
+
+    return 0;
+
+error:
+    // 出错时在原子变量中存储状态，通知其他线程立即返回
+    canceled.store(true);
+    // 出错时也要关闭数据连接
+    data_socket.close();
+    return 1;
 }
 
 int quit_and_close(SOCK& sock)

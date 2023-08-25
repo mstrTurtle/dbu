@@ -16,6 +16,7 @@
 #include <iostream>
 #include <string>
 #include <functional>
+#include <atomic>
 
 #include "ftp_util.h"
 
@@ -124,17 +125,19 @@ int enter_passive_and_get_data_connection(
  * @param start_offset 要下载的部分的起始偏移量。
  * @param size 要下载的部分的大小。
  * @param part_id 正在下载的部分的ID。
+ * @return 如果成功，则返回0；如果出现错误，则返回1。
  *
  * @note 此函数假设控制套接字和数据套接字已经连接到FTP服务器。
  */
-void download_one_segment(
+int download_one_segment(
         Ftp_Control_Client cli,
         SOCK data_socket,
         string path,
         off_t start_offset,
         size_t size,
         int part_id,
-        FILE* file);
+        FILE* file,
+        std::atomic<bool>& canceled);
 
 /**
  * @brief 关闭控制连接并退出FTP服务器。
@@ -160,24 +163,6 @@ int get_ftp_file_size(
         Ftp_Control_Client sock,
         const std::string& path,
         int& result);
-
-/**
- * @brief 进入被动模式，下载指定片段的文件，并关闭连接。
- *
- * @param path 文件路径。
- * @param off 文件偏移量。
- * @param size 文件大小。
- * @param part_id 片段 ID。
- * @param file 文件指针。
- * @param sock 连接的 SOCK 对象。
- */
-void enter_passive_and_download_one_segment_and_close(
-        string path,
-        off_t off,
-        size_t size,
-        int part_id,
-        FILE* file,
-        SOCK sock);
 
 /**
  * @brief FTP控制连接socket的工厂方法类型
@@ -258,3 +243,51 @@ int fetch_fzf(SOCK sock, string path, string e, VS& result);
  * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
 int fetch_find(SOCK sock, string path, string e, bool& result);
+
+/**
+ * @brief 下载线程入口：进入被动模式、下载一个分段并关闭连接
+ *
+ * 这个函数用于进入被动模式，下载一个指定的文件分段，并关闭连接。
+ * 由于std::thread无法取得返回值，所以返回类型为void。
+ *
+ * @param path 文件路径
+ * @param off 分段的偏移量
+ * @param size 分段的大小
+ * @param part_id 分段的ID
+ * @param file 文件指针，用于写入下载的数据
+ * @param sock 控制连接的 SOCK 对象
+ * @param canceled 原子标志，用于取消下载
+ */
+void enter_passive_and_download_one_segment_and_close(
+        string path,
+        off_t off,
+        size_t size,
+        int part_id,
+        FILE* file,
+        SOCK sock,
+        std::atomic<bool>& canceled);
+
+/**
+ * @brief 下载一个文件分段
+ *
+ * 这个函数用于从服务器下载一个文件分段。它接收一个控制连接对象、数据连接套接字、文件路径、起始偏移量、分段大小、分段ID、文件指针以及取消标志作为参数。
+ *
+ * @param cli Ftp_Control_Client 对象，用于发送控制命令和接收响应
+ * @param data_socket 数据连接套接字
+ * @param path 文件路径
+ * @param start_offset 分段的起始偏移量
+ * @param size 分段的大小
+ * @param part_id 分段的ID
+ * @param file 文件指针，用于写入下载的数据
+ * @param canceled 原子标志，用于取消下载
+ * @return 如果下载成功，则返回0；如果下载过程中或出错时取消了下载，则返回1
+ */
+int download_one_segment(
+        Ftp_Control_Client cli,
+        SOCK data_socket,
+        string path,
+        off_t start_offset,
+        size_t size,
+        int part_id,
+        FILE* file,
+        std::atomic<bool>& canceled);

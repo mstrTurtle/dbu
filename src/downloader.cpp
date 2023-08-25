@@ -85,14 +85,15 @@ int spawn_multi_downloads_and_join(
     ACE_TRACE(ACE_TEXT(__func__));
     std::vector<std::thread> ts; // 计算大小，并且spawn若干线程以供下载。
     std::vector<FILE*> fs;
+    std::atomic<bool> canceled(false);
     int fsize;
     if (get_ftp_file_size(sock, path, fsize)) {
         std::cout << "Get file size failed\n";
         return BAD_PATH;
     }
     int fhandle = open(path.c_str(), O_RDWR);
-    int segsize =
-            static_cast<int>(static_cast<float>(fsize) / threads); // 向下取整
+    // 分段大小向下取整
+    int segsize = static_cast<int>(static_cast<float>(fsize) / threads);
 
     std::cout << "Got size: " << fsize << std::endl;
 
@@ -108,7 +109,7 @@ int spawn_multi_downloads_and_join(
         create_sock(new_sock);
         ts.emplace_back(std::thread(
                 enter_passive_and_download_one_segment_and_close, path, off,
-                len, i, fs[i], new_sock));
+                len, i, fs[i], new_sock, std::ref(canceled)));
 
         std::cout << "Download thread " << i << " start" << std::endl;
     }
@@ -118,7 +119,8 @@ int spawn_multi_downloads_and_join(
     create_sock(new_sock);
     ts.emplace_back(std::thread(
             enter_passive_and_download_one_segment_and_close, path, finaloff,
-            fsize - finaloff, threads - 1, fs.back(), new_sock));
+            fsize - finaloff, threads - 1, fs.back(), new_sock,
+            std::ref(canceled)));
     std::cout << "Thread " << (threads - 1) << " Start" << std::endl;
 
     std::cout << "Download Complete" << std::endl;
