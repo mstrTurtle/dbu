@@ -6,3 +6,4 @@ build
 .cache
 bin/*
 !bin/.gitkeep
+compile_commands.json

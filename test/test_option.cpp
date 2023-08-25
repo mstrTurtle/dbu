@@ -33,13 +33,6 @@ TEST(DbuOptionTest, InvalidOption)
   ASSERT_EQ(1, 1);
 }
 
-/**
- * @brief 初始化并且RUN_ALL_TESTS
- *
- * @param argc
- * @param argv
- * @return int
- */
 int
 main(int argc, char** argv)
 {
