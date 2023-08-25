@@ -56,7 +56,7 @@ int getRegularName(string path, string& result)
     return 0;
 }
 
-std::vector<std::string> strToLines(string text)
+std::vector<std::string> str_to_lines(string text)
 {
     std::vector<std::string> result;
     std::istringstream iss(text);
@@ -103,7 +103,7 @@ VS fzf(VS ss, string e)
 }
 
 // 函数用于找最大版本号的辅助函数
-int findMax(const VS& ss, std::string& result)
+int find_max(const VS& ss, std::string& result)
 {
     std::string line;
     std::tuple<int, int, int> maxNumber{0, 0, 0};
@@ -135,11 +135,11 @@ int findMax(const VS& ss, std::string& result)
  * @param result 存储最大值的字符串。
  * @return 如果成功获取并查找最大值，则返回0；否则返回非零值。
  */
-int fetchFindMax(SOCK sock, Str path, Str& result)
+int fetch_find_max(SOCK sock, Str path, Str& result)
 {
     Str s;
     fetchNLST(sock, path, s);
-    findMax(strToLines(s), result);
+    find_max(str_to_lines(s), result);
     return 0;
 }
 
@@ -159,7 +159,7 @@ int fetchFzf(SOCK sock, Str path, Str e, VS& result)
 {
     Str s;
     fetchNLST(sock, path, s);
-    result = fzf(strToLines(s), e);
+    result = fzf(str_to_lines(s), e);
     return 0;
 }
 
@@ -172,14 +172,14 @@ bool fetchFind(SOCK sock, Str path, Str e)
 {
     Str s;
     fetchNLST(sock, path, s);
-    return find(strToLines(s), e);
+    return find(str_to_lines(s), e);
 }
 
 bool fetchExist(SOCK sock, Str path)
 {
     Str s;
     fetchNLST(sock, path, s);
-    return strToLines(s).size() == 1;
+    return str_to_lines(s).size() == 1;
 }
 
 char buffer[1024];

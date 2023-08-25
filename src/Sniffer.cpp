@@ -80,7 +80,7 @@ int Sniffer::processVersion()
 {
     std::cout << "In Process Version\n";
     Str result;
-    fetchFindMax(conn.sock, cwd, result);
+    fetch_find_max(conn.sock, cwd, result);
     join_path(cwd, result);
     return 0;
 }

@@ -29,7 +29,7 @@ using SOCK = ACE_SOCK_Stream;
 
 using Str = string;
 
-void fetchNLST(
+void fetch_nlst(
         ACE_SOCK_Stream& control_socket,
         const std::string& cwd,
         std::string& result);
@@ -38,24 +38,24 @@ int sniff(char* buffer, int size);
 
 void join_path(std::string& origin_, const std::string& appendix);
 
-std::vector<std::string> strToLines(string text);
+std::vector<std::string> str_to_lines(string text);
 
 VS fzf(VS ss, string e);
 
-int findMax(const VS& ss, std::string& result);
+int find_max(const VS& ss, std::string& result);
 
-int fetchFindMax(SOCK sock, Str path, Str& result);
+int fetch_find_max(SOCK sock, Str path, Str& result);
 
-int fetchFzf(SOCK sock, Str path, Str e, VS& result);
+int fetch_fzf(SOCK sock, Str path, Str e, VS& result);
 
-bool fetchFind(SOCK sock, Str path, Str e);
+bool fetch_find(SOCK sock, Str path, Str e);
 
-bool fetchExist(SOCK sock, Str path);
+bool fetch_exist(SOCK sock, Str path);
 
-void setupControl(ACE_SOCK_Stream& control_socket);
+void setup_control(ACE_SOCK_Stream& control_socket);
 
-int getStatusCode(const char* line);
+int get_status_code(const char* line);
 
-int getStatusCode(Str line);
+int get_status_code(Str line);
 
-int getRegularName(string path, string& result);
+int get_regular_name(string path, string& result);
