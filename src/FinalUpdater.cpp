@@ -3,8 +3,7 @@
 #include "Downloader.h"
 #include "Updater.h"
 
-int
-FinalUpdater::run()
+int FinalUpdater::run()
 {
     Sniffer sniffer;
     Downloader downloader;
