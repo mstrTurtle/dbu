@@ -73,7 +73,7 @@ public:
     int process_target();
     int process_version();
     int process_functionality();
-    int run(Str& result);
+    int run(string& result);
 };
 
 Sniff_Hint convert_option_to_sniff_hint(const Option& option);

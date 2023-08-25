@@ -77,7 +77,7 @@ int open_n_file(int n, vector<FILE*>& result)
  */
 int spawn_multi_downloads_and_join(
         SOCK sock,
-        Str path,
+        string path,
         int threads,
         const char* savepath,
         Sock_Creator create_sock)

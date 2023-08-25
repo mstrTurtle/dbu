@@ -18,9 +18,6 @@
 
 using std::string;
 
-using Str = std::string;
-using SOCK = ACE_SOCK_Stream;
-
 class Downloader
 {
     string filepath_;

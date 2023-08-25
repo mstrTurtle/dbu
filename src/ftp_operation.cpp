@@ -8,9 +8,8 @@
 #include <iostream>
 #include <string>
 #include <thread>
+#include <sstream>
 
-using Str = std::string;
-using SOCK = ACE_SOCK_Stream;
 
 /**
  * @brief 建立与FTP服务器的控制连接。
@@ -22,7 +21,7 @@ using SOCK = ACE_SOCK_Stream;
  * @return
  * 如果成功建立控制连接，则返回控制连接的套接字；如果出现错误，则返回1。
  */
-SOCK connect_to_ftp(Str ip, int port)
+SOCK connect_to_ftp(string ip, int port)
 {
     // 建立控制连接
     ACE_SOCK_Stream control_socket;
@@ -45,7 +44,7 @@ SOCK connect_to_ftp(Str ip, int port)
  * @param pass FTP服务器的密码。
  * @return 如果成功登录，则返回0；如果出现错误，则返回1。
  */
-int login_to_ftp(SOCK control_socket, Str user, Str pass)
+int login_to_ftp(SOCK control_socket, string user, string pass)
 {
     char buffer[1024];
     char comm[1024];
@@ -135,7 +134,7 @@ int enter_passive_and_get_data_connection(SOCK control_socket, SOCK& dsock)
  * @param sock 连接的 SOCK 对象。
  */
 void enter_passive_and_download_one_segment_and_close(
-        Str path,
+        string path,
         off_t off,
         size_t size,
         int part_id,
@@ -166,7 +165,7 @@ void enter_passive_and_download_one_segment_and_close(
 void download_one_segment(
         SOCK control_socket,
         SOCK data_socket,
-        Str path,
+        string path,
         off_t start_offset,
         size_t size,
         int part_id,
@@ -290,4 +289,49 @@ int get_ftp_file_size(SOCK sock, const std::string& path)
     sscanf(buffer, "213 %d", &size); // 接收响应
 
     return size;
+}
+
+int Ftp_Control_Client::sendCommand(
+        const std::string& command,
+        const std::string& argument)
+{
+    std::string cmd = command + " " + argument;
+    if (sock.sendLine(cmd)) {
+        return 1;
+    }
+    return 0;
+}
+
+int Ftp_Control_Client::receiveReply(
+        std::string& status_code,
+        std::string& result_lines)
+{
+    std::string line;
+    while (true) {
+        if (sock.receiveLine(line)) {
+            // 接收失败或连接关闭
+            return 1;
+        }
+
+        // 检查行是否符合Completion
+        // reply模式（2xx或4xx）
+        // 1. 是Completion Reply且是中间状态行（状态码后接'-'字符）
+        if (line.size() >= 4 && isdigit(line[0]) && isdigit(line[1]) &&
+            isdigit(line[2]) && line[3] == '-') {
+            status_code = line.substr(0, 3);
+            result_lines += line.substr(4);
+            continue;
+        }
+        // 2. 是Completion Reply且不是中间状态行
+        else if (
+                line.size() >= 4 && isdigit(line[0]) && isdigit(line[1]) &&
+                isdigit(line[2]) && line[3] == ' ') {
+            result_lines += line.substr(5);
+            return 0;
+        }
+        // 3. 是中间状态行
+        else {
+            continue;
+        }
+    }
 }

@@ -98,7 +98,7 @@ int Sniffer::process_target()
 int Sniffer::process_version()
 {
     std::cout << "In " << __func__ << "\n";
-    Str result;
+    string result;
     fetch_find_max(conn.sock, cwd, result);
     join_path(cwd, result);
     std::cout << __func__ << " completed, cwd is" << cwd << std::endl;
@@ -120,7 +120,7 @@ int Sniffer::process_functionality()
     if (v.size() < 1) {
         return BAD_FETCH;
     }
-    Str target;
+    string target;
     get_regular_name(v[0], target);
     join_path(cwd, target);
     std::cout << __func__ << " completed, cwd is" << cwd << std::endl;
@@ -133,7 +133,7 @@ int Sniffer::process_functionality()
  * @param result 探测结果的字符串引用，将被填充为目标路径。
  * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
-int Sniffer::run(Str& result)
+int Sniffer::run(string& result)
 {
     cwd = "/ftp_product_installer/dbackup3/rpm";
 

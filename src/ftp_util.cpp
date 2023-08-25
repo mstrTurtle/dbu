@@ -3,7 +3,6 @@
 
 #include <ace/INET_Addr.h>
 #include <ace/Log_Msg.h>
-#include <ace/Message_Block.h>
 #include <ace/OS.h>
 #include <ace/SOCK_Stream.h>
 #include <iostream>
@@ -141,9 +140,9 @@ int find_max(const VS& ss, std::string& result)
  * @param result 存储最大值的字符串。
  * @return 如果成功获取并查找最大值，则返回0；否则返回非零值。
  */
-int fetch_find_max(SOCK sock, Str path, Str& result)
+int fetch_find_max(SOCK sock, string path, string& result)
 {
-    Str s;
+    string s;
     fetch_nlst(sock, path, s);
     std::cout << __func__ << " got nlst: " << s << std::endl;
     find_max(str_to_lines(s), result);
@@ -162,9 +161,9 @@ int fetch_find_max(SOCK sock, Str path, Str& result)
  * @param result 存储过滤后的文件列表的向量。
  * @return 如果成功获取并过滤文件列表，则返回0；否则返回非零值。
  */
-int fetch_fzf(SOCK sock, Str path, Str e, VS& result)
+int fetch_fzf(SOCK sock, string path, string e, VS& result)
 {
-    Str s;
+    string s;
     if (fetch_nlst(sock, path, s)) {
         std::cout << "fetch_nlst failed with code " << s << std::endl;
         return 1;
@@ -182,10 +181,10 @@ int fetch_fzf(SOCK sock, Str path, Str e, VS& result)
  * @param result [out] 查找结果，true 表示找到，false 表示未找到。
  * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
-int fetch_find(SOCK sock, Str path, Str e, bool& result)
+int fetch_find(SOCK sock, string path, string e, bool& result)
 {
-    Str s;
-    Str e_with_prefix = path;
+    string s;
+    string e_with_prefix = path;
     join_path(e_with_prefix, e);
     if (fetch_nlst(sock, path, s)) {
         return 1;
@@ -195,9 +194,9 @@ int fetch_find(SOCK sock, Str path, Str e, bool& result)
     return 0;
 }
 
-bool fetch_exist(SOCK sock, Str path)
+bool fetch_exist(SOCK sock, string path)
 {
-    Str s;
+    string s;
     fetch_nlst(sock, path, s);
     return str_to_lines(s).size() == 1;
 }
@@ -314,28 +313,6 @@ std::string receiveLine(
     return line;
 }
 
-using MB = ACE_Message_Block;
-
-/**
- * @brief 为FTP控制连接通信而设计的Socket封装
- *
- * 为FTP控制连接通信设计的Socket封装，能够按行接收响应
- * 以便更好判断返回状态
- *
- */
-class Lined_Sock
-{
-    SOCK sock;
-    MB block{1024};
-
-    Lined_Sock(SOCK sock_): sock(sock_) {}
-    int get_line(Str& result)
-    {
-        result = receiveLine(sock, block);
-        return 0;
-    }
-};
-
 int get_status_code(const char* line)
 {
     if (strlen(line) < 3)
@@ -345,7 +322,7 @@ int get_status_code(const char* line)
     return atoi(buf);
 }
 
-int get_status_code(Str line)
+int get_status_code(string line)
 {
     int i = std::atoi(line.substr(0, 3).c_str());
     return i;
@@ -371,4 +348,44 @@ Sock_Creator make_logined_sock_creator(
         }
         return 0;
     };
+}
+
+int Lined_SOCK::sendLine(const std::string& line)
+{
+    std::string message = line + "\r\n";
+    ssize_t bytesSent = sock.send_n(message.c_str(), message.length());
+    if (bytesSent != static_cast<ssize_t>(message.length())) {
+        return 1;
+    } else
+        return 0;
+}
+
+int Lined_SOCK::receiveLine(std::string& line)
+{
+    line.clear();
+
+    while (true) {
+        // 检查缓冲区中是否有剩余数据
+        size_t newlinePos = buffer.find("\r\n");
+        if (newlinePos != std::string::npos) {
+            // 从缓冲区中提取行
+            line = buffer.substr(0, newlinePos);
+
+            // 从缓冲区中删除行（包括分隔符）
+            buffer.erase(0, newlinePos + 2);
+
+            return 0;
+        }
+
+        // 从套接字中读取更多数据到缓冲区
+        char recvBuffer[1024];
+        ssize_t bytesRead = sock.recv(recvBuffer, sizeof(recvBuffer));
+        if (bytesRead <= 0) {
+            // 错误或连接关闭
+            return 1;
+        }
+
+        // 将接收到的数据追加到缓冲区
+        buffer.append(recvBuffer, bytesRead);
+    }
 }
