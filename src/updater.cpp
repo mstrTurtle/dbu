@@ -30,11 +30,10 @@ int Updater::run()
     sniffer.run(path);
 
     std::cout << "Sniffer done, got path: " << path << std::endl;
-    exit(0);
 
     // run downloader, 多线程下载
     Downloader downloader(
-            "/pub/robots.txt", OPTION->threads_, "download.rpm", sock,
+            path, OPTION->threads_, "download.rpm", sock,
             sock_creator);
 
     downloader.run();
