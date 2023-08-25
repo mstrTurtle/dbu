@@ -224,7 +224,7 @@ int get_ftp_file_size(
             (LM_DEBUG, "%I%t size query return (%s, %s)\n", c.c_str(),
              t.c_str()));
     if (c != "213") {
-        return -1;
+        return 1;
     }
     result = std::stoi(t);
     return 0;
