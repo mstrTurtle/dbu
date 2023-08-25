@@ -9,7 +9,7 @@
 #include <iostream>
 
 /**
- * @brief 输入Option，输出嗅探到的文件路径
+ * @brief 输入Option，输出探测到的文件路径
  *
  * @return int 错误码，0是对的，其他是其他错误码
  */

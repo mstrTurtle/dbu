@@ -128,8 +128,10 @@ int Sniffer::process_functionality()
 }
 
 /**
- * 嗅探的入口。传入Option，逐步嗅探。返回错误码。
- * TODO: 我觉得得定义一下错误码。
+ * @brief 探测的入口。传入Option，逐步探测。返回错误码。
+ *
+ * @param result 探测结果的字符串引用，将被填充为目标路径。
+ * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
 int Sniffer::run(Str& result)
 {

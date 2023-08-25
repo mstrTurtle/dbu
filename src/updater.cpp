@@ -48,7 +48,7 @@ int Updater::run()
 
     // run installer，安装
     Installer installer;
-    if (installer.run() == -1)
+    if (installer.run())
         ACE_ERROR_RETURN((LM_ERROR, "%p\n", "updater.run() error"), 1);
 
     // 关闭ACE
