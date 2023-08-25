@@ -25,7 +25,6 @@ using VS = vector<string>;
 
 using namespace Sniffer_Errors;
 
-// 函数用于判断主分支并处理分支
 int Sniffer::process_branch()
 {
     std::cout << "In " << __func__ << "\n";
@@ -50,11 +49,6 @@ int Sniffer::process_branch()
     return OK;
 }
 
-/**
- * @brief 处理选项
- *
- * @return int
- */
 int Sniffer::process_option()
 {
     std::cout << "In " << __func__ << "\n";
@@ -69,11 +63,6 @@ int Sniffer::process_option()
     return OK;
 }
 
-/**
- * @brief 处理目标
- *
- * @return int
- */
 int Sniffer::process_target()
 {
     std::cout << "In " << __func__ << "\n";
@@ -90,11 +79,6 @@ int Sniffer::process_target()
     return OK;
 }
 
-/**
- * @brief 处理版本号
- *
- * @return int
- */
 int Sniffer::process_version()
 {
     std::cout << "In " << __func__ << "\n";
@@ -105,11 +89,6 @@ int Sniffer::process_version()
     return OK;
 }
 
-/**
- * @brief 处理功能
- *
- * @return int
- */
 int Sniffer::process_functionality()
 {
     std::cout << "In " << __func__ << "\n";
@@ -127,12 +106,6 @@ int Sniffer::process_functionality()
     return OK;
 }
 
-/**
- * @brief 探测的入口。传入Option，逐步探测。返回错误码。
- *
- * @param result 探测结果的字符串引用，将被填充为目标路径。
- * @return 返回操作的结果，0 表示成功，非零值表示失败。
- */
 int Sniffer::run(string& result)
 {
     cwd = "/ftp_product_installer/dbackup3/rpm";

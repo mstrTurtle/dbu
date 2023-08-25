@@ -32,15 +32,23 @@ using std::vector;
 using std::string;
 
 using VS = vector<string>;
-
+/**
+ * @brief Sniff_Hint结构体用于存储探测提示信息
+ */
 struct Sniff_Hint
 {
-    const string branch;
-    const string subbranch;
-    const string option;
-    const string arch;
-    const string product;
+    const string branch;    /**< 分支 */
+    const string subbranch; /**< 子分支 */
+    const string option;    /**< 选项 */
+    const string arch;      /**< 架构 */
+    const string product;   /**< 产品 */
 
+    /**
+     * @brief 重载输出流操作符，用于打印Sniff_Hint对象的信息
+     * @param os 输出流
+     * @param hint Sniff_Hint对象
+     * @return std::ostream& 输出流
+     */
     friend std::ostream& operator<<(std::ostream& os, const Sniff_Hint& hint)
     {
         os << "Branch: " << hint.branch << std::endl;
@@ -52,28 +60,74 @@ struct Sniff_Hint
     }
 };
 
+/**
+ * @brief Sniffer 类用于探测目标路径
+ */
 class Sniffer final
 {
 private:
     struct
     {
-        ACE_INET_Addr addr;
-        SOCK sock;
+        ACE_INET_Addr addr; /**< 地址信息 */
+        SOCK sock;          /**< socket 信息 */
     } conn;
-    Sniff_Hint hint;
-    string cwd;
+    Sniff_Hint hint; /**< 探测提示信息 */
+    string cwd;      /**< 当前工作路径 */
 
 public:
     Sniffer() = delete;
     Sniffer(ACE_INET_Addr addr_, SOCK sock_, Sniff_Hint hint_)
         : conn({.addr = addr_, .sock = sock_}),
           hint(hint_){};
+
+    /**
+     * @brief 处理分支信息
+     *
+     * @return int 错误码，0 表示成功，其他值表示失败
+     */
     int process_branch();
+
+    /**
+     * @brief 处理选项信息
+     *
+     * @return int 错误码，0 表示成功，其他值表示失败
+     */
     int process_option();
+
+    /**
+     * @brief 处理目标信息
+     *
+     * @return int 错误码，0 表示成功，其他值表示失败
+     */
     int process_target();
+
+    /**
+     * @brief 处理版本号信息
+     *
+     * @return int 错误码，0 表示成功，其他值表示失败
+     */
     int process_version();
+
+    /**
+     * @brief 处理功能信息
+     *
+     * @return int 错误码，0 表示成功，其他值表示失败
+     */
     int process_functionality();
+
+    /**
+     * @brief 探测的入口。传入Option，逐步探测。返回错误码。
+     *
+     * @param result 探测结果的字符串引用，将被填充为目标路径。
+     * @return 返回操作的结果，0 表示成功，非零值表示失败。
+     */
     int run(string& result);
 };
 
+/**
+ * @brief 将Option对象转换为Sniff_Hint对象
+ *
+ * @param option Option对象
+ * @return Sniff_Hint 转换后的Sniff_Hint对象
+ */
 Sniff_Hint convert_option_to_sniff_hint(const Option& option);
