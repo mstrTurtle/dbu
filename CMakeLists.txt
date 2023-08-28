@@ -1,54 +1,37 @@
 cmake_minimum_required(VERSION 3.10)
-project (DbuProject)
+project(DbuProject)
 
-SET(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_BINARY_DIR}/bin)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-# set(EXECUTABLE_OUTPUT_PATH  ${PROJECT_SOURCE_DIR}/bin/)
 set(CMAKE_BUILD_TYPE Debug)
 
-# add sanitizer support
-add_compile_options(-fsanitize=address)
-add_link_options(-fsanitize=address)
+add_library(
+  Dbu STATIC
+  src/downloader.cpp
+  src/ftp_operation.cpp
+  src/ftp_util.cpp
+  src/sniffer.cpp
+  src/installer.cpp
+  src/option.cpp
+  src/updater.cpp)
 
-ADD_LIBRARY(Dbu STATIC
-    src/downloader.cpp
-    src/ftp_operation.cpp
-    src/ftp_util.cpp
-    src/sniffer.cpp
-    src/installer.cpp
-    src/option.cpp
-    src/updater.cpp
+target_include_directories(Dbu PRIVATE src/include)
+
+target_link_libraries(Dbu ACE pthread)
+
+add_executable(DbuApp src/main.cpp)
+
+target_include_directories(DbuApp PRIVATE src/include)
+
+target_link_libraries(DbuApp Dbu)
+
+set(GCC_COVERAGE_COMPILE_FLAGS "-lACE")
+set(GCC_COVERAGE_COMPILE_FLAGS
+    "-I/usr/include/x86_64-linux-gnu/c++/9 -stdlib=libstdc++ -stdlib=libc++ -I/usr/include/c++/9 -std=c++17"
 )
-
-target_include_directories(Dbu
-    PRIVATE
-        src/include
-)
-
-TARGET_LINK_LIBRARIES( Dbu
-    ACE
-    pthread
-)
-
-ADD_EXECUTABLE(DbuApp
-    src/main.cpp
-)
-
-target_include_directories(DbuApp
-    PRIVATE
-        src/include
-)
-
-TARGET_LINK_LIBRARIES( DbuApp
-    Dbu
-)
-
-SET(GCC_COVERAGE_COMPILE_FLAGS "-lACE")
-SET(GCC_COVERAGE_COMPILE_FLAGS "-I/usr/include/x86_64-linux-gnu/c++/9 -stdlib=libstdc++ -stdlib=libc++ -I/usr/include/c++/9 -std=c++17")
-
 
 # Locate GTest
 find_package(GTest REQUIRED)
