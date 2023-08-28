@@ -33,6 +33,20 @@ public:
      */
     Ftp_Control_Client(const SOCK& sock_): sock(sock_) {}
 
+    Ftp_Control_Client(const Ftp_Control_Client& other) = delete;
+
+    Ftp_Control_Client(Ftp_Control_Client&& other): sock(std::move(other.sock))
+    {
+    }
+
+    Ftp_Control_Client& operator=(const Ftp_Control_Client& other) = delete;
+
+    Ftp_Control_Client& operator=(Ftp_Control_Client&& other)
+    {
+        sock = std::move(other.sock);
+        return *this;
+    }
+
     /**
      * @brief 发送FTP命令。
      *
@@ -100,7 +114,7 @@ public:
  * @return 如果成功建立数据连接，则返回0；如果出现错误，则返回1。
  */
 [[nodiscard]] int enter_passive_and_get_data_connection(
-        Ftp_Control_Client cli,
+        Ftp_Control_Client& cli,
         SOCK& dsock);
 
 /**
@@ -119,7 +133,7 @@ public:
  * @note 此函数假设控制套接字和数据套接字已经连接到FTP服务器。
  */
 [[nodiscard]] int download_one_segment(
-        Ftp_Control_Client cli,
+        Ftp_Control_Client& cli,
         SOCK data_socket,
         string path,
         off_t start_offset,
@@ -129,14 +143,14 @@ public:
         std::atomic<bool>& canceled);
 
 /**
- * @brief 关闭控制连接并退出FTP服务器。
+ * @brief 关闭控制连接。
  *
  * 此函数发送QUIT命令关闭控制连接，并从FTP服务器退出。
  *
- * @param sock 控制连接的套接字。
+ * @param cli Ftp_Control_Client 对象，用于发送控制命令和接收响应。
  * @return 返回值为0表示成功关闭控制连接和退出FTP服务器，否则表示出现错误。
  */
-[[nodiscard]] int quit_and_close(SOCK& sock);
+[[nodiscard]] int quit(Ftp_Control_Client& cli);
 
 /**
  * @brief 获取FTP服务器上文件的大小。
@@ -254,29 +268,4 @@ void enter_passive_and_download_one_segment_and_close(
         int part_id,
         FILE* file,
         SOCK sock,
-        std::atomic<bool>& canceled);
-
-/**
- * @brief 下载一个文件分段
- *
- * 这个函数用于从服务器下载一个文件分段。它接收一个控制连接对象、数据连接套接字、文件路径、起始偏移量、分段大小、分段ID、文件指针以及取消标志作为参数。
- *
- * @param cli Ftp_Control_Client 对象，用于发送控制命令和接收响应
- * @param data_socket 数据连接套接字
- * @param path 文件路径
- * @param start_offset 分段的起始偏移量
- * @param size 分段的大小
- * @param part_id 分段的ID
- * @param file 文件指针，用于写入下载的数据
- * @param canceled 原子标志，用于取消下载
- * @return 如果下载成功，则返回0；如果下载过程中或出错时取消了下载，则返回1
- */
-[[nodiscard]] int download_one_segment(
-        Ftp_Control_Client cli,
-        SOCK data_socket,
-        string path,
-        off_t start_offset,
-        size_t size,
-        int part_id,
-        FILE* file,
         std::atomic<bool>& canceled);

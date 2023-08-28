@@ -99,6 +99,29 @@ public:
      */
     Lined_SOCK(const SOCK& sock_): sock(sock_) {}
 
+    Lined_SOCK(const Lined_SOCK& other) = delete;
+
+    Lined_SOCK(Lined_SOCK&& other): sock(other.sock)
+    {
+        buffer = other.buffer;
+        other.buffer.clear();
+    }
+
+    Lined_SOCK& operator=(const Lined_SOCK& other) = delete;
+
+    Lined_SOCK& operator=(Lined_SOCK&& other)
+    {
+        sock = other.sock;
+        buffer = other.buffer;
+        other.buffer.clear();
+        return *this;
+    }
+
+    ~Lined_SOCK()
+    {
+        sock.close();
+    }
+
     /**
      * @brief 发送一行文本。
      * @param line 要发送的文本行

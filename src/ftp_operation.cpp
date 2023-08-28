@@ -50,7 +50,7 @@ int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
     return 0;
 }
 
-int enter_passive_and_get_data_connection(Ftp_Control_Client cli, SOCK& dsock)
+int enter_passive_and_get_data_connection(Ftp_Control_Client& cli, SOCK& dsock)
 {
     ACE_TRACE(ACE_TEXT(__func__));
     string c, t;
@@ -102,22 +102,23 @@ void enter_passive_and_download_one_segment_and_close(
             (LM_DEBUG,
              "%I%t enter passive and download: (off = %d, size = %u)\n", off,
              size));
+    Ftp_Control_Client cli(sock);
     SOCK dsock;
     // 发送PASV，获取data socket。若发生错误，设置原子变量，通知各线程返回。
-    if (enter_passive_and_get_data_connection(sock, dsock)) {
+    if (enter_passive_and_get_data_connection(cli, dsock)) {
         canceled.store(true);
     }
     // 下载对应分段，出错则立即返回。错误信息已存储在原子变量中。
     if (download_one_segment(
-                sock, dsock, path, off, size, part_id, file, canceled)) {
+                cli, dsock, path, off, size, part_id, file, canceled)) {
         return;
     }
     // 关闭数据连接。在关闭数据连接时出错，无需处理
-    if (quit_and_close(sock)) {}
+    if (quit(cli)) {}
 }
 
 int download_one_segment(
-        Ftp_Control_Client cli,
+        Ftp_Control_Client& cli,
         SOCK data_socket,
         string path,
         off_t start_offset,
@@ -197,15 +198,12 @@ error:
     return 1;
 }
 
-int quit_and_close(SOCK& sock)
+int quit(Ftp_Control_Client& cli)
 {
     ACE_TRACE(ACE_TEXT(__func__));
-    Ftp_Control_Client cli(sock);
     if (cli.send_command("QUIT", "")) {
         return 1;
     }
-
-    sock.close();
     return 0;
 }
 
