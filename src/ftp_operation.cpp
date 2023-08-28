@@ -221,7 +221,9 @@ int get_ftp_file_size(
     ACE_DEBUG(
             (LM_DEBUG, "%I%t size query return (%s, %s)\n", c.c_str(),
              t.c_str()));
+    // 检测返回码是否为213正确响应
     if (c != "213") {
+        std::cout << "SIZE request received " << c << ", doesn't match 213\n";
         return 1;
     }
     result = std::stoi(t);
@@ -246,6 +248,12 @@ int fetch_nlst(
 
     // 发送NLST命令
     if (cli.send_and_receive("NLST", cwd, c, t)) {
+        return 1;
+    }
+
+    // 检测返回码是否为226正确响应
+    if (c != "226") {
+        std::cout << "NLST request received " << c << ", doesn't match 226\n";
         return 1;
     }
 
