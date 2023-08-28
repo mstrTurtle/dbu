@@ -1,7 +1,7 @@
 /**
  * @file sniffer.h
  * @author JiayuXiao (xiaojiayu@scutech.com)
- * @brief 根据提示探测资源路径的类。
+ * @brief 根据提示探测资源路径的类
  * @version 0.1
  * @date 2023-07-28
  *

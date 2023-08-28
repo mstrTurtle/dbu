@@ -1,7 +1,7 @@
 /**
  * @file downloader.h
  * @author JiayuXiao (xiaojiayu@scutech.com)
- * @brief 输入路径，提供多线程下载功能。
+ * @brief 输入路径，提供多线程下载功能
  * @version 0.1
  * @date 2023-07-28
  *

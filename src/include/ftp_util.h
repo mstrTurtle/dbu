@@ -1,3 +1,13 @@
+/**
+ * @file ftp_util.h
+ * @author JiayuXiao (xiaojiayu@scutech.com)
+ * @brief FTP实用工具，包括字符串检索操作、ACE_SOCK_Stream浅封装等。
+ * @version 0.1
+ * @date 2023-07-28
+ *
+ * @copyright Copyright (c) 2023
+ *
+ */
 #pragma once
 
 #include <ace/INET_Addr.h>
