@@ -1,0 +1,9 @@
+doc/html
+CMakeFiles
+build
+.clangd
+.vscode
+.cache
+bin/*
+!bin/.gitkeep
+compile_commands.json
