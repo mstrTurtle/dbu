@@ -54,25 +54,18 @@ SET(GCC_COVERAGE_COMPILE_FLAGS "-I/usr/include/x86_64-linux-gnu/c++/9 -stdlib=li
 find_package(GTest REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
 
-# Link runTests with what we want to test and the GTest and pthread library
-add_executable(runTests test/test_installer.cpp src/installer.cpp)
-target_link_libraries(runTests Dbu gtest pthread)
+add_executable(runInstallerTests test/test_installer.cpp)
+target_link_libraries(runInstallerTests Dbu gtest pthread)
+target_include_directories(runInstallerTests PRIVATE src/include)
 
-target_include_directories(runTests
-    PRIVATE
-        src/include
-)
-
-add_executable(runSnifferTests test/test_sniffer.cpp src/downloader.cpp
-    src/ftp_operation.cpp
-    src/ftp_util.cpp
-    src/sniffer.cpp
-    src/installer.cpp
-    src/option.cpp
-    src/updater.cpp)
+add_executable(runSnifferTests test/test_sniffer.cpp)
 target_link_libraries(runSnifferTests Dbu gtest pthread)
+target_include_directories(runSnifferTests PRIVATE src/include)
 
-target_include_directories(runSnifferTests
-    PRIVATE
-        src/include
-)
+add_executable(runDownloaderTests test/test_downloader.cpp)
+target_link_libraries(runDownloaderTests Dbu gtest pthread)
+target_include_directories(runDownloaderTests PRIVATE src/include)
+
+add_executable(runOptionTests test/test_option.cpp)
+target_link_libraries(runOptionTests Dbu gtest pthread)
+target_include_directories(runOptionTests PRIVATE src/include)
