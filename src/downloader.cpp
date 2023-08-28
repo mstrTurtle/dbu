@@ -1,12 +1,11 @@
 #include "downloader.h"
+
 #include "downloader_errors.h"
 #include "ftp_operation.h"
 #include "ftp_util.h"
 #include "option.h"
-#include <cstdio>
-
-#include "option.h"
 #include <ace/INET_Addr.h>
+#include <cstdio>
 #include <iostream>
 #include <set>
 #include <string>

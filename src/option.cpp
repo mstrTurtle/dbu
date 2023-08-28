@@ -8,12 +8,11 @@ using std::string;
 
 void printUsage(const char* pname)
 {
-    ACE_DEBUG(
-            (LM_DEBUG,
-             "Usage:\n"
-             "%s -h hostname -f filename -[r/w] [-p port] [-l length] "
-             "[-o offset] [-d]\n",
-             pname));
+    printf("Usage:\n"
+           "%s -b branch_name -s subbranch_name -b build_option "
+           "-arch target_architecture -product product_name"
+           "[-t threads] [-d]\n",
+           pname);
 }
 
 Option* Option::instance_ = nullptr;
