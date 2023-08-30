@@ -13,6 +13,9 @@
 
 using namespace Downloader_Errors;
 
+using std::vector;
+using std::string;
+
 /**
  * @brief 将多个文件聚合到一个文件中。
  *

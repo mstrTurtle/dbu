@@ -28,20 +28,18 @@
 #include <tuple>
 #include <vector>
 
-using std::string;
-using std::vector;
+using VS = std::vector<std::string>;
 
-using VS = vector<string>;
 /**
  * @brief Sniff_Hint结构体用于存储探测提示信息
  */
 struct Sniff_Hint
 {
-    const string branch;    /**< 分支 */
-    const string subbranch; /**< 子分支 */
-    const string option;    /**< 选项 */
-    const string arch;      /**< 架构 */
-    const string product;   /**< 产品 */
+    const std::string branch;    /**< 分支 */
+    const std::string subbranch; /**< 子分支 */
+    const std::string option;    /**< 选项 */
+    const std::string arch;      /**< 架构 */
+    const std::string product;   /**< 产品 */
 
     /**
      * @brief 重载输出流操作符，用于打印Sniff_Hint对象的信息
@@ -72,7 +70,7 @@ private:
         SOCK sock;          /**< socket 信息 */
     } conn;
     Sniff_Hint hint; /**< 探测提示信息 */
-    string cwd;      /**< 当前工作路径 */
+    std::string cwd;      /**< 当前工作路径 */
 
     /**
      * @brief 处理分支信息
@@ -121,7 +119,7 @@ public:
      * @param result 探测结果的字符串引用，将被填充为目标路径。
      * @return 返回操作的结果，0 表示成功，非零值表示失败。
      */
-    [[nodiscard]] int run(string& result);
+    [[nodiscard]] int run(std::string& result);
 };
 
 /**

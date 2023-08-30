@@ -11,10 +11,9 @@
 #pragma once
 #include <string>
 
-using std::string;
 class Installer
 {
-    string path;
+    std::string path;
 
 public:
     [[nodiscard]] int run();

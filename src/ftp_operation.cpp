@@ -68,7 +68,7 @@ int enter_passive_and_get_data_connection(Ftp_Control_Client& cli, SOCK& dsock)
     unsigned int ip1, ip2, ip3, ip4, port1, port2;
     sscanf(t.c_str(), "Entering Passive Mode (%u,%u,%u,%u,%u,%u)", &ip1, &ip2,
            &ip3, &ip4, &port1, &port2);
-    std::string data_ip = std::to_string(ip1) + "." + std::to_string(ip2) +
+    string data_ip = std::to_string(ip1) + "." + std::to_string(ip2) +
                           "." + std::to_string(ip3) + "." +
                           std::to_string(ip4);
     u_short data_port = (port1 << 8) + port2;
@@ -209,7 +209,7 @@ int quit(Ftp_Control_Client& cli)
 
 int get_ftp_file_size(
         Ftp_Control_Client cli,
-        const std::string& path,
+        const string& path,
         int& result)
 {
     ACE_TRACE(ACE_TEXT(__func__));
@@ -232,8 +232,8 @@ int get_ftp_file_size(
 
 int fetch_nlst(
         Ftp_Control_Client cli,
-        const std::string& cwd,
-        std::string& result)
+        const string& cwd,
+        string& result)
 {
     static char buffer[1024];
     string c, t;
@@ -258,7 +258,7 @@ int fetch_nlst(
     }
 
     // 接收数据
-    std::string received_lines;
+    string received_lines;
     int recv_count;
     while ((recv_count = data_socket.recv(buffer, sizeof(buffer))) > 0) {
         buffer[recv_count] = '\0';
@@ -310,10 +310,10 @@ int fetch_find(SOCK sock, string path, string e, bool& result)
 }
 
 int Ftp_Control_Client::send_command(
-        const std::string& command,
-        const std::string& argument)
+        const string& command,
+        const string& argument)
 {
-    std::string cmd = command + " " + argument;
+    string cmd = command + " " + argument;
     if (sock.send_line(cmd)) {
         return 1;
     }
@@ -321,10 +321,10 @@ int Ftp_Control_Client::send_command(
 }
 
 int Ftp_Control_Client::receive_reply(
-        std::string& status_code,
-        std::string& result_lines)
+        string& status_code,
+        string& result_lines)
 {
-    std::string line;
+    string line;
     result_lines.clear();
     while (true) {
         if (sock.receive_line(line)) {
@@ -356,10 +356,10 @@ int Ftp_Control_Client::receive_reply(
 }
 
 int Ftp_Control_Client::send_and_receive(
-        const std::string& command,
-        const std::string& argument,
-        std::string& status_code,
-        std::string& result_lines)
+        const string& command,
+        const string& argument,
+        string& status_code,
+        string& result_lines)
 {
     if (send_command(command, argument)) {
         return 1;

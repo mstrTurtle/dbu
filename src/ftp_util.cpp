@@ -7,7 +7,10 @@
 #include <ace/SOCK_Stream.h>
 #include <iostream>
 
-void join_path(std::string& origin_, const std::string& appendix)
+using std::string;
+using std::vector;
+
+void join_path(string& origin_, const string& appendix)
 {
     if ((appendix.length()) == 0) {
         return;
@@ -39,11 +42,11 @@ int get_regular_name(string path, string& result)
     return 0;
 }
 
-std::vector<std::string> str_to_lines(string text)
+std::vector<string> str_to_lines(string text)
 {
-    std::vector<std::string> result;
+    std::vector<string> result;
     std::istringstream iss(text);
-    std::string line;
+    string line;
 
     while (std::getline(iss, line, '\n')) {
         if (line.length() >= 1 && line.back() == '\r') {
@@ -62,7 +65,7 @@ std::vector<std::string> str_to_lines(string text)
  * @return true
  * @return false
  */
-bool find(vector<string> v, std::string e)
+bool find(vector<string> v, string e)
 {
     return std::find(v.begin(), v.end(), e) != v.end();
 }
@@ -78,15 +81,15 @@ VS fzf(VS ss, string e)
     return result;
 }
 
-int find_max(const VS& ss, std::string& result)
+int find_max(const VS& ss, string& result)
 {
-    std::string line;
+    string line;
     std::tuple<int, int, int> max_number{0, 0, 0};
     if (ss.size() < 1)
         return 1;
 
     for (auto line : ss) {
-        std::string r_name;
+        string r_name;
         if (get_regular_name(line, r_name)) {
             return 1;
         }
@@ -106,8 +109,8 @@ int find_max(const VS& ss, std::string& result)
 
 Sock_Creator make_logined_sock_creator(
         const ACE_INET_Addr& ftp_address,
-        const std::string& username,
-        const std::string& password)
+        const string& username,
+        const string& password)
 {
     return [=](SOCK& sock) {
         // 连接到对端地址
@@ -126,9 +129,9 @@ Sock_Creator make_logined_sock_creator(
     };
 }
 
-int Lined_SOCK::send_line(const std::string& line)
+int Lined_SOCK::send_line(const string& line)
 {
-    std::string message = line + "\r\n";
+    string message = line + "\r\n";
     ssize_t bytes_sent = sock.send_n(message.c_str(), message.length());
     if (bytes_sent != static_cast<ssize_t>(message.length())) {
         return 1;
@@ -136,14 +139,14 @@ int Lined_SOCK::send_line(const std::string& line)
         return 0;
 }
 
-int Lined_SOCK::receive_line(std::string& line)
+int Lined_SOCK::receive_line(string& line)
 {
     line.clear();
 
     while (true) {
         // 检查缓冲区中是否有剩余数据
         size_t newline_pos = buffer.find("\r\n");
-        if (newline_pos != std::string::npos) {
+        if (newline_pos != string::npos) {
             // 从缓冲区中提取行
             line = buffer.substr(0, newline_pos);
 

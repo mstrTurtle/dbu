@@ -100,8 +100,8 @@ public:
  */
 [[nodiscard]] int login_to_ftp(
         Ftp_Control_Client cli,
-        string user = "anonymous",
-        string pass = "");
+        std::string user = "anonymous",
+        std::string pass = "");
 
 /**
  * @brief 进入被动模式并建立数据连接。
@@ -135,7 +135,7 @@ public:
 [[nodiscard]] int download_one_segment(
         Ftp_Control_Client& cli,
         SOCK data_socket,
-        string path,
+        std::string path,
         off_t start_offset,
         size_t size,
         int part_id,
@@ -220,7 +220,7 @@ typedef std::function<int(SOCK&)> Sock_Creator;
  * @param result 存储最大值的字符串。
  * @return 如果成功获取并查找最大值，则返回0；否则返回非零值。
  */
-[[nodiscard]] int fetch_find_max(SOCK sock, string path, string& result);
+[[nodiscard]] int fetch_find_max(SOCK sock, std::string path, std::string& result);
 
 /**
  * @brief 获取文件列表并使用FZF过滤
@@ -234,7 +234,7 @@ typedef std::function<int(SOCK&)> Sock_Creator;
  * @param result 存储过滤后的文件列表的向量。
  * @return 如果成功获取并过滤文件列表，则返回0；否则返回非零值。
  */
-[[nodiscard]] int fetch_fzf(SOCK sock, string path, string e, VS& result);
+[[nodiscard]] int fetch_fzf(SOCK sock, std::string path, std::string e, VS& result);
 
 /**
  * @brief 从指定的 SOCK 连接中获取文件列表，并查找指定的文件路径。
@@ -245,7 +245,7 @@ typedef std::function<int(SOCK&)> Sock_Creator;
  * @param result [out] 查找结果，true 表示找到，false 表示未找到。
  * @return 返回操作的结果，0 表示成功，非零值表示失败。
  */
-[[nodiscard]] int fetch_find(SOCK sock, string path, string e, bool& result);
+[[nodiscard]] int fetch_find(SOCK sock, std::string path, std::string e, bool& result);
 
 /**
  * @brief 下载线程入口：进入被动模式、下载一个分段并关闭连接
@@ -262,7 +262,7 @@ typedef std::function<int(SOCK&)> Sock_Creator;
  * @param canceled 原子标志，用于取消下载
  */
 void enter_passive_and_download_one_segment_and_close(
-        string path,
+        std::string path,
         off_t off,
         size_t size,
         int part_id,

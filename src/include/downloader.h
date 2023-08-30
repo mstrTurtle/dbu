@@ -15,16 +15,14 @@
 #include <ace/SOCK_Stream.h>
 #include <string>
 
-using std::string;
-
 /**
  * @brief Downloader 类用于下载文件
  */
 class Downloader
 {
-    string filepath_;           /**< 文件路径 */
+    std::string filepath_;           /**< 文件路径 */
     int threads_;               /**< 线程数 */
-    string savepath_;           /**< 保存路径 */
+    std::string savepath_;           /**< 保存路径 */
     SOCK sock_;                 /**< socket 信息 */
     Sock_Creator sock_creator_; /**< socket 创建器 */
 
@@ -39,9 +37,9 @@ public:
      * @param sock_creator socket 创建器
      */
     Downloader(
-            string path,
+            std::string path,
             int threads,
-            string savepath,
+            std::string savepath,
             SOCK sock,
             Sock_Creator sock_creator)
         : filepath_(path),

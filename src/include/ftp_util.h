@@ -25,10 +25,7 @@
 #include <tuple>
 #include <vector>
 
-using std::string;
-using std::vector;
-
-using VS = vector<string>;
+using VS = std::vector<std::string>;
 using SOCK = ACE_SOCK_Stream;
 
 /**
@@ -45,7 +42,7 @@ void join_path(std::string& origin_, const std::string& appendix);
  * @param text 输入的文本字符串
  * @return std::vector<std::string> 拆分后的字符串向量
  */
-[[nodiscard]] std::vector<std::string> str_to_lines(string text);
+[[nodiscard]] std::vector<std::string> str_to_lines(std::string text);
 
 /**
  * @brief 在字符串向量中查找指定字符串
@@ -54,7 +51,7 @@ void join_path(std::string& origin_, const std::string& appendix);
  * @param e 指定字符串
  * @return bool 如果找到指定字符串，则返回true；否则返回false
  */
-[[nodiscard]] bool find(vector<string> v, std::string e);
+[[nodiscard]] bool find(std::vector<std::string> v, std::string e);
 
 /**
  * @brief 模糊查找字符串向量中包含指定字符串的字符串
@@ -63,7 +60,7 @@ void join_path(std::string& origin_, const std::string& appendix);
  * @param e 指定字符串
  * @return VS 包含指定字符串的字符串向量
  */
-[[nodiscard]] VS fzf(VS ss, string e);
+[[nodiscard]] VS fzf(VS ss, std::string e);
 
 /**
  * @brief 在字符串向量中查找具有最大版本号的字符串
@@ -81,7 +78,7 @@ void join_path(std::string& origin_, const std::string& appendix);
  * @param result 存储提取的文件名
  * @return int 错误码，0表示成功，其他表示错误
  */
-[[nodiscard]] int get_regular_name(string path, string& result);
+[[nodiscard]] int get_regular_name(std::string path, std::string& result);
 
 /**
  * @brief 模糊查找字符串向量中包含指定字符串的字符串
@@ -90,7 +87,7 @@ void join_path(std::string& origin_, const std::string& appendix);
  * @param e 指定字符串
  * @return VS 包含指定字符串的字符串向量
  */
-[[nodiscard]] VS fzf(VS ss, string e);
+[[nodiscard]] VS fzf(VS ss, std::string e);
 
 /**
  * @class Lined_SOCK

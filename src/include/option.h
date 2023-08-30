@@ -34,11 +34,11 @@ public:
      */
     void parse_args(int argc, ACE_TCHAR* argv[]);
 
-    string branch_;
-    string sub_branch_;
-    string build_;
-    string arch_;
-    string product_;
+    std::string branch_;
+    std::string sub_branch_;
+    std::string build_;
+    std::string arch_;
+    std::string product_;
     int threads_;
     bool debug_;
 
