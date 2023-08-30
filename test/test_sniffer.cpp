@@ -1,6 +1,8 @@
 #include "sniffer.h"
 #include <gtest/gtest.h>
 
+using std::string;
+
 /**
  * @brief 检验正确的路径
  *

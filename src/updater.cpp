@@ -9,6 +9,8 @@
 #include "sniffer.h"
 #include "sniffer_errors.h"
 
+using std::string;
+
 int Updater::run()
 {
     int err;

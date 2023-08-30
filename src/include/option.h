@@ -12,8 +12,6 @@
 #include "ace/ARGV.h"
 #include <string>
 
-using std::string;
-
 /**
  * @class Option
  * @brief Option类用于解析命令行参数并存储选项值

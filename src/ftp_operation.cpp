@@ -10,6 +10,8 @@
 #include <string>
 #include <thread>
 
+using std::string;
+
 int login_to_ftp(Ftp_Control_Client cli, string user, string pass)
 {
     string c, t;
